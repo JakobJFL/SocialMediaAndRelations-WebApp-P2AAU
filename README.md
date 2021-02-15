@@ -1,1 +1,1 @@
-# SocialMediaAndRelations-WebApp-P2-Project
+# Social Media and Relations WebApp P2-Project-AAU
