@@ -1,0 +1,38 @@
+@media (min-width: 767.98px) {
+    .chat-box {
+        z-index: 1;
+        margin-left: 30%;
+        margin-right: 15%;
+    }
+}
+
+.bg-grey {
+    background-color: #e7e7e7 !important;
+
+}
+
+.reciever-msg {
+    position: relative;
+    margin-left: 12% !important;
+    padding-left: 21% !important;
+    margin-bottom: 20px;
+    float: right;
+
+}
+
+.sender-msg {
+    position: relative;
+    margin-right: 12% !important;
+    padding-right: 21% !important;
+    margin-bottom: 20px;
+    float: left;
+}
+
+.rounded {
+    border-radius: 15px !important;
+}
+
+#messageSenderBox {
+    resize: none;
+}
+
