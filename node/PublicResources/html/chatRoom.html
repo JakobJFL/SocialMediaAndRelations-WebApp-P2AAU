@@ -4,27 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="css/messages.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/color.css">
-
-
+    <link rel="stylesheet" href="../css/messages.css">
+    <link rel="stylesheet" href="../css/chatRoomMain.css">
+    <link rel="stylesheet" href="../css/color.css">
 
     <title>Social Media and Relations WebApp-P2AAU</title>
 </head>
 <body>
   <header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand" href="#">Company name</a>
+      <a class="navbar-brand" href="#">Skabelon til vores chat</a>
       <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-    <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Sign out</a>
-      </li>
-    </ul>
+      <div class="navbar-left px-1">
+      <a class="nav-link" id="navbar-text" href="#">Sign out</a>
+      <a class="profileBtn" href="#"></a>
+      </div>
   </header>
 
   <div class="container-fluid">
@@ -68,11 +66,12 @@
           <!-- Sender Message-->
           <div class="media sender-msg mb-3">
             <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
-            <div class="media-body ml-3">
+            <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Ida</p>
               <div class="bg-grey rounded py-2 px-3 mb-2">
-                <p class="text-small mb-0">Test which is a new approach all solutionsTest which is a new approach all solutionTest which is a new approach all solution</p>
+                <p class="text-small mb-0">Hej med jer, har i så lavet nogen spændende projekter?</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">12:00 | Aug 13</p>
             </div>
           </div>
   
@@ -82,7 +81,7 @@
               <div class="bg-primary rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0 text-white">Test which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">12:00 | Aug 13</p>
             </div>
           </div>
   
@@ -90,10 +89,11 @@
           <div class="media sender-msg mb-3">
             <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
             <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Johan</p>
               <div class="bg-grey rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0">Test which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">12:00 | Aug 13</p>
             </div>
           </div>
   
@@ -103,7 +103,7 @@
               <div class="bg-primary rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0 text-white">Test which is a new a</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">13:00 | Aug 13</p>
             </div>
           </div>
   
@@ -111,10 +111,11 @@
           <div class="media sender-msg mb-3">
             <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
             <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Ida</p>
               <div class="bg-grey rounded py-2 px-3 mb-2">
-                <p class="text-small mb-0">kkkkkkkkk</p>
+                <p class="text-small mb-0">k</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">18:00 | Aug 13</p>
             </div>
           </div>
   
@@ -124,7 +125,7 @@
               <div class="bg-primary rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0 text-white">Test which is a new approach to have all </p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">19:00 | Aug 13</p>
             </div>
           </div>
 
@@ -134,7 +135,7 @@
               <div class="bg-primary rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0 text-white">Test which is a new aTest which is a new a</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">19:00 | Aug 13</p>
             </div>
           </div>
 
@@ -142,47 +143,72 @@
           <div class="media sender-msg mb-3">
             <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
             <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Sofie</p>
               <div class="bg-grey rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0">Test which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">19:00 | Aug 13</p>
             </div>
           </div>
           <!-- Sender Message-->
           <div class="media sender-msg mb-3">
             <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
             <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Jakob</p>
               <div class="bg-grey rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0">Test which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
               </div>
-              <p class="small text-muted">12:00 PM | Aug 13</p>
+              <p class="small text-muted">19:00 | Aug 13</p>
             </div>
           </div>
+
+          <!-- Reciever Message-->
+          <div class="media reciever-msg mb-3">
+            <div class="media-body">
+              <div class="bg-primary rounded py-2 px-3 mb-2">
+                <p class="text-small mb-0 text-white">Test which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
+              </div>
+              <p class="small text-muted">19:00 | Aug 13</p>
+            </div>
+          </div>
+
+          <!-- Sender Message-->
+          <div class="media sender-msg mb-3">
+            <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" class="rounded-circle">
+            <div class="media-body py-2 ml-3">
+              <p class="small top-text-muted">Sofie</p>
+              <div class="bg-grey rounded py-2 px-3 mb-2">
+                <p class="text-small mb-0">Test which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutionsTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest which is a new approach to have all solutions</p>
+              </div>
+              <p class="small text-muted">19:00 | Aug 13</p>
+            </div>
+          </div>
+
+
           <!-- Typing area -->
           
         </div>
       </div>
-    </div>
-    <div class="message-sender">
-      <div class="container-fluid p-2 px-4 py-5 bg-white">
-        <form action="#" >
-          <div class="input-group">
-            <div type="textbox"  id="messageSenderBox" data-text="Skirv en besked" contentEditable=true aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></div >
-            <div class="input-group-append">
-              <button id="button-addon2" type="submit" class="btn btn-outline-primary send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+      <div class="message-sender">
+        <div class="container-fluid p-2 px-4 py-3 bg-white">
+          <form action="#" >
+            <div class="input-group">
+              <div type="textbox"  id="messageSenderBox" data-text="Skirv en besked" contentEditable=true aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></div >
+              <div class="input-group-append">
+                <button id="button-addon2" type="submit" class="btn btn-outline-primary send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-    
   </main>
   
   
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="userTestData.json"></script>
-  <script type="text/javascript" src="commonInterestsData.json"></script>
-  <script type="text/javascript" src="testOfAlgorithm.js"></script>
+  <script type="text/javascript" src="../json/userTestData.json"></script>
+  <script type="text/javascript" src="../json/commonInterestsData.json"></script>
+  <script type="text/javascript" src="../js/testOfAlgorithm.js"></script>
 </body>
 </html>

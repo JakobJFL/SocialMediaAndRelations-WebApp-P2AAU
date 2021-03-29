@@ -1,11 +1,44 @@
 body {
   font-size: .875rem;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .feather {
   width: 16px;
   height: 16px;
   vertical-align: text-bottom;
+}
+
+.profileBtn {
+  background-image: url(https://www.mypeterinarian.com/wp-content/uploads/2020/10/jae-park-1198084-unsplash-1497x1600.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 5px 0px 0px 0px;
+	border-radius:28px;
+  display:inline-block;
+	border:3px solid var(--primary-checked-color);
+	cursor: pointer;
+  padding: 20px 20px 20px 20px;
+}
+
+.profileBtn:hover, #navbar-text:hover {
+  opacity: 60%;
+  transition-duration: 0.1s;
+}
+
+#navbar-text {
+  color: white;
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.navbar-left {
+  color: white;
+  height:50%;
 }
 
 /*
