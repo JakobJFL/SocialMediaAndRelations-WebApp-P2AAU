@@ -187,7 +187,7 @@ function processReq(req,res){
       //USE "sp" from above to get query search parameters
       switch(pathElements[1]){     
         case "": // 
-           fileResponse(res,"/html/index.html");
+           fileResponse(res,"/html/chatroom.html");
            break;
         case "date": // 
           let date=new Date();
