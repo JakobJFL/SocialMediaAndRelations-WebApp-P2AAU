@@ -1,0 +1,142 @@
+body {
+  font-size: .875rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+.profileBtn {
+  background-image: url(https://www.mypeterinarian.com/wp-content/uploads/2020/10/jae-park-1198084-unsplash-1497x1600.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 5px 0px 0px 0px;
+	border-radius:28px;
+  display:inline-block;
+	border:3px solid var(--primary-checked-color);
+	cursor: pointer;
+  padding: 20px 20px 20px 20px;
+}
+
+.profileBtn:hover, #navbar-text:hover {
+  opacity: 60%;
+  transition-duration: 0.1s;
+}
+
+#navbar-text {
+  color: white;
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.navbar-left {
+  color: white;
+  height:50%;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.navbar {
+  background-color: var(--primary-color);
+} 
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+  
+  
+}
+
+.sidebar {
+  background-color: var(--back-bg-color);
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+.navbar-brand {
+  display: inline-block;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  position: relative;
+  left: 50%;
+  transform: translatex(-50%);
+  font-size: 1rem;
+  
+}
+
+.navbar .navbar-toggler {
+  top: .5rem;
+  width: 5rem;
+  left: 0rem;
+}
+
+.card-active {
+  float: right;
+  margin-bottom: 0px;
+  color: black;
+}
+
+.online {
+  color: #00af0f;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(68, 109, 245, 0.1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(68, 62, 62, 0.25);
+}

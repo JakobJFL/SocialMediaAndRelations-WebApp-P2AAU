@@ -7,15 +7,14 @@ export {ValidationError, NoResourceError, processReq};
 //import mysql from "mysql";
 //you may need to: npm install mysql
 startServer();
-
-// test DB connection 
 /*
-const mysql = require('mysql');
+// test DB connection 
+//const mysql = require('mysql');
 const DBConnection = mysql.createConnection({
-  host: "localhost", 
-  user: "sw2c2-19", 
-  password: "VCp2rR3zG6msejsZ", 
-  database: "sw2c2_19" 
+  host: 'localhost',
+  user: 'p2datsw-staff',
+  password: '#############',
+  database: 'staff'
 });
 
 
@@ -23,16 +22,21 @@ DBConnection.connect((err) => {
   if (err) throw err;
   console.log('MySql Connected!');
 });
-
 */
+
+
 
 /* ***************************************************
  * Application code for the BMI tracker application 
  ***************************************************** */
 
 //constants for validating input from the network client
-const minLoginLength=1;
-const maxLoginLength=50;
+const maxHeight=300;
+const minHeight=1;
+const maxWeight=300;
+const minWeight=1;
+const minNameLength=1;
+const maxNameLength=30;
 
 //remove potentially dangerous/undesired characters 
 function sanitize(str){
@@ -74,28 +78,6 @@ function validateBMIData(bmiData){
     else throw(new Error(ValidationError));
 }
 
-function validateLoginData(loginData){
-  console.log("Validating");
-  //console.log(loginData);
-  let email;
-  let password;
-  try { //ensure that object has name,weight,height properties
-    email = String(loginData.email);
-    password = String(loginData.password);
-
-  }catch(e){console.log("Invalid "+e);throw(new Error(ValidationError));}
-  //ensure correct ranges of values
-  
-  if((email.length>=minLoginLength) && (email.length<=maxLoginLength) &&
-    (password.length>=minLoginLength) && (password.length<=maxLoginLength)) {
-    let validloginData={email: loginData.email, password: loginData.password};
-    console.log("Validated: "); console.log(validloginData);
-    return validloginData;
-  } 
-  else throw(new Error(ValidationError));
-
-}
-
 function round2Decimals(floatNumber){
   return Math.round(floatNumber*100)/100;
 }
@@ -118,7 +100,6 @@ let bmiDB=[sampleBMIData]; //
 //compare the latest two entries for 'name' and compute difference of bmi numbers
 //return 0 if only one or no record is found
 //The solution uses C-like JS, and can be simplified using filter and map, indexOf
-/*
 function calcDelta(name){
   console.log("looking up "+name);
   console.log(bmiDB);
@@ -145,7 +126,6 @@ function calcDelta(name){
    else 
    return 0;
 }
-
 //The solution can be simplified using filter and map, indexOf: bmiDB.filter(name).pop().
 function bmiLookup(name){
   console.log("looking up "+name);
@@ -172,12 +152,11 @@ function recordBMI(bmiData){
   console.log(bmiStatus);
   return bmiStatus;
 }
-*/
 /* *********************************************************************
    Setup HTTP route handling: Called when a HTTP request is received 
    ******************************************************************** */
 function processReq(req,res){
-  //console.log("GOT: " + req.method + " " +req.url);
+  console.log("GOT: " + req.method + " " +req.url);
 
   let baseURL = 'http://' + req.headers.host + '/';    //https://github.com/nodejs/node/issues/12682
   let url=new URL(req.url,baseURL);
@@ -189,11 +168,11 @@ function processReq(req,res){
       let pathElements=queryPath.split("/"); 
       console.log(pathElements[1]);
        switch(pathElements[1]){
-        case "/login":
-        case "login": //just to be nice
+        case "/bmi-records":
+        case "bmi-records": //just to be nice
           extractJSON(req)
-          .then(loginData => validateLoginData(loginData))
-          .then(validLoginData => jsonResponse(res,login(validLoginData)))
+          .then(bmiData => validateBMIData(bmiData))
+          .then(validBmiData => jsonResponse(res,recordBMI(validBmiData)))
           .catch(err=>reportError(res,err));
           break;
         default: 
@@ -204,19 +183,15 @@ function processReq(req,res){
       break; //POST URL
     case "GET":{
       let pathElements=queryPath.split("/"); 
-      //console.log(pathElements);
+      console.log(pathElements);
       //USE "sp" from above to get query search parameters
       switch(pathElements[1]){     
         case "": // 
-<<<<<<< Updated upstream
-           fileResponse(res,"/html/chatRoom.html");
-=======
-           fileResponse(res,"/html/login.html");
->>>>>>> Stashed changes
+           fileResponse(res,"/html/chatroom.html");
            break;
         case "date": // 
           let date=new Date();
-          //console.log(date);
+          console.log(date);
           jsonResponse(res,date);
         break;
         case "bmi-records": 
@@ -236,17 +211,3 @@ function processReq(req,res){
   } //end switch method
 }
 
-function login(loginData){
-  console.log(loginData);
-  
-  DBConnection.connect(function(err) {
-  if (err) throw err;
-    DBConnection.query("SELECT user_id FROM users WHERE user_mail = " + mysql.escape(loginData.email) + " AND user_psw = " + mysql.escape(loginData.password) , function (err, result, fields) {    
-      if (err) throw err;
-      else {
-        console.log(result);
-        return true;
-      } 
-    });
-  });
-}
