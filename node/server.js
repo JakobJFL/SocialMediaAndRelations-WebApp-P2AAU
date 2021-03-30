@@ -32,7 +32,7 @@ const hostname = "127.0.0.1";
 
 /* ***                 Setup Serving of files ***                  */ 
 
-const publicResources="PublicResources/";
+const publicResources="node/PublicResources/";
 //secture file system access as described on 
 //https://nodejs.org/en/knowledge/file-system/security/introduction/
 const rootFileSystem=process.cwd();
