@@ -5,6 +5,8 @@ function getLoginData() {
     let loginData={};
     loginData.email=String(document.getElementById("inputEmail").value);
     loginData.password=String(document.getElementById("inputPassword").value);
+    console.log(JSON.stringify(loginData));
+
     return loginData;
   }
 

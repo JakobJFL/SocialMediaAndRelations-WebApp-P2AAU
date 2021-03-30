@@ -1,16 +1,19 @@
 
 //We use EC6 modules!
-import {extractJSON, fileResponse, htmlResponse,extractForm,jsonResponse,errorResponse,reportError,startServer} from "./server.js";
+import {extractJSON, fileResponse, htmlResponse, jsonResponse, reportError, startServer} from "./server.js";
+import {printChatPage} from "./siteChat.js";
+import {printLoginPage} from "./siteLogin.js";
+
 const ValidationError="Validation Error";
 const NoResourceError="No Such Resource";
 export {ValidationError, NoResourceError, processReq};
-//import mysql from "mysql";
+import mysql from "mysql";
 //you may need to: npm install mysql
 startServer();
 
 // test DB connection 
-/*
-const mysql = require('mysql');
+
+//const mysql = require('node_modules/mysql');
 const DBConnection = mysql.createConnection({
   host: "localhost", 
   user: "sw2c2-19", 
@@ -24,7 +27,6 @@ DBConnection.connect((err) => {
   console.log('MySql Connected!');
 });
 
-*/
 
 //constants for validating input from the network client
 const minLoginLength=1;
@@ -103,10 +105,10 @@ function processReq(req,res){
       //USE "sp" from above to get query search parameters
       switch(pathElements[1]){     
         case "": // 
-           fileResponse(res,"/html/login.html");
-           break;
+          htmlResponse(res, printLoginPage());
+          break;
         case "chat": 
-          fileResponse(res,"/html/chatRoom.html");
+            htmlResponse(res, printChatPage());
           break;
          default: //for anything else we assume it is a file to be served
            fileResponse(res, req.url);
@@ -123,9 +125,9 @@ function login(loginData){
   console.log(loginData);
   
   DBConnection.connect(function(err) {
-  if (err) throw err;
+  if (err) console.log("nejnej err DB connect");
     DBConnection.query("SELECT user_id FROM users WHERE user_mail = " + mysql.escape(loginData.email) + " AND user_psw = " + mysql.escape(loginData.password) , function (err, result, fields) {    
-      if (err) throw err;
+      if(err) console.log("nejnej err SELECT users"); //if (err) throw err;
       else {
         console.log(result);
         return true;
