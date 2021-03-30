@@ -208,11 +208,7 @@ function processReq(req,res){
       //USE "sp" from above to get query search parameters
       switch(pathElements[1]){     
         case "": // 
-<<<<<<< Updated upstream
-           fileResponse(res,"/html/chatRoom.html");
-=======
            fileResponse(res,"/html/login.html");
->>>>>>> Stashed changes
            break;
         case "date": // 
           let date=new Date();
