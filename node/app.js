@@ -57,6 +57,24 @@ function validateLoginData(loginData){
 
 }
 
+function validateUserData(userData) {
+  // skriv noget 
+
+  return userData;
+}
+
+function validateGroupData(groupData) {
+  // skriv noget 
+
+  return groupData;
+}
+
+function validateMessageData(messageData) {
+  // skriv noget 
+
+  return messageData;
+}
+
 /* *********************************************************************
    Setup HTTP route handling: Called when a HTTP request is received 
    ******************************************************************** */
@@ -80,7 +98,29 @@ function processReq(req,res){
           .then(validLoginData => jsonResponse(res,login(validLoginData)))
           .catch(err=>reportError(res,err));
           break;
-        default: 
+          case "/makeUser":
+          case "makeUser": //just to be nice
+            extractJSON(req)
+            .then(userData => validateUserData(userData))
+            .then(validatedData => jsonResponse(res, createUser(validatedData)))
+            .catch(err=>reportError(res,err));
+          break;
+          case "/makeGroup":
+          case "makeGroup": //just to be nice
+            extractJSON(req)
+            .then(groupData => validateGroupData(groupData))
+            .then(validatedData => jsonResponse(res, createGroup(validatedData)))
+            .catch(err=>reportError(res,err));
+          break;
+          case "/makeMessage":
+          case "makeMessage": //just to be nice
+            extractJSON(req)
+            .then(messageData => validateMessageData(messageData))
+            .then(validatedData => jsonResponse(res, createMessage(validatedData)))
+            .catch(err=>reportError(res,err));
+          break;
+
+          default: 
           console.error("Resource doesn't exist");
           reportError(res, NoResourceError); 
         }
@@ -111,8 +151,109 @@ function processReq(req,res){
   } //end switch method
 }
 
+function createUser(response) {
+  const DBConnection = mysql.createConnection({ 
+    host: "localhost", 
+    user: "sw2c2-19", 
+    password: "VCp2rR3zG6msejsZ", 
+    database: "sw2c2_19" 
+  });
+
+  DBConnection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    let sql = `INSERT INTO users(
+      user_psw, 
+      user_name, 
+      user_lname, 
+      user_mail, 
+      user_intrest1, 
+      user_intrest2, 
+      user_intrest3, 
+      CHG_TIMESTAMP) VALUES (
+        ${response.user_psw},
+        ${response.user_name},
+        ${response.user_lname},
+        ${response.user_mail},
+        ${response.user_intrest1},
+        ${response.user_intrest2},
+        ${response.user_intrest3},
+        '2021-03-26 15:03:10.000000');`;
+    console.log(sql)
+    DBConnection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+  });
+
+ return response;
+}
+
+function createGroup(response) {
+  const DBConnection = mysql.createConnection({ 
+    host: "localhost", 
+    user: "sw2c2-19", 
+    password: "VCp2rR3zG6msejsZ", 
+    database: "sw2c2_19" 
+  });
+
+  DBConnection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    let sql = `INSERT INTO groups(
+      group_member_id1, 
+      group_member_id2, 
+      group_member_id3, 
+      group_member_id4) VALUES (
+        ${response.group_member_id1}, 
+        ${response.group_member_id2}, 
+        ${response.group_member_id3}, 
+        ${response.group_member_id4});`;
+    console.log(sql)
+    DBConnection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+  });
+
+ return response;
+}
+
+function createMessage(response) {
+  const DBConnection = mysql.createConnection({ 
+    host: "localhost", 
+    user: "sw2c2-19", 
+    password: "VCp2rR3zG6msejsZ", 
+    database: "sw2c2_19" 
+  });
+
+  DBConnection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    let sql = `INSERT INTO message(
+      group_id, 
+      user_id, 
+      msg_content) VALUES (
+        ${response.group_id}, 
+        ${response.user_id}, 
+        ${response.msg_content});`;
+    console.log(sql)
+    DBConnection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted");
+    });
+  });
+
+ return response;
+}
+
 function login(loginData){
-  console.log(loginData);
+  const DBConnection = mysql.createConnection({ 
+    host: "localhost", 
+    user: "sw2c2-19", 
+    password: "VCp2rR3zG6msejsZ", 
+    database: "sw2c2_19" 
+  });
   
   DBConnection.connect(function(err) {
   if (err) console.log("nejnej err DB connect");
@@ -127,8 +268,10 @@ function login(loginData){
 }
 
 async function showAllTableContent(res) {
-  const theResult = await getdata("users");
-  jsonResponse(res, theResult);
+  const usersResult = await getdata("users");
+  const groupsResult = await getdata("groups");
+  const messageResult = await getdata("message");
+  jsonResponse(res, usersResult);
 }
 
 function getdata(typeData) {
@@ -139,11 +282,12 @@ function getdata(typeData) {
     database: "sw2c2_19" 
   });
 
-  return new Promise(resolve => {
+  return new Promise((resolve,reject) => {
     DBConnection.connect(function(err) {
-      if (err) console.log(err);
+      if (err) reject(err);
       DBConnection.query("SELECT * FROM " + typeData, function (err, result, fields) {
-        if (err) throw err;
+        if (err) reject(err);
+        console.table(result);
         resolve(result);
       });
     });
