@@ -78,6 +78,7 @@ function printBody() {
                             </div>
                         </div>
                         </main>`;
+                        
     function addChatSender(message, userName, date) {
         let dummy = "";
         if (message.length <= 45 )
@@ -113,6 +114,7 @@ function printBody() {
       </div>`;
       return resReciever;
     }
+
     let chats = "";
 
     for (let i = 0; i < 4; i++) {

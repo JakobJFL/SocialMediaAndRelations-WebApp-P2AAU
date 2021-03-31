@@ -13,20 +13,7 @@ startServer();
 
 // test DB connection 
 
-//const mysql = require('node_modules/mysql');
-/* const DBConnection = mysql.createConnection({
-  host: "localhost", 
-  user: "sw2c2-19", 
-  password: "VCp2rR3zG6msejsZ", 
-  database: "sw2c2_19" 
-});
-
-
-DBConnection.connect((err) => {
-  if (err) throw err;
-  console.log('MySql Connected!');
-});
-*/
+//const mysql = require('mysql');
 
 //constants for validating input from the network client
 const minLoginLength=1;
@@ -109,6 +96,9 @@ function processReq(req,res){
           break;
         case "chat": 
             htmlResponse(res, printChatPage());
+         break;
+         case "showAllTable": 
+            showAllTableContent(res);
           break;
          default: //for anything else we assume it is a file to be served
            fileResponse(res, req.url);
@@ -130,8 +120,32 @@ function login(loginData){
       if(err) console.log("nejnej err SELECT users"); //if (err) throw err;
       else {
         console.log(result);
-        return true;
+        return result;
       } 
+    });
+  });
+}
+
+async function showAllTableContent(res) {
+  const theResult = await getdata("users");
+  jsonResponse(res, theResult);
+}
+
+function getdata(typeData) {
+  const DBConnection = mysql.createConnection({
+    host: "localhost", 
+    user: "sw2c2-19", 
+    password: "VCp2rR3zG6msejsZ", 
+    database: "sw2c2_19" 
+  });
+
+  return new Promise(resolve => {
+    DBConnection.connect(function(err) {
+      if (err) console.log(err);
+      DBConnection.query("SELECT * FROM " + typeData, function (err, result, fields) {
+        if (err) throw err;
+        resolve(result);
+      });
     });
   });
 }
