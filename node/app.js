@@ -14,7 +14,7 @@ startServer();
 // test DB connection 
 
 //const mysql = require('node_modules/mysql');
-const DBConnection = mysql.createConnection({
+/* const DBConnection = mysql.createConnection({
   host: "localhost", 
   user: "sw2c2-19", 
   password: "VCp2rR3zG6msejsZ", 
@@ -26,7 +26,7 @@ DBConnection.connect((err) => {
   if (err) throw err;
   console.log('MySql Connected!');
 });
-
+*/
 
 //constants for validating input from the network client
 const minLoginLength=1;

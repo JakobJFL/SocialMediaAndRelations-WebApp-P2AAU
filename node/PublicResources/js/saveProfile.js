@@ -1,11 +1,13 @@
-saveForms = function(){
-    let a = document.getElementById("name").value;
-    let b = document.getElementById("dateOfBirth").value;
-    let c = document.getElementById("email").value;
-    let d = document.getElementById("fieldsOfStudy").value;
-    let e = document.getElementById("interests1").value;
-    let f = document.getElementById("interests2").value;
-    let g = document.getElementById("interests3").value;
+getProfileData = function(){
+    let profileData={};
+    profileData.name=String(document.getElementById("inputName").value);
+    profileData.dateOfBirth=String(document.getElementById("inputDateOfBirth").value);
+    profileData.email=String(document.getElementById("inputEmail").value);
+    profileData.fieldsOfStudy=String(document.getElementById("inputFieldsOfStudy").value);
+    profileData.interests1=String(document.getElementById("inputInterests1").value);
+    profileData.interests2=String(document.getElementById("inputInterests2").value);
+    profileData.interests3=String(document.getElementById("inputInterests3").value);
+    console.log(JSON.stringify(profileData));
 
-    console.log(a, b, c, d, e, f, g);
+    return profileData;
 }
