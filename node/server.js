@@ -19,9 +19,10 @@ import process from "process";
 import {processReq,ValidationError, NoResourceError} from "./app.js";
 export {startServer,extractJSON, extractForm, fileResponse, htmlResponse,jsonResponse,errorResponse,reportError};
 
-const hostname = '127.0.0.1';
-const port = 3000;
-const serverName="https://sw2c2-19.p2datsw.cs.aau.dk/";
+const port = 3280;
+const hostname = "127.0.0.1";
+//const serverName="https://sw2c2-19.p2datsw.cs.aau.dk/";
+
 
 
 /* ***************************************************************************  
@@ -52,7 +53,7 @@ function securePath(userPath){
 /* send contents as file as response */
 function fileResponse(res, filename){
   const sPath=securePath(filename);
-  console.log("Reading:"+sPath);
+  //console.log("Reading:"+sPath);
   fs.readFile(sPath, (err, data) => {
     if (err) {
       console.error(err);
@@ -70,7 +71,7 @@ function fileResponse(res, filename){
 //better alternative: use require('mmmagic') library
 function guessMimeType(fileName){
   const fileExtension=fileName.split('.').pop().toLowerCase();
-  console.log(fileExtension);
+  //console.log(fileExtension);
   const ext2Mime ={ //Aught to check with IANA spec
     "txt": "text/txt",
     "html": "text/html",
@@ -144,15 +145,13 @@ function collectPostBody(req){
       }
     }).on('end', () => {
     bodyData = Buffer.concat(bodyData).toString(); //By default, Buffers use UTF8
-    console.log(bodyData);
+    //console.log(bodyData);
     resolve(bodyData); 
     });
     //Exceptions raised will reject the promise
   }
   return new Promise(collectPostBodyExecutor);
 }
-
-
 
 /* extract the enclosed JSON object in body of a POST to JavaScript Object */ 
 /* Aught also to check that Content-Type is application/json before parsing*/
@@ -200,7 +199,6 @@ function isJsonEncoded(contentType){
 //would be more robust to use the content-type module and  contentType.parse(..)
 }
 
-
 function reportError(res,error){
   if(error.message===ValidationError){
     return errorResponse(res,400,error.message);
@@ -223,7 +221,7 @@ function requestHandler(req,res){
   try{
    processReq(req,res);
   }catch(e){
-    console.log(InternalError +"!!: " +e);
+    console.log(InternalError +"!!: " +e);  
    errorResponse(res,500,"");
   }
 }

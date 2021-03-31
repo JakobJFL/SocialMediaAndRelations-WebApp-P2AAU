@@ -15,6 +15,20 @@
     height: 75vh;
     overflow-x: hidden;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.text-bottom-sender {
+    position: absolute;
+    left: 67px;
+    bottom: -20px;
+}
+
+.text-bottom-reciever {
+    position: absolute;
+    right: 0px;
+    bottom: -28px;
 }
 
 ::-webkit-scrollbar {
@@ -37,20 +51,29 @@
 
 }
 
+.dummy-space-right {
+    position: relative;
+    margin-left: 350px !important;
+}
+
+.dummy-space-left {
+    position: relative;
+    margin-right: 350px !important;
+}
+
 .reciever-msg {
     position: relative;
-    margin-left: 10% !important;
-    padding-left: 30% !important;
-    margin-bottom: 20px;
-    float: right;
+    padding-left: 20% !important;
+    padding-top: 20px !important;
 
+    float: right;
 }
 
 .sender-msg {
     position: relative;
-    margin-right: 10% !important;
-    padding-right: 30% !important;
-    margin-bottom: 20px;
+    padding-right: 20% !important;
+    padding-top: 20px !important;
+
     float: left;
 }
 

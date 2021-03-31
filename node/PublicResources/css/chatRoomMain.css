@@ -11,7 +11,7 @@ body {
 }
 
 .profileBtn {
-  background-image: url(https://www.mypeterinarian.com/wp-content/uploads/2020/10/jae-park-1198084-unsplash-1497x1600.jpg);
+  background-image: url(../pictures/KEKW.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -83,6 +83,10 @@ body {
   
 }
 
+#sidebarMenu {
+  overflow-y: scroll;
+}
+
 .sidebar {
   background-color: var(--back-bg-color);
 }
@@ -109,7 +113,7 @@ body {
 }
 
 .navbar .navbar-toggler {
-  top: .25rem;
+  top: .5rem;
   width: 5rem;
   left: 0rem;
 }
