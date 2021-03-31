@@ -15,12 +15,12 @@
 </head>
 <body>
   <header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand" href="#">Profil</a>
+      <a class="navbar-brand" href="#">Skabelon til vores profil</a>
       <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="navbar-left px-1">
-      <a class="nav-link" id="navbar-text" href="../html/login.html">Sign out</a>
+      <a class="nav-link" id="navbar-text" href="../html/login.html">Log ud</a>
       <a class="profileBtn" href="#"></a>
       </div>
   </header>
@@ -67,15 +67,15 @@
     <div class="py-5 text-center">
       <h2>Profil</h2>
       <div id="profile-container">
-        <image id="profileImage" src="../pictures/KEKW.jpg" class="rounded-circle" width="150" height="150" />
+        <image id="profileImage" src="../pictures/KEKW.jpg" class="rounded-circle" width="200" height="200" />
       </div>
-      <input id="imageUpload" type="file" 
+      <input class="py-2" id="imageUpload" type="file" 
       name="profile_photo" placeholder="Photo" required="" capture> 
     </div>
   </div>  
         <div class="bio mb-3 col-md-6 order-md-1">
             <h4 class="mb-1">Bio</h4>
-            <p id="edit">Below is an example form built entirely with Bootstrap's form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+            <p id="edit">What the fuck did you just fucking say about me, you little bitch? I’ll have you know I graduated top of my class in the Navy Seals, and I’ve been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills.</p>
             <button type="submit" id="edit-button">Ændre</button>
             <button type="submit" id="end-editing">Gem</button>
         </div>        
@@ -86,14 +86,14 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="name">Navn</label>
-              <input type="text" class="form-control" id="name" placeholder="" value="" required>
+              <input type="text" class="form-control" id="inputName" placeholder="" value="" required>
               <div class="invalid-feedback">
                 Valid name is required.
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <label for="dateOfBirth">Fødselsdato</label>
-              <input type="date" class="form-control" id="dateOfBirth" placeholder="" value="" required>
+              <input type="date" class="form-control" id="inputDateOfBirth" max="2008-03-01" required>
               <div class="invalid-feedback">
                 Valid date of birth is required.
               </div>
@@ -101,10 +101,10 @@
           </div>
           
           <div class="mb-3">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="dig@eksempel.dk">
+            <label for="inputEmail" class="sr-only">E-mail addresse</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="E-mail addresse" required autofocus>
             <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
+              Please enter a valid email address.
             </div>
           </div>
 
@@ -113,7 +113,7 @@
                 <label for="username">Studieretning</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                    <select class="fieldsOfStudy" id="fieldsOfStudy">
+                    <select class="fieldsOfStudy" id="inputFieldsOfStudy">
                         <option value="software">Software</option>
                         <option value="datalogi">Datalogi</option>
                         <option value="kemiteknologi">Kemiteknologi</option>
@@ -126,7 +126,7 @@
                     <label for="address">Interesser <span class="text-muted">(Vælg op til 3)</span> </label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                        <select class="interests" id="interests1">
+                        <select class="interests" id="inputInterests1">
                             <option value="technology">Teknologi</option>
                             <option value="noInterest">-</option>
                             <option value="programming">Programmering</option>
@@ -135,7 +135,7 @@
                             <option value="hi-fi">Hi-Fi</option>
                             <option value="smartphone">Smartphone</option>
                             </select>
-                            <select class="interests" id="interests2">
+                            <select class="interests" id="inputInterests2">
                                 <option value="outdoorLife">Udeliv</option>
                                 <option value="noInterest">-</option>
                                 <option value="exercise">Motion</option>
@@ -145,7 +145,7 @@
                                 <option value="fishing">Fiskeri</option>
                                 <option value="hunting">Jagt</option>
                             </select>
-                            <select class="interests" id="interests3">
+                            <select class="interests" id="inputInterests3">
                                 <option value="entertainment">Underholdning</option>
                                 <option value="noInterest">-</option>
                                 <option value="sport">Sport</option>
@@ -162,7 +162,7 @@
                 </div>
               </div>
             <div class="py-2 text-right">
-              <input type="button" class="save-button" id="save-button" value="Gem ændringer" onclick="saveForms()"/>
+              <input type="button" class="save-button" id="save-button" value="Gem ændringer" onclick="getProfileData()"/>
             </div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
