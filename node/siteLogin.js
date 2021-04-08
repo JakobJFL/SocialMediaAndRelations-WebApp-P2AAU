@@ -14,7 +14,8 @@ function printLoginPage() {
     
         <title>Social Media and Relations WebApp-P2AAU</title>
     </head>
-    <body class="text-center">
+    <body>
+    <div class="text-center">
       <form id="loginBtn" class="form-signin">
         <img class="mb-4" src="https://www.mypeterinarian.com/wp-content/uploads/2020/10/jae-park-1198084-unsplash-1497x1600.jpg" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Log ind</h1>
@@ -29,11 +30,8 @@ function printLoginPage() {
         <button class="btn btn-lg btn-primary btn-block" type="submit">Log ind</button>
         <p class="mt-5 mb-3 text-muted">&copy; Copyright <script>document.write(new Date().getFullYear())</script></p>
       </form>
-      
+      </div>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-      <script type="text/javascript" src="json/userTestData.json"></script>
-      <script type="text/javascript" src="json/commonInterestsData.json"></script>
-      <script type="text/javascript" src="js/testOfAlgorithm.js"></script>
       <script type="text/javascript" src="js/login-client.js"></script>
     </body>
     </html>`

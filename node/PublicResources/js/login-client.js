@@ -11,27 +11,33 @@ function getLoginData() {
   }
 
 function sendLoginData(event) {
-    console.log("mus");
+  console.log("mus");
 
-    event.preventDefault(); //we handle the interaction with the server rather than browsers form submission
-    let loginData=getLoginData();
+  event.preventDefault(); //we handle the interaction with the server rather than browsers form submission
+  let loginData=getLoginData();
 
-    fetch('http://127.0.0.1:3280/login', {
-        method: 'POST', // or 'PUT'
-        headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(loginData),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:');
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-    
-  }
+  fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat/', {
+		method: 'GET', // or 'PUT'
+		headers: {
+			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+			'Content-Type': 'text/html',
+	},
+	})
+	.then(response => response.text())
+	.then(data => {
+		//console.log(data);
+		document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); // SRY men ved ellers ikke hvordan
+		document.body.innerHTML = data;
+		//storeUser();
+	})
+	.catch((error) => {
+		console.error('Error:', error);
+	});
+}
+
+function storeUser(usernameID) {
+  	sessionStorage.setItem('usernameID', usernameID);
+}
 
 document.getElementById("loginBtn").addEventListener("submit", sendLoginData);
 

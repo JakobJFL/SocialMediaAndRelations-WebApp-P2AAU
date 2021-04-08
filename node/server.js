@@ -16,8 +16,9 @@ import process from "process";
 /* ****************************************************************************
  * Application code for the yatzy application 
  ***************************************************************************** */
-import {processReq,ValidationError, NoResourceError} from "./app.js";
-export {startServer,extractJSON, extractForm, fileResponse, htmlResponse,jsonResponse,errorResponse,reportError};
+import {processReq,ValidationError, NoResourceError, login} from "./app.js";
+import {printChatPage} from "./siteChat.js";
+export {startServer,extractJSON, extractForm, fileResponse, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
 
 const port = 3280;
 const hostname = "127.0.0.1";
@@ -32,7 +33,7 @@ const hostname = "127.0.0.1";
 
 /* ***                 Setup Serving of files ***                  */ 
 
-const publicResources="node/PublicResources/";
+const publicResources="/PublicResources/";
 //secture file system access as described on 
 //https://nodejs.org/en/knowledge/file-system/security/introduction/
 const rootFileSystem=process.cwd();
@@ -101,6 +102,22 @@ function htmlResponse(res, htmlString){
   res.setHeader('Content-Type', "text/html");
   res.write(htmlString);
   res.end('\n');
+}
+
+async function responseAuth(req, res){
+	let authheader = req.headers.authorization;
+	if (!authheader) 
+		htmlResponse(res, "You are not authenticated!");
+	let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
+    let loginData = {
+		email: auth[0],
+		password: auth[1]
+	};
+	let loginResult = await login(loginData);
+	if (loginResult[0] !== undefined)
+		htmlResponse(res, printChatPage(loginResult[0].user_id));
+  else 
+		htmlResponse(res, "You are not authenticated!");
 }
 
 /* send a response with a given HTTP error code, and reason string */ 

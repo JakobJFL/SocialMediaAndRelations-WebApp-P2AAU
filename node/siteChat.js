@@ -1,14 +1,13 @@
 export {printChatPage};
 
-function printChatPage() {
+function printChatPage(userId) {
+	console.log("ID: " +userId + "loged on");
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="../json/userTestData.json"></script>
-    <script type="text/javascript" src="../json/commonInterestsData.json"></script>
-    <script type="text/javascript" src="../js/testOfAlgorithm.js"></script>
+	<script type="text/javascript" src="../node0/js/chat-client.js"></script>
     </html>`
-    return top+printHead()+printBody()+bottom;
+    return top+printHead()+printBody(userId)+bottom;
 }
 
 function printHead() {
@@ -16,26 +15,26 @@ return `<head>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="../bootstrap/css/bootstrap.css">
+            <link rel="stylesheet" href="../node0/bootstrap/css/bootstrap.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-            <link rel="stylesheet" href="../css/messages.css">
-            <link rel="stylesheet" href="../css/chatRoomMain.css">
-            <link rel="stylesheet" href="../css/color.css">
+            <link rel="stylesheet" href="../node0/css/messages.css">
+            <link rel="stylesheet" href="../node0/css/chatRoomMain.css">
+            <link rel="stylesheet" href="../node0/css/color.css">
 
             <title>Social Media and Relations WebApp-P2AAU</title>
         </head>`;
 }
 
-function printBody() {
+function printBody(userId) {
     let header = `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-                    <a class="navbar-brand" href="#">Skabelon til vores chat</a>
+                    <a class="navbar-brand" href="#">Dit ID: ${userId}</a>
                     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-left px-1">
                     <a class="nav-link" id="navbar-text" href="http://127.0.0.1:3280/">Log ud</a>
-                    <a class="profileBtn" href="../html/profile.html"></a>
+                    <a class="profileBtn" href="../node0/html/profile.html"></a>
                     </div>
                 </header>`;   
 
@@ -85,7 +84,7 @@ function printBody() {
             dummy = `<div class="dummy-space-left"></div>`
 
         let resSender = `<div class="media sender-msg mb-3">
-        <img src="../pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
+        <img src="../node0/pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
         <div class="media-body py-2 ml-3">
           <p class="small top-text-muted">${userName}</p>
           <div class="bg-grey rounded py-2 px-3 mb-2">
@@ -129,9 +128,5 @@ function printBody() {
     for (let i = 0; i < 4; i++) {
         chats += addChatSender("T", "Ida", "idag");
     }
-
-
-     
-
     return header+cards+bottomCard+topChat+chats+bottomChat;
 }
