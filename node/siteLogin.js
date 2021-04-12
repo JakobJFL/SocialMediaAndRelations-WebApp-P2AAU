@@ -23,10 +23,7 @@ function printLoginPage() {
         <input type="email" id="inputEmail" class="form-control" placeholder="E-mail addresse" required autofocus>
         <label for="inputPassword" class="sr-only">Adgangskode</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Adgangskode" required>
-        <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" value="remember-me"> Husk mig</label>
-          </div>
+        <p id="errorField" style="visibility:hidden" class="text-danger">Ukendt fejl</p>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Log ind</button>
         <p class="mt-5 mb-3 text-muted">&copy; Copyright <script>document.write(new Date().getFullYear())</script></p>
       </form>

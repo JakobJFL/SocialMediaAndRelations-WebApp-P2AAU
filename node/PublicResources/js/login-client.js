@@ -21,13 +21,21 @@ function sendLoginData(event) {
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
 			'Content-Type': 'text/html',
-	},
+		},
 	})
 	.then(response => response.text())
 	.then(data => {
+		if (data.startsWith("Error:403")) {
+			let errorField = document.getElementById("errorField");
+			errorField.innerHTML = "Adgangskode eller brugernavn er forkert";
+			errorField.style = "visibility:show";
+		}
+		else {
+			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); // SRY men ved ellers ikke hvordan
+			document.body.innerHTML = data;
+		}
 		//console.log(data);
-		document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); // SRY men ved ellers ikke hvordan
-		document.body.innerHTML = data;
+
 		//storeUser();
 	})
 	.catch((error) => {

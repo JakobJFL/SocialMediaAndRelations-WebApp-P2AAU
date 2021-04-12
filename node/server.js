@@ -16,7 +16,8 @@ import process from "process";
 /* ****************************************************************************
  * Application code for the yatzy application 
  ***************************************************************************** */
-import {processReq,ValidationError, NoResourceError, login} from "./app.js";
+import {processReq,ValidationError, NoResourceError} from "./app.js";
+import {login} from "./database.js";
 import {printChatPage} from "./siteChat.js";
 export {startServer,extractJSON, extractForm, fileResponse, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
 
@@ -104,10 +105,17 @@ function htmlResponse(res, htmlString){
   res.end('\n');
 }
 
+function errorResponse1(res, errorCode, msg){
+  res.statusCode = errorCode;
+  res.setHeader('Content-Type', "text/html");
+  res.write("Error:" + errorCode + " | " + msg);
+  res.end('\n');
+}
+
 async function responseAuth(req, res){
 	let authheader = req.headers.authorization;
 	if (!authheader) 
-		htmlResponse(res, "You are not authenticated!");
+  errorResponse1(res, 403, "You are not authenticated!");
 	let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
     let loginData = {
 		email: auth[0],
@@ -117,7 +125,7 @@ async function responseAuth(req, res){
 	if (loginResult[0] !== undefined)
 		htmlResponse(res, printChatPage(loginResult[0].user_id));
   else 
-		htmlResponse(res, "You are not authenticated!");
+  errorResponse1(res, 403, "You are not authenticated!");
 }
 
 /* send a response with a given HTTP error code, and reason string */ 

@@ -1,4 +1,7 @@
 export {printChatPage};
+import {getGroups} from "./database.js";
+
+const messageLengthToAddDummy = 15;
 
 function printChatPage(userId) {
 	console.log("ID: " +userId + "loged on");
@@ -53,13 +56,18 @@ function printBody(userId) {
         </li>
       </ul>`
     }
+
     let topCard = `  <div class="container-fluid"><div class="row"><nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse"><div class="position-sticky pt-3">`;
     let bottomCard = `</div></nav></div></div>`
     let cards = topCard;
-    for (let i = 0; i < 10; i++) {
-        cards += addCard("Mig, Mig", "Software", "Aktiv nu")
-    }
-
+    cards += addCard("ID: " + "29", "Software", "Aktiv nu");
+    getGroups(userId).then(data => {
+      for (const group of data) {
+        cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu");
+      }
+      console.log(cards);
+    });
+    
     let topChat = `<main><div class="chat-box p-2 px-4 py-5 my-4"><div>`;
     let bottomChat = `</div>
                         </div>
@@ -80,7 +88,7 @@ function printBody(userId) {
                         
     function addChatSender(message, userName, date) {
         let dummy = "";
-        if (message.length <= 45 )
+        if (message.length <= messageLengthToAddDummy )
             dummy = `<div class="dummy-space-left"></div>`
 
         let resSender = `<div class="media sender-msg mb-3">
@@ -99,7 +107,7 @@ function printBody(userId) {
 
     function addChatReciever(message, date) {
         let dummy = "";
-        if (message.length <= 45 )
+        if (message.length <= messageLengthToAddDummy)
             dummy = `<div class="dummy-space-right"></div>`
 
         let resReciever = `<div class="media reciever-msg mb-3">
