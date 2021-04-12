@@ -1,4 +1,4 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups};
+export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats};
 
 import mysql from "mysql";
 //const mysql = require('mysql');
@@ -36,20 +36,34 @@ function getGroups(userId) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
 		DBConnection.connect(function(err) {
-			if (err) {
+			if (err) 
                 reject(err)
-            };
-			    DBConnection.query("SELECT group_id FROM groups WHERE group_member_id1 = " + 
-                    mysql.escape(userId) + " OR group_member_id2 = " + 
-                    mysql.escape(userId) + " OR group_member_id3 = " + 
-					mysql.escape(userId) + " OR group_member_id4 = " + 
-                    mysql.escape(userId) , function (err, result, fields) {    
-				if(err) {
-					reject(err) 
-				} 
-				else {
-					resolve(result);
-				} 
+			DBConnection.query("SELECT group_id FROM groups WHERE group_member_id1 = " + 
+				mysql.escape(userId) + " OR group_member_id2 = " + 
+				mysql.escape(userId) + " OR group_member_id3 = " + 
+				mysql.escape(userId) + " OR group_member_id4 = " + 
+				mysql.escape(userId) , function (err, result, fields) {    
+					if(err) 
+						reject(err) 
+					else 
+						resolve(result);
+			});
+		});
+	});
+}
+
+function getChats(groupId) {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err) {
+			if (err) 
+                reject(err)
+			DBConnection.query("SELECT msg_content,user_id,TIMESTAMP FROM message WHERE group_id = " + 
+				mysql.escape(groupId), function (err, result, fields) {   
+					if(err) 
+						reject(err) 
+					else 
+						resolve(result);
 			});
 		});
 	});
@@ -148,7 +162,7 @@ function getdata(typeData) {
 			if (err) reject(err);
 			DBConnection.query("SELECT * FROM " + typeData, function (err, result, fields) {
 				if (err) reject(err);
-				//console.table(result);
+				console.table(result);
 				resolve(result);
 			});
 		});

@@ -79,8 +79,14 @@ body {
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
-  
-  
+}
+
+.active {
+  background-color: var(--selected-bg-color);
+}
+
+.card:hover {
+  background-color: var(--hover-bg-color); 
 }
 
 #sidebarMenu {

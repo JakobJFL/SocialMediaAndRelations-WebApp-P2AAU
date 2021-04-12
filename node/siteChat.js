@@ -1,16 +1,25 @@
 export {printChatPage};
-import {getGroups} from "./database.js";
+import {getGroups, getChats} from "./database.js";
 
 const messageLengthToAddDummy = 15;
 
-function printChatPage(userId) {
+function printChatPage(userId, url) {
 	console.log("ID: " +userId + "loged on");
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="../node0/js/chat-client.js"></script>
     </html>`
-    return top+printHead()+printBody(userId)+bottom;
+    let bodyPromise = new Promise((resolve,reject) => {
+		printBody(userId, url).then(html => {
+			let res = top+printHead()+html+bottom;
+			resolve(res);
+			if (!html) {
+				reject("promiseReject(printChatPage)");
+			} 
+		}).catch(err => console.error(err));
+    });
+    return bodyPromise;
 }
 
 function printHead() {
@@ -29,7 +38,7 @@ return `<head>
         </head>`;
 }
 
-function printBody(userId) {
+function printBody(userId, url) {
     let header = `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
                     <a class="navbar-brand" href="#">Dit ID: ${userId}</a>
                     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,11 +50,11 @@ function printBody(userId) {
                     </div>
                 </header>`;   
 
-    function addCard(title, subtitle, active) {
+    function addCard(title, subtitle, active, cGroupID, addActive) {
         return `<ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">
-            <div class="card">
+          <a class="nav-link" aria-current="page" onclick="changeGroup(${cGroupID})">
+            <div class="card ${addActive}">
               <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
@@ -56,17 +65,9 @@ function printBody(userId) {
         </li>
       </ul>`
     }
-
+	
     let topCard = `  <div class="container-fluid"><div class="row"><nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse"><div class="position-sticky pt-3">`;
     let bottomCard = `</div></nav></div></div>`
-    let cards = topCard;
-    cards += addCard("ID: " + "29", "Software", "Aktiv nu");
-    getGroups(userId).then(data => {
-      for (const group of data) {
-        cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu");
-      }
-      console.log(cards);
-    });
     
     let topChat = `<main><div class="chat-box p-2 px-4 py-5 my-4"><div>`;
     let bottomChat = `</div>
@@ -122,19 +123,42 @@ function printBody(userId) {
       return resReciever;
     }
 
-    let chats = "";
+	let promise = new Promise((resolve,reject) => {
+		let cards = topCard;
+		let urlSplit = url.split("=");
+		console.log("yes: " + urlSplit[1]);
+		let groupID = urlSplit[1];
+		getGroups(userId).then(groupsData => {
+			for (const group of groupsData) {
+				if (!groupID) 
+				groupID = group.group_id;
+				if (group.group_id == groupID) 
+					cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu", group.group_id, "active");
+				else 
+					cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu", group.group_id, "");
+			}
+			if (!groupsData) {
+				reject("promiseReject(getGroups)");
+			} 
 
-    for (let i = 0; i < 4; i++) {
-        if (i % 3)
-            chats += addChatReciever("hej", "idag");
-        else 
-            chats += addChatSender("hej med dig jeg hedder kej", "Ida", "idag");
-    }
-    for (let i = 0; i < 4; i++) {
-        chats += addChatReciever("Test which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTestTest which is a new approach all solutionsTest which is a new approach to have all solutionsTest", "idag");
-    }
-    for (let i = 0; i < 4; i++) {
-        chats += addChatSender("T", "Ida", "idag");
-    }
-    return header+cards+bottomCard+topChat+chats+bottomChat;
+			getChats(groupID).then(chatsData => {
+				let chats = "";
+				for (const group of chatsData) {
+					let DBdate = String(group.TIMESTAMP).split(/[- :]/);
+					//let date = new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]);
+					let dateFormatted = DBdate[2] + "/" + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5];
+					if (group.user_id == userId) 
+						chats += addChatReciever(group.msg_content, dateFormatted);
+					else 
+						chats += addChatSender(group.msg_content, group.user_id, dateFormatted);
+				}
+				let res = header+cards+bottomCard+topChat+chats+bottomChat;
+				resolve(res);
+				if (!chatsData) {
+					reject("promiseReject(getChats)");
+				} 
+			  }).catch(err => console.error(err));
+		  }).catch(err => console.error(err));
+    });
+    return promise;
 }

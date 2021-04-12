@@ -115,17 +115,18 @@ function errorResponse1(res, errorCode, msg){
 async function responseAuth(req, res){
 	let authheader = req.headers.authorization;
 	if (!authheader) 
-  errorResponse1(res, 403, "You are not authenticated!");
+    errorResponse1(res, 403, "You are not authenticated!");
 	let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
     let loginData = {
 		email: auth[0],
 		password: auth[1]
 	};
 	let loginResult = await login(loginData);
-	if (loginResult[0] !== undefined)
-		htmlResponse(res, printChatPage(loginResult[0].user_id));
+	if (loginResult[0] !== undefined) {
+    printChatPage(loginResult[0].user_id, req.url).then(html => htmlResponse(res, html)).catch(err => console.error(err));
+  }
   else 
-  errorResponse1(res, 403, "You are not authenticated!");
+    errorResponse1(res, 403, "You are not authenticated!");
 }
 
 /* send a response with a given HTTP error code, and reason string */ 
