@@ -73,7 +73,6 @@ function createUser(body) {
 	const DBConnection = dbConnect();
 	DBConnection.connect(function(err) {
 		if (err) throw err;
-		console.log("Connected!");
 		let sql = `INSERT INTO users(
 			user_psw, 
 			user_name, 
@@ -91,10 +90,8 @@ function createUser(body) {
 			${mysql.escape(body.user_intrest2)},
 			${mysql.escape(body.user_intrest3)},
 			'2021-03-26 15:03:10.000000');`;
-		console.log(sql)
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
-		console.log("1 record inserted");
 		});
 	});
  return body;
@@ -104,7 +101,6 @@ function createGroup(body) {
 	const DBConnection = dbConnect();
 	DBConnection.connect(function(err) {
 		if (err) throw err;
-		console.log("Connected!");
 		let sql = `INSERT INTO groups(
 			group_member_id1, 
 			group_member_id2, 
@@ -114,10 +110,8 @@ function createGroup(body) {
 			${mysql.escape(body.group_member_id2)}, 
 			${mysql.escape(body.group_member_id3)}, 
 			${mysql.escape(body.group_member_id4)});`;
-		console.log(sql)
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
-		console.log("1 record inserted");
 		});
 	});
 	return body;
@@ -127,7 +121,6 @@ function createMessage(body) {
 	const DBConnection = dbConnect();
 	DBConnection.connect(function(err) {
 		if (err) throw err;
-		console.log("Connected!");
 		let sql = `INSERT INTO message(
 			group_id, 
 			user_id, 
@@ -137,10 +130,8 @@ function createMessage(body) {
 			${mysql.escape(body.user_id)}, 
 			${mysql.escape(1)}, 
 			${mysql.escape(body.msg_content)});`;
-		console.log(sql)
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
-		console.log("1 record inserted");
 		});
 	});
 	return body;

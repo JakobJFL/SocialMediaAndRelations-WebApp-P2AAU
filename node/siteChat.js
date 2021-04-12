@@ -1,14 +1,14 @@
 export {printChatPage};
 import {getGroups, getChats} from "./database.js";
 
-const messageLengthToAddDummy = 15;
+const messageLengthToAddDummy = 40;
 
 function printChatPage(userId, url) {
-	console.log("ID: " +userId + "loged on");
+	console.log("ID: " + userId + " loged on");
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="../node0/js/chat-client.js"></script>
+	<script type="text/javascript" src="../node0/js/main-client.js"></script>
     </html>`
     let bodyPromise = new Promise((resolve,reject) => {
 		printBody(userId, url).then(html => {
@@ -65,27 +65,30 @@ function printBody(userId, url) {
         </li>
       </ul>`
     }
+    function bottomChatFun(cGroupID) {
+      return `</div>
+                </div>
+                    <div class="message-sender">
+                    <div class="container-fluid p-2 px-4 py-3 bg-white">
+                        <form action="javascript:void(0);">
+                        <div class="input-group">
+                            <textarea type="textbox" role="textbox" id="messageSenderBox" data-text="Skriv en besked" aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></textarea>
+                            <div class="input-group-append">
+                            <button onclick="newMessage(${cGroupID},${userId})" class="btn btn-outline-primary send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </main>`;
+    }
+
 	
     let topCard = `  <div class="container-fluid"><div class="row"><nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse"><div class="position-sticky pt-3">`;
     let bottomCard = `</div></nav></div></div>`
     
     let topChat = `<main><div class="chat-box p-2 px-4 py-5 my-4"><div>`;
-    let bottomChat = `</div>
-                        </div>
-                            <div class="message-sender">
-                            <div class="container-fluid p-2 px-4 py-3 bg-white">
-                                <form action="#" >
-                                <div class="input-group">
-                                    <div type="textbox"  id="messageSenderBox" data-text="Skriv en besked" contentEditable=true aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></div >
-                                    <div class="input-group-append">
-                                    <button id="button-addon2" type="submit" class="btn btn-outline-primary send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-                                    </div>
-                                </div>
-                                </form>
-                            </div>
-                            </div>
-                        </div>
-                        </main>`;
                         
     function addChatSender(message, userName, date) {
         let dummy = "";
@@ -126,12 +129,13 @@ function printBody(userId, url) {
 	let promise = new Promise((resolve,reject) => {
 		let cards = topCard;
 		let urlSplit = url.split("=");
-		console.log("yes: " + urlSplit[1]);
 		let groupID = urlSplit[1];
+    let bottomChat = "";
 		getGroups(userId).then(groupsData => {
 			for (const group of groupsData) {
 				if (!groupID) 
-				groupID = group.group_id;
+				  groupID = group.group_id;
+          bottomChat = bottomChatFun(groupID);
 				if (group.group_id == groupID) 
 					cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu", group.group_id, "active");
 				else 
@@ -140,18 +144,18 @@ function printBody(userId, url) {
 			if (!groupsData) {
 				reject("promiseReject(getGroups)");
 			} 
-
 			getChats(groupID).then(chatsData => {
 				let chats = "";
-				for (const group of chatsData) {
-					let DBdate = String(group.TIMESTAMP).split(/[- :]/);
+				for (const chat of chatsData) {
+					let DBdate = String(chat.TIMESTAMP).split(/[- :]/);
 					//let date = new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]);
 					let dateFormatted = DBdate[2] + "/" + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5];
-					if (group.user_id == userId) 
-						chats += addChatReciever(group.msg_content, dateFormatted);
+					if (chat.user_id == userId) 
+						chats += addChatReciever(chat.msg_content, dateFormatted);
 					else 
-						chats += addChatSender(group.msg_content, group.user_id, dateFormatted);
+						chats += addChatSender(chat.msg_content, chat.user_id, dateFormatted);
 				}
+        
 				let res = header+cards+bottomCard+topChat+chats+bottomChat;
 				resolve(res);
 				if (!chatsData) {
@@ -160,5 +164,6 @@ function printBody(userId, url) {
 			  }).catch(err => console.error(err));
 		  }).catch(err => console.error(err));
     });
+
     return promise;
 }

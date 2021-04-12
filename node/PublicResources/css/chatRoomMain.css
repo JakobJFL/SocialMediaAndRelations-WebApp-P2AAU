@@ -87,6 +87,7 @@ body {
 
 .card:hover {
   background-color: var(--hover-bg-color); 
+  cursor: pointer;
 }
 
 #sidebarMenu {

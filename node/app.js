@@ -1,12 +1,13 @@
 //We use EC6 modules!
-import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, reportError, startServer} from "./server.js";
+import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, reportError, startServer, extractJSONAuth} from "./server.js";
 import {createUser, createGroup, createMessage, showAllTableContent} from "./database.js";
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
 
 const ValidationError="Validation Error";
+const AuthError="Authentication Error";
 const NoResourceError="No Such Resource";
-export {ValidationError, NoResourceError, processReq};
+export {ValidationError, NoResourceError, AuthError, processReq};
 startServer();
 
 //constants for validating input from the network client
@@ -86,7 +87,7 @@ function validateMessageData(messageData) {
 
 function isStringTooLong (string, max_length){
 	//Help function to validate if string is too long. 
-    if (string.length >= max_length) {
+    if (string.length >= max_length || string.length < 1) {
 		console.log("Too many characters");
 		return false
 	}
@@ -118,7 +119,7 @@ function processReq(req, res) {
 	switch(req.method) {
 		case "POST": {
 		let pathElements=queryPath.split("/"); 
-		console.log(pathElements[1]);
+		//console.log(pathElements[1]);
 		switch(pathElements[1]){
 			case "/makeUser":
 			case "makeUser": 
@@ -140,6 +141,15 @@ function processReq(req, res) {
 					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
 					.catch(err=>reportError(res,err));
+			break;
+			case "newMessage": 
+				extractJSONAuth(req)
+					.then(messageData => validateMessageData(messageData))
+					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
+					.catch(err => {
+						jsonResponse(res, String(err));
+						reportError(res,err);
+					});
 			break;
 			default: 
 				console.error("Resource doesn't exist");

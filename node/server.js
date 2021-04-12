@@ -16,10 +16,10 @@ import process from "process";
 /* ****************************************************************************
  * Application code for the yatzy application 
  ***************************************************************************** */
-import {processReq,ValidationError, NoResourceError} from "./app.js";
+import {processReq,ValidationError, NoResourceError, AuthError} from "./app.js";
 import {login} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, extractForm, fileResponse, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
+export {startServer,extractJSON, extractForm, fileResponse, extractJSONAuth, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
 
 const port = 3280;
 const hostname = "127.0.0.1";
@@ -181,12 +181,41 @@ function collectPostBody(req){
 
 /* extract the enclosed JSON object in body of a POST to JavaScript Object */ 
 /* Aught also to check that Content-Type is application/json before parsing*/
+async function extractJSONAuth(req){
+  let authheader = req.headers.authorization;
+  if (!authheader) 
+    return Promise.reject(new Error(AuthError)); //create a rejected promise that you are not authenticated
+  let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
+  let loginData = {
+		email: auth[0],
+		password: auth[1]
+	};
+  let loginResult = await login(loginData);
+  if (loginResult[0] !== undefined) {
+    if(isJsonEncoded(req.headers['content-type']))
+    return collectPostBody(req).then(body=> {
+      let jsonBody = JSON.parse(body);
+      console.log(jsonBody)
+      if (loginResult[0].user_id == jsonBody.user_id) {
+        return jsonBody;
+      }
+      else {
+        return Promise.reject(new Error(AuthError)); //create a rejected promise that you are not authenticated
+      }
+    });
+    else
+      return Promise.reject(new Error(ValidationError)); //create a rejected promise
+  }
+  else 
+    return Promise.reject(new Error(AuthError)); //create a rejected promise that you are not authenticated
+}
+
 function extractJSON(req){
   if(isJsonEncoded(req.headers['content-type']))
    return collectPostBody(req).then(body=> {
-     let x= JSON.parse(body);
+     let jsonBody = JSON.parse(body);
      //console.log(x);
-     return x;
+     return jsonBody;
   });
   else
     return Promise.reject(new Error(ValidationError)); //create a rejected promise

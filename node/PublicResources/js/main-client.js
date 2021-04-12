@@ -5,13 +5,16 @@ let loginData={};
 function getLoginData() {
     loginData.email=String(document.getElementById("inputEmail").value);
     loginData.password=String(document.getElementById("inputPassword").value);
-    console.log(JSON.stringify(loginData));
   }
 
-function sendLoginData(event) {
+function getChatSiteBtn(event) {
   event.preventDefault(); //we handle the interaction with the server rather than browsers form submission
   getLoginData();
-  fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat', {
+  getChatSite();
+}
+
+function getChatSite() {
+  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat', {
 		method: 'GET', // or 'PUT'
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -42,7 +45,32 @@ function storeUser(usernameID) {
   	sessionStorage.setItem('usernameID', usernameID);
 }
 
-document.getElementById("loginBtn").addEventListener("submit", sendLoginData);
+function newMessage(groupID, userId) {
+	let message = String(document.getElementById("messageSenderBox").value);
+	let jsonBody = {
+		group_id: groupID,
+		user_id: userId,
+		msg_content: message
+	};
+  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/newMessage', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(jsonBody),
+	})
+	.then(response => response.json())
+	.then(data => {
+		getChatSite(); // SKAL GØRE NOGET ANDET
+		//storeUser();
+	})
+	.catch((error) => {
+		console.error('Error:', error);
+	});
+}
+
+document.getElementById("loginBtn").addEventListener("submit", getChatSiteBtn);
 
 function changeGroup(groupID) {
 	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat?id='+groupID, {

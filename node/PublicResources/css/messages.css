@@ -53,12 +53,12 @@
 
 .dummy-space-right {
     position: relative;
-    margin-left: 350px !important;
+    margin-left: 400px !important;
 }
 
 .dummy-space-left {
     position: relative;
-    margin-right: 350px !important;
+    margin-right: 400px !important;
 }
 
 .reciever-msg {
@@ -81,10 +81,6 @@
     border-radius: 15px !important;
 }
 
-[contentEditable=true]:empty:not(:focus):before{
-    content:attr(data-text)
-}
-
 .send-btn {
     border-radius: 15px !important;
 }
@@ -97,7 +93,7 @@
 #messageSenderBox {
     padding: 10px;
     width: 20em;
-    min-height: 1em;
+    min-height: 2.5em;
     max-height: 5em;
     overflow: auto;
 }
