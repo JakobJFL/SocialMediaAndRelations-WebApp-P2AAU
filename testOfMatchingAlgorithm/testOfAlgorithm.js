@@ -1,4 +1,5 @@
-const gruppeSize = 7;
+const gruppeSize = 6;
+const numberOfGroups = 5;
 
 let outputUser = JSON.parse(userTestData);
 let users = passToUser(outputUser);
@@ -7,10 +8,10 @@ let outputInterests = JSON.parse(commonInterestsData);
 let commonInterests = passToInterests(outputInterests);
 setUsersInterests(users, commonInterests)
 
-console.log(users);
-
-let groups = makeGroup(users);
-console.log(groups);
+//console.log(users);
+let sortGroups = sortUser(users);
+//let groups = makeGroups(sortGroups);
+console.log(sortGroups);
 
 function passToUser(jsonData) {   
     let users = [];
@@ -19,7 +20,7 @@ function passToUser(jsonData) {
         newUser.id = jsonData.data[i][0];
         newUser.name = jsonData.data[i][1];
         newUser.mail = jsonData.data[i][2];
-        newUser.region = jsonData.data[i][3];
+        newUser.fieldsOfStudy = jsonData.data[i][3];
         users.push(newUser);
     }
     return users;
@@ -47,23 +48,71 @@ function setUsersInterests(users, commonInterests) {
     }
 }
 
-function makeGroup(users) {
-    let groups = [];
-    for (let j = 0; j < gruppeSize; j++) {  
-        groups.push(users[j*randomIntNum(0, users.length/gruppeSize)]);
+
+function sortUser(users) {
+    let software = [];
+    let datalogi = [];
+    let kemiTeknologi = [];
+    let bioTeknologi = [];
+
+    for (let i = 0; i < users.length; i++) {
+        //console.log(users[i].fieldsOfStudy);
+        switch (users[i].fieldsOfStudy) {
+            case "Software":
+                software.push(users[i])
+                break;
+            case "Datalogi":
+                datalogi.push(users[i])
+                break;
+            case "Kemiteknologi":
+                kemiTeknologi.push(users[i])
+                break;
+            case "Bioteknologi":
+                bioTeknologi.push(users[i])
+                break;
+        
+            default:
+                break;
+        }
     }
+    let groups = makeGroups(software, datalogi, kemiTeknologi, bioTeknologi)
     return groups;
+}
+
+function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
+    let groups = [];
+    for (let i = 0; i < software.length/gruppeSize; i++){
+        groups.push(makeGroup(software));
+    }
+    for (let i = 0; i < datalogi.length/gruppeSize; i++){
+        groups.push(makeGroup(datalogi));
+    }
+    for (let i = 0; i < kemiTeknologi.length/gruppeSize; i++){
+        groups.push(makeGroup(kemiTeknologi));
+    }
+    for (let i = 0; i < bioTeknologi.length/gruppeSize; i++){
+        groups.push(makeGroup(bioTeknologi));
+    }
+    return groups;  
+}
+
+function makeGroup(users){
+    let group = [];
+    for (let j = 1; j < gruppeSize; j++) {  
+        group.push(users[j*randomIntNum(0, (users.length-1)/gruppeSize)]);
+    }
+    return group;
 }
 
 function randomIntNum(min, max) {
     return Math.floor(Math.random() * ((max) - min+1)) + min;
 }
 
-function User(id, name, mail, region) {
+function User(id, name, mail, fieldsOfStudy) {
     this.id = id;
     this.name = name;
     this.mail = mail;
-    this.region = region;
+    this.fieldsOfStudy = fieldsOfStudy;
     this.interest = [];
 }
 
