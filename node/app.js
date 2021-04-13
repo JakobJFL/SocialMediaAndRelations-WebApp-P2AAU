@@ -1,6 +1,6 @@
 //We use EC6 modules!
-import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, reportError, startServer, extractJSONAuth} from "./server.js";
-import {createUser, createGroup, createMessage, showAllTableContent} from "./database.js";
+import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, reportError, startServer, extractJSONAuth, broadcastbroadcastAuth} from "./server.js";
+import {createUser, createGroup, createMessage, showAllTableContent, createInterest} from "./database.js";
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
 
@@ -63,10 +63,11 @@ function validateUserData(userData) {
 
 function validateGroupData(groupData) {
 	// Validates group ID
-	if (isGroupValid(groupData.group_member_id1) &&
-		isGroupValid(groupData.group_member_id2) &&
-		isGroupValid(groupData.group_member_id3) &&
-		isGroupValid(groupData.group_member_id4)) {
+	if (isGroupValid(groupData.member_id1) &&
+		isGroupValid(groupData.member_id2) &&
+		isGroupValid(groupData.member_id3) &&
+		isGroupValid(groupData.member_id4) &&
+		isGroupValid(groupData.member_id5)) {
 		return groupData;
 	}
 	else {
@@ -76,7 +77,7 @@ function validateGroupData(groupData) {
 
 function validateMessageData(messageData) {
 	// Character limit in chatbox 
-	const content_limit = 200;
+	const content_limit = 2000;
 	if (isStringTooLong(messageData.msg_content, content_limit)) {
 		return messageData;
 	}
@@ -128,6 +129,13 @@ function processReq(req, res) {
 					.then(validatedData => jsonResponse(res, createUser(validatedData)))
 					.catch(err=>reportError(res,err));
 			break;
+			case "/makeInterest":
+			case "makeInterest": 
+				extractJSON(req)
+					//.then(userData => validateUserData(userData))
+					.then(validatedData => jsonResponse(res, createInterest(validatedData)))
+					.catch(err=>reportError(res,err));
+			break;
 			case "/makeGroup":
 			case "makeGroup": 
 				extractJSON(req)
@@ -142,10 +150,13 @@ function processReq(req, res) {
 					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
 					.catch(err=>reportError(res,err));
 			break;
-			case "newMessage": 
-				extractJSONAuth(req)
-					.then(messageData => validateMessageData(messageData))
-					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
+			case "newMessageSSE": 
+			console.log("enj");
+				extractJSON(req)
+					//.then(messageData => validateMessageData(messageData))
+					.then(validatedData => {
+						broadcastbroadcastAuth(req, res, validatedData);
+					})
 					.catch(err => {
 						jsonResponse(res, String(err));
 						reportError(res,err);
@@ -168,8 +179,11 @@ function processReq(req, res) {
 				case "chat": 
 					responseAuth(req, res);
 				break;
+				case "chatSSE": 
+					SSEResponse(req, res, "event: chat\ndata: Connected\n\n");
+				break;
 				case "chatHack": // SLET det her
-					htmlResponse(res, printChatPage(1));
+					htmlResponse(res, printChatPage(1,""));
 				break;
 				case "showAllTable": 
 					showAllTableContent(res);

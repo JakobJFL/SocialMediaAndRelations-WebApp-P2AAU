@@ -8,7 +8,8 @@ function printChatPage(userId, url) {
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="../node0/js/main-client.js"></script>
+	  <script type="text/javascript" src="../node0/js/src/eventsource.min.js"></script>
+    <script type="text/javascript" src="../node0/js/main-client.js"></script>
     </html>`
     let bodyPromise = new Promise((resolve,reject) => {
 		printBody(userId, url).then(html => {
@@ -153,7 +154,7 @@ function printBody(userId, url) {
 					if (chat.user_id == userId) 
 						chats += addChatReciever(chat.msg_content, dateFormatted);
 					else 
-						chats += addChatSender(chat.msg_content, chat.user_id, dateFormatted);
+						chats += addChatSender(chat.msg_content, chat.fname, dateFormatted);
 				}
         
 				let res = header+cards+bottomCard+topChat+chats+bottomChat;

@@ -1,6 +1,7 @@
 //'use strict'
 //SEE: https://javascript.info/strict-
 
+
 let loginData={};
 function getLoginData() {
     loginData.email=String(document.getElementById("inputEmail").value);
@@ -11,6 +12,7 @@ function getChatSiteBtn(event) {
   event.preventDefault(); //we handle the interaction with the server rather than browsers form submission
   getLoginData();
   getChatSite();
+  listenerChats();
 }
 
 function getChatSite() {
@@ -41,6 +43,19 @@ function getChatSite() {
 	});
 }
 
+function listenerChats() {
+	let chat = new EventSourcePolyfill("https://sw2c2-19.p2datsw.cs.aau.dk/node0/chatSSE", {
+		headers: {
+			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+		}
+	});
+	chat.addEventListener("chat", event => { // When a chat message arrives
+		let responseObj = JSON.parse(event.data);
+		console.log(responseObj);
+
+	});
+}
+
 function storeUser(usernameID) {
   	sessionStorage.setItem('usernameID', usernameID);
 }
@@ -52,7 +67,8 @@ function newMessage(groupID, userId) {
 		user_id: userId,
 		msg_content: message
 	};
-  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/newMessage', {
+
+  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/newMessageSSE', {
 		method: 'POST',
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -60,9 +76,8 @@ function newMessage(groupID, userId) {
 		},
 		body: JSON.stringify(jsonBody),
 	})
-	.then(response => response.json())
-	.then(data => {
-		getChatSite(); // SKAL GØRE NOGET ANDET
+	.then(response => {
+		//console.log(response);
 		//storeUser();
 	})
 	.catch((error) => {

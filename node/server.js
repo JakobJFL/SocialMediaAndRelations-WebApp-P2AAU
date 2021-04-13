@@ -17,15 +17,15 @@ import process from "process";
  * Application code for the yatzy application 
  ***************************************************************************** */
 import {processReq,ValidationError, NoResourceError, AuthError} from "./app.js";
-import {login} from "./database.js";
+import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, extractForm, fileResponse, extractJSONAuth, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
+export {startServer,extractJSON, extractForm, fileResponse, SSEResponse, broadcastbroadcastAuth, extractJSONAuth, htmlResponse,responseAuth,jsonResponse,errorResponse,reportError};
 
 const port = 3280;
 const hostname = "127.0.0.1";
 //const serverName="https://sw2c2-19.p2datsw.cs.aau.dk/";
 
-
+let clientsSSE = [];
 
 /* ***************************************************************************  
   First a number of generic helper functions to serve basic files and documents 
@@ -98,6 +98,42 @@ function guessMimeType(fileName){
 const InternalError ="Internal Error";
 
 /* send a response with htmlString as html page */
+function SSEResponseJson(res, str){
+  res.statusCode = 200;
+  res.setHeader('Content-Type', "text/event-stream");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("Cache-Control", "no-cache");
+  res.write(str);
+  res.connection.on("end", () => {
+    clientsSSE.splice(clientsSSE.indexOf(res), 1);
+    res.end();
+  });
+}
+
+async function SSEResponse(req, res, str) {
+  let authheader = req.headers.authorization;
+	if (!authheader) 
+    errorResponse1(res, 403, "You are not authenticated!");
+	let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
+    let loginData = {
+		email: auth[0],
+		password: auth[1]
+	};
+	let loginResult = await login(loginData);
+	if (loginResult[0] !== undefined) {
+    let clientsSSEObj = {
+      SSEreq: req,
+      SSEres: res,
+      SSEuserID: loginResult[0].user_id
+    }
+    clientsSSE.push(clientsSSEObj);
+    console.log("SSEResponse: "+loginResult[0].user_id);
+    SSEResponseJson(res, str);
+  }
+  else 
+    errorResponse1(res, 403, "You are not authenticated!");
+}
+
 function htmlResponse(res, htmlString){
   res.statusCode = 200;
   res.setHeader('Content-Type', "text/html");
@@ -124,6 +160,46 @@ async function responseAuth(req, res){
 	let loginResult = await login(loginData);
 	if (loginResult[0] !== undefined) {
     printChatPage(loginResult[0].user_id, req.url).then(html => htmlResponse(res, html)).catch(err => console.error(err));
+  }
+  else 
+    errorResponse1(res, 403, "You are not authenticated!");
+}
+
+// THIS IS CRAZY
+async function broadcastbroadcastAuth(req, res, data) {
+  let authheader = req.headers.authorization;
+	if (!authheader) 
+    errorResponse1(res, 403, "You are not authenticated!");
+	let auth = new Buffer.from(authheader.split(' ')[1],'base64').toString().split(':'); // Se her hvis du ikke forstår: https://en.wikipedia.org/wiki/Basic_access_authentication
+    let loginData = {
+		email: auth[0],
+		password: auth[1]
+	};
+  let loginResult = await login(loginData);
+  if (loginResult[0] !== undefined && data.user_id === loginResult[0].user_id) {
+    console.log("DATA");
+    console.log(req.headers.authorization);
+    res.writeHead(200).end();
+    let message = "data: " + JSON.stringify(data);
+    let event = `event: chat\n${message}\n\n`;
+    let groupID = 0;
+    getGroups(loginResult[0].user_id).then(groupsData => {
+      for (const group of groupsData) {
+        if (data.group_id === group.group_id)
+          groupID = group.group_id;
+      }
+      getGroupMembers(groupID).then(groupsMembers=> {
+        console.log(groupsMembers);
+        for (const client of clientsSSE) {
+          console.log(groupsMembers[0].member_id1+"|"+groupsMembers[0].member_id2+"|"+groupsMembers[0].member_id3+"|"+groupsMembers[0].member_id4+"|"+groupsMembers[0].member_id5);
+          console.log(client.SSEuserID);
+          if (groupsMembers[0].member_id1 === client.SSEuserID || groupsMembers[0].member_id2 === client.SSEuserID || groupsMembers[0].member_id3 === client.SSEuserID || groupsMembers[0].member_id4 === client.SSEuserID || groupsMembers[0].member_id5 === client.SSEuserID) { //auth[0] === loginData.email && auth[1] === loginData.password
+            console.log("TRUE"+ client.SSEuserID);
+            client.SSEres.write(event);
+          }
+        }
+      });
+    });
   }
   else 
     errorResponse1(res, 403, "You are not authenticated!");
