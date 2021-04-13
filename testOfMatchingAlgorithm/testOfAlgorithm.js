@@ -81,25 +81,35 @@ function sortUser(users) {
 
 function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
     let groups = [];
-    for (let i = 0; i < software.length/gruppeSize; i++){
+    let softwareGroupAmount = software.length/numberOfGroups;
+    let datalogiGroupAmount = datalogi.length/numberOfGroups;
+    let kemiGroupAmount = kemiTeknologi.length/numberOfGroups;
+    let bioGroupAmount = bioTeknologi.length/numberOfGroups;
+
+    for (let i = 0; i < softwareGroupAmount; i++){
         groups.push(makeGroup(software));
     }
-    for (let i = 0; i < datalogi.length/gruppeSize; i++){
+    for (let i = 0; i < datalogiGroupAmount; i++){
         groups.push(makeGroup(datalogi));
     }
-    for (let i = 0; i < kemiTeknologi.length/gruppeSize; i++){
+    for (let i = 0; i < kemiGroupAmount; i++){
         groups.push(makeGroup(kemiTeknologi));
     }
-    for (let i = 0; i < bioTeknologi.length/gruppeSize; i++){
+    for (let i = 0; i < bioGroupAmount; i++){
         groups.push(makeGroup(bioTeknologi));
     }
+    console.log(bioTeknologi.length/numberOfGroups);
     return groups;  
 }
 
 function makeGroup(users){
     let group = [];
+    let id = 0;
     for (let j = 1; j < gruppeSize; j++) {  
-        group.push(users[j*randomIntNum(0, (users.length-1)/gruppeSize)]);
+        id = randomIntNum(0, (users.length-1));
+        group.push(users[id]);
+        users.splice(id, 1);
+        //console.log(users);
     }
     return group;
 }
