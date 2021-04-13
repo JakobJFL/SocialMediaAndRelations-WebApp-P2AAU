@@ -1,5 +1,6 @@
 const gruppeSize = 6;
 const numberOfGroups = 5;
+const maxInterests = 3;
 
 let outputUser = JSON.parse(userTestData);
 let users = passToUser(outputUser);
@@ -11,7 +12,7 @@ setUsersInterests(users, commonInterests)
 //console.log(users);
 let sortGroups = sortUser(users);
 //let groups = makeGroups(sortGroups);
-console.log(sortGroups);
+//console.log(sortGroups);
 
 function passToUser(jsonData) {   
     let users = [];
@@ -42,12 +43,11 @@ function passToInterests(jsonData) {
 function setUsersInterests(users, commonInterests) {
     for (let i = 0; i < users.length; i++) {
         for (let j = 0; j < randomIntNum(1, 3); j++) {
-            let randomIndex = randomIntNum(0, commonInterests.length);
+            let randomIndex = randomIntNum(0, (commonInterests.length-1));
             users[i].interest.push(commonInterests[randomIndex]);
         }
     }
 }
-
 
 function sortUser(users) {
     let software = [];
@@ -86,6 +86,9 @@ function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
     let kemiGroupAmount = kemiTeknologi.length/numberOfGroups;
     let bioGroupAmount = bioTeknologi.length/numberOfGroups;
 
+
+    getDistance(software);
+
     for (let i = 0; i < softwareGroupAmount; i++){
         groups.push(makeGroup(software));
     }
@@ -98,7 +101,7 @@ function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
     for (let i = 0; i < bioGroupAmount; i++){
         groups.push(makeGroup(bioTeknologi));
     }
-    console.log(bioTeknologi.length/numberOfGroups);
+
     return groups;  
 }
 
@@ -116,6 +119,59 @@ function makeGroup(users){
 
 function randomIntNum(min, max) {
     return Math.floor(Math.random() * ((max) - min+1)) + min;
+}
+
+function getDistance(users) {
+    let dist = [];
+    let person = [];
+    for (let i = 0; i < users.length; i++) {
+        for (let j = 0; j < maxInterests; j++) {
+            if (users[i].interest[j] == undefined) {
+                break;
+            }
+            else {
+                for (let k = i+1; k < users.length; k++) {
+                    for(let l = 0; l < maxInterests; l++) {
+                        if (users[k].interest[l] == undefined) {
+                            break;
+                        }
+                        else {
+                            x1 = users[i].interest[j].relationX;
+                            y1 = users[i].interest[j].relationY;
+                            x2 = users[k].interest[l].relationX;
+                            y2 = users[k].interest[l].relationY;
+                            dist.push(Math.hypot(x2-x1, y2-y1));
+                            person.push(dist);
+                        }
+                    }
+                }
+            }
+        }
+        //bubbleSort(dist);
+        dist = [];
+        //console.log(users[i].id);
+    }
+    //console.log(person);
+    //let ass = bubbleSort(person);
+    console.log(person);
+    return dist;
+}
+
+function bubbleSort(inputArr) {
+    let len = inputArr.length;
+    let checked;
+    do {
+        checked = false;
+        for (let i = 0; i < len; i++) {
+            if (inputArr[i] > inputArr[i + 1]) {
+                let tmp = inputArr[i];
+                inputArr[i] = inputArr[i + 1];
+                inputArr[i + 1] = tmp;
+                checked = true;
+            }
+        }
+    } while (checked);
+    return inputArr;
 }
 
 function User(id, name, mail, fieldsOfStudy) {
