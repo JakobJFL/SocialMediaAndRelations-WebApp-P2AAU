@@ -33,8 +33,7 @@ function passToInterests(jsonData) {
         let newInterest = new Interests();
         newInterest.id = jsonData.data[i][0];
         newInterest.name = jsonData.data[i][1];
-        newInterest.relationX = jsonData.data[i][2];
-        newInterest.relationY = jsonData.data[i][3];
+        newInterest.relation = jsonData.data[i][2];
         interests.push(newInterest);
     }
     return interests;
@@ -122,42 +121,50 @@ function randomIntNum(min, max) {
 }
 
 function getDistance(users) {
-    let dist = [];
+    let dist = {
+        user1ID: [],
+        user2ID: [],
+        distInterests: []
+    };
     let person = [];
+    let interest1 = [];
+    let interest2 = [];
+
     for (let i = 0; i < users.length; i++) {
-        for (let j = 0; j < maxInterests; j++) {
-            if (users[i].interest[j] == undefined) {
-                break;
-            }
-            else {
-                for (let k = i+1; k < users.length; k++) {
-                    for(let l = 0; l < maxInterests; l++) {
-                        if (users[k].interest[l] == undefined) {
-                            break;
-                        }
-                        else {
-                            x1 = users[i].interest[j].relationX;
-                            y1 = users[i].interest[j].relationY;
-                            x2 = users[k].interest[l].relationX;
-                            y2 = users[k].interest[l].relationY;
-                            dist.push(Math.hypot(x2-x1, y2-y1));
-                            person.push(dist);
-                        }
-                    }
+        for (let k = i+1; k < users.length; k++) {
+            for (let j = 0; j < maxInterests; j++) {
+                if (users[i].interest[j] == undefined) {
+                    interest1[j] = 0;
+                }
+                else {
+                    interest1[j] = users[i].interest[j].relation;
+                }
+                if (users[k].interest[j] == undefined) {
+                    interest2[j] = 0;
+                }
+                else {
+                    interest2[j] = users[k].interest[j].relation;
                 }
             }
+            dist.user1ID.push(users[i].id);
+            dist.user2ID.push(users[k].id);
+            dist.distInterests.push(Math.hypot(interest2[0]-interest1[0], interest2[1]-interest1[1], interest2[2]-interest1[2]));
         }
-        //bubbleSort(dist);
-        dist = [];
+        //person.push(dist);
+        //dist = [];
         //console.log(users[i].id);
     }
+    console.log(users[0].id, users[0].interest);
+    console.log(users[16].id, users[16].interest);
+    bubbleSort(dist.distInterests, dist.user1ID, dist.user2ID);
+    bubbleSort(dist.user1ID, dist.distInterests, dist.user2ID);
     //console.log(person);
     //let ass = bubbleSort(person);
-    console.log(person);
+    console.log(dist);
     return dist;
 }
 
-function bubbleSort(inputArr) {
+function bubbleSort(inputArr, ID1, ID2) {
     let len = inputArr.length;
     let checked;
     do {
@@ -167,6 +174,15 @@ function bubbleSort(inputArr) {
                 let tmp = inputArr[i];
                 inputArr[i] = inputArr[i + 1];
                 inputArr[i + 1] = tmp;
+
+                let tmpID1 = ID1[i];
+                ID1[i] = ID1[i + 1];
+                ID1[i + 1] = tmpID1;
+
+                let tmpID2 = ID2[i];
+                ID2[i] = ID2[i + 1];
+                ID2[i + 1] = tmpID2;
+
                 checked = true;
             }
         }
@@ -182,9 +198,8 @@ function User(id, name, mail, fieldsOfStudy) {
     this.interest = [];
 }
 
-function Interests(id, name, relationX, relationY) {
+function Interests(id, name, relation) {
     this.id = id;
     this.name = name;
-    this.relationX = relationX;
-    this.relationY = relationY;
+    this.relation = relation;
 }
