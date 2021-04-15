@@ -1,4 +1,4 @@
-const gruppeSize = 6;
+const gruppeSize = 5;
 const numberOfGroups = 5;
 const maxInterests = 3;
 
@@ -9,7 +9,7 @@ let outputInterests = JSON.parse(commonInterestsData);
 let commonInterests = passToInterests(outputInterests);
 setUsersInterests(users, commonInterests)
 
-//console.log(users);
+console.log(users);
 let sortGroups = sortUser(users);
 //let groups = makeGroups(sortGroups);
 //console.log(sortGroups);
@@ -75,6 +75,7 @@ function sortUser(users) {
         }
     }
     let groups = makeGroups(software, datalogi, kemiTeknologi, bioTeknologi)
+    console.log(software);
     return groups;
 }
 
@@ -86,33 +87,75 @@ function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
     let bioGroupAmount = bioTeknologi.length/numberOfGroups;
 
 
-    getDistance(software);
+    software = getDistance(software);
+    //datalogi = getDistance(datalogi);
+    //kemiTeknologi = getDistance(kemiTeknologi);
+    //bioTeknologi = getDistance(bioTeknologi);
 
-    for (let i = 0; i < softwareGroupAmount; i++){
         groups.push(makeGroup(software));
-    }
-    for (let i = 0; i < datalogiGroupAmount; i++){
-        groups.push(makeGroup(datalogi));
-    }
-    for (let i = 0; i < kemiGroupAmount; i++){
-        groups.push(makeGroup(kemiTeknologi));
-    }
-    for (let i = 0; i < bioGroupAmount; i++){
-        groups.push(makeGroup(bioTeknologi));
-    }
+        //groups.push(makeGroup(datalogi));
+        //groups.push(makeGroup(kemiTeknologi));
+        //groups.push(makeGroup(bioTeknologi));
 
     return groups;  
 }
 
-function makeGroup(users){
+function makeGroup(users) {
     let group = [];
-    let id = 0;
-    for (let j = 1; j < gruppeSize; j++) {  
-        id = randomIntNum(0, (users.length-1));
-        group.push(users[id]);
-        users.splice(id, 1);
-        //console.log(users);
+    let person = [];
+    for (let i = 1; i < 6; i++) {
+        //group.push(users.user1ID[i]);
+        for (let j = 1; j < gruppeSize; j++) {
+            person[j] = users.user2ID[j]
+            //console.log(users);
+        }
+        person.push(users.user1ID[1]);
+        group.push(person);
+        person = [];
+        
+
+
+        
+        
+        
+        
+        
+        //console.log(users.user1ID);
+        //let thicc1 = users.user1ID;
+        //let thicc2 = users.user2ID;
+        //let thicc3 = users.distInterests;
+        /*for (let o = 0; o < group.length; o++) {
+            for (let l = 1; l < gruppeSize; l++) {
+                for (let k = 0; k < users.user1ID.length; k++) {
+                    if (group[o][l] === users.user1ID[k]) {
+                        thicc1.splice(k, 1);
+                        //thicc2.splice(k, 1);
+                        //thicc3.splice(k, 1);
+                    }
+                }
+            }
+        }*/
+        //users.user1ID = thicc1;
+        //users.user2ID = thicc2;
+        //users.distInterests = thicc3;
+        //console.log(users.user1ID);
+        //console.log(users.user1ID);
     }
+
+
+    /*const index = array.indexOf(5);
+    if (index > -1) {
+    array.splice(index, 1);*/
+    
+    /*let array = [1, 2, 2, 3, 4, 5, 5, 6, 1, 7];
+    for (let k = 1; k < array.length; k++) {
+        let index = array.indexOf(k);
+
+        array.splice(index, 1);
+        
+        console.log(array);
+    } */
+    
     return group;
 }
 
@@ -126,7 +169,7 @@ function getDistance(users) {
         user2ID: [],
         distInterests: []
     };
-    let person = [];
+    //let person = [];
     let interest1 = [];
     let interest2 = [];
 
@@ -159,7 +202,6 @@ function getDistance(users) {
     bubbleSort(dist.distInterests, dist.user1ID, dist.user2ID);
     bubbleSort(dist.user1ID, dist.distInterests, dist.user2ID);
     //console.log(person);
-    //let ass = bubbleSort(person);
     console.log(dist);
     return dist;
 }
