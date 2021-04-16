@@ -3,63 +3,43 @@ commonInterestsData = `
 	"cols": [
 		"id",
 		"name",
-		"relationX",
-		"relationY"
+		"relation"
 	],
 	"data": [
 		[
 			1,
-			"C#",
-			"0.8",
-			"0.8"
-		],
-		[
-			2,
-			"Javascript",
-			"0.8",
-			"0.9"
+			"Technology-Programming",
+			"0.02020"
 		],
 		[
 			3,
-			"Kats",
-			"0.16",
-			"0.15"
+			"Home-Pets",
+			"0.06010"
 		],
 		[
 			4,
-			"Music",
-			"0.4",
-			"0.5"
+			"Entertainment-Music",
+			"0.03020"
 		],
 		[
 			5,
-			"Electronics",
-			"0.7",
-			"0.10"
-		],
-		[
-			6,
-			"Dogs",
-			"0.16",
-			"0.17"
+			"Technology-Electronics",
+			"0.02070"
 		],
 		[
 			7,
-			"Travelling",
-			"0.1",
-			"0.1"
+			"Outdoorliving-Travelling",
+			"0.09090"
 		],
 		[
 			8,
-			"Photography",
-			"0.1",
-			"0.3"
+			"Entertainment-Photography",
+			"0.03070"
 		],
 		[
 			9,
-			"Html",
-			"0.8",
-			"0.10"
+			"Home-Clothing",
+			"0.06070"
 		]
 	]
 }

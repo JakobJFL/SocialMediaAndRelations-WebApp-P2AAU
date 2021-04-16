@@ -1,4 +1,4 @@
-const gruppeSize = 6;
+const gruppeSize = 5;
 const numberOfGroups = 5;
 const maxInterests = 3;
 
@@ -9,7 +9,7 @@ let outputInterests = JSON.parse(commonInterestsData);
 let commonInterests = passToInterests(outputInterests);
 setUsersInterests(users, commonInterests)
 
-//console.log(users);
+console.log(users);
 let sortGroups = sortUser(users);
 //let groups = makeGroups(sortGroups);
 //console.log(sortGroups);
@@ -33,8 +33,7 @@ function passToInterests(jsonData) {
         let newInterest = new Interests();
         newInterest.id = jsonData.data[i][0];
         newInterest.name = jsonData.data[i][1];
-        newInterest.relationX = jsonData.data[i][2];
-        newInterest.relationY = jsonData.data[i][3];
+        newInterest.relation = jsonData.data[i][2];
         interests.push(newInterest);
     }
     return interests;
@@ -76,6 +75,7 @@ function sortUser(users) {
         }
     }
     let groups = makeGroups(software, datalogi, kemiTeknologi, bioTeknologi)
+    console.log(software);
     return groups;
 }
 
@@ -87,33 +87,75 @@ function makeGroups(software, datalogi, kemiTeknologi, bioTeknologi) {
     let bioGroupAmount = bioTeknologi.length/numberOfGroups;
 
 
-    getDistance(software);
+    software = getDistance(software);
+    //datalogi = getDistance(datalogi);
+    //kemiTeknologi = getDistance(kemiTeknologi);
+    //bioTeknologi = getDistance(bioTeknologi);
 
-    for (let i = 0; i < softwareGroupAmount; i++){
         groups.push(makeGroup(software));
-    }
-    for (let i = 0; i < datalogiGroupAmount; i++){
-        groups.push(makeGroup(datalogi));
-    }
-    for (let i = 0; i < kemiGroupAmount; i++){
-        groups.push(makeGroup(kemiTeknologi));
-    }
-    for (let i = 0; i < bioGroupAmount; i++){
-        groups.push(makeGroup(bioTeknologi));
-    }
+        //groups.push(makeGroup(datalogi));
+        //groups.push(makeGroup(kemiTeknologi));
+        //groups.push(makeGroup(bioTeknologi));
 
     return groups;  
 }
 
-function makeGroup(users){
+function makeGroup(users) {
     let group = [];
-    let id = 0;
-    for (let j = 1; j < gruppeSize; j++) {  
-        id = randomIntNum(0, (users.length-1));
-        group.push(users[id]);
-        users.splice(id, 1);
-        //console.log(users);
+    let person = [];
+    for (let i = 1; i < 6; i++) {
+        //group.push(users.user1ID[i]);
+        for (let j = 1; j < gruppeSize; j++) {
+            person[j] = users.user2ID[j]
+            //console.log(users);
+        }
+        person.push(users.user1ID[1]);
+        group.push(person);
+        person = [];
+        
+
+
+        
+        
+        
+        
+        
+        //console.log(users.user1ID);
+        //let thicc1 = users.user1ID;
+        //let thicc2 = users.user2ID;
+        //let thicc3 = users.distInterests;
+        /*for (let o = 0; o < group.length; o++) {
+            for (let l = 1; l < gruppeSize; l++) {
+                for (let k = 0; k < users.user1ID.length; k++) {
+                    if (group[o][l] === users.user1ID[k]) {
+                        thicc1.splice(k, 1);
+                        //thicc2.splice(k, 1);
+                        //thicc3.splice(k, 1);
+                    }
+                }
+            }
+        }*/
+        //users.user1ID = thicc1;
+        //users.user2ID = thicc2;
+        //users.distInterests = thicc3;
+        //console.log(users.user1ID);
+        //console.log(users.user1ID);
     }
+
+
+    /*const index = array.indexOf(5);
+    if (index > -1) {
+    array.splice(index, 1);*/
+    
+    /*let array = [1, 2, 2, 3, 4, 5, 5, 6, 1, 7];
+    for (let k = 1; k < array.length; k++) {
+        let index = array.indexOf(k);
+
+        array.splice(index, 1);
+        
+        console.log(array);
+    } */
+    
     return group;
 }
 
@@ -122,42 +164,49 @@ function randomIntNum(min, max) {
 }
 
 function getDistance(users) {
-    let dist = [];
-    let person = [];
+    let dist = {
+        user1ID: [],
+        user2ID: [],
+        distInterests: []
+    };
+    //let person = [];
+    let interest1 = [];
+    let interest2 = [];
+
     for (let i = 0; i < users.length; i++) {
-        for (let j = 0; j < maxInterests; j++) {
-            if (users[i].interest[j] == undefined) {
-                break;
-            }
-            else {
-                for (let k = i+1; k < users.length; k++) {
-                    for(let l = 0; l < maxInterests; l++) {
-                        if (users[k].interest[l] == undefined) {
-                            break;
-                        }
-                        else {
-                            x1 = users[i].interest[j].relationX;
-                            y1 = users[i].interest[j].relationY;
-                            x2 = users[k].interest[l].relationX;
-                            y2 = users[k].interest[l].relationY;
-                            dist.push(Math.hypot(x2-x1, y2-y1));
-                            person.push(dist);
-                        }
-                    }
+        for (let k = i+1; k < users.length; k++) {
+            for (let j = 0; j < maxInterests; j++) {
+                if (users[i].interest[j] == undefined) {
+                    interest1[j] = 0;
+                }
+                else {
+                    interest1[j] = users[i].interest[j].relation;
+                }
+                if (users[k].interest[j] == undefined) {
+                    interest2[j] = 0;
+                }
+                else {
+                    interest2[j] = users[k].interest[j].relation;
                 }
             }
+            dist.user1ID.push(users[i].id);
+            dist.user2ID.push(users[k].id);
+            dist.distInterests.push(Math.hypot(interest2[0]-interest1[0], interest2[1]-interest1[1], interest2[2]-interest1[2]));
         }
-        //bubbleSort(dist);
-        dist = [];
+        //person.push(dist);
+        //dist = [];
         //console.log(users[i].id);
     }
+    console.log(users[0].id, users[0].interest);
+    console.log(users[16].id, users[16].interest);
+    bubbleSort(dist.distInterests, dist.user1ID, dist.user2ID);
+    bubbleSort(dist.user1ID, dist.distInterests, dist.user2ID);
     //console.log(person);
-    //let ass = bubbleSort(person);
-    console.log(person);
+    console.log(dist);
     return dist;
 }
 
-function bubbleSort(inputArr) {
+function bubbleSort(inputArr, ID1, ID2) {
     let len = inputArr.length;
     let checked;
     do {
@@ -167,6 +216,15 @@ function bubbleSort(inputArr) {
                 let tmp = inputArr[i];
                 inputArr[i] = inputArr[i + 1];
                 inputArr[i + 1] = tmp;
+
+                let tmpID1 = ID1[i];
+                ID1[i] = ID1[i + 1];
+                ID1[i + 1] = tmpID1;
+
+                let tmpID2 = ID2[i];
+                ID2[i] = ID2[i + 1];
+                ID2[i + 1] = tmpID2;
+
                 checked = true;
             }
         }
@@ -182,9 +240,8 @@ function User(id, name, mail, fieldsOfStudy) {
     this.interest = [];
 }
 
-function Interests(id, name, relationX, relationY) {
+function Interests(id, name, relation) {
     this.id = id;
     this.name = name;
-    this.relationX = relationX;
-    this.relationY = relationY;
+    this.relation = relation;
 }
