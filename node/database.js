@@ -1,4 +1,5 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createInterest};
+export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createInterest, getUserEmail};
+import {ValidationError} from "./errors.js";
 
 import mysql from "mysql";
 //const mysql = require('mysql');
@@ -26,6 +27,7 @@ function login(loginData) {
 				} 
 				else {
 					resolve(result);
+					DBConnection.end();
 				} 
 			});
 		});
@@ -46,8 +48,10 @@ function getGroups(userId) {
 				mysql.escape(userId) , function (err, result, fields) {    
 					if(err) 
 						reject(err) 
-					else 
+					else {
 						resolve(result);
+						DBConnection.end();
+					}
 			});
 		});
 	});
@@ -63,8 +67,10 @@ function getGroupMembers(groupId) {
 				mysql.escape(groupId), function (err, result, fields) {    
 					if(err) 
 						reject(err) 
-					else 
+					else {
 						resolve(result);
+						DBConnection.end();
+					}
 			});
 		});
 	});
@@ -76,12 +82,13 @@ function getChats(groupId) {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT messages.msg_content,messages.user_ID,messages.TIMESTAMP, users.fname FROM messages INNER JOIN users ON messages.user_ID=users.user_id WHERE group_ID = " + 
-				mysql.escape(groupId), function (err, result, fields) {   
+			DBConnection.query("SELECT * FROM ( SELECT * FROM messages WHERE group_id = "+ mysql.escape(groupId) + " ORDER BY message_id DESC LIMIT 100) sub ORDER BY message_id ASC", function (err, result, fields) {   
 					if(err) 
 						reject(err) 
-					else 
+					else {
 						resolve(result);
+						DBConnection.end();
+					}
 			});
 		});
 	});
@@ -89,32 +96,86 @@ function getChats(groupId) {
 
 function createUser(body) {
 	const DBConnection = dbConnect();
-	DBConnection.connect(function(err) {
-		if (err) throw err;
-		let sql = `INSERT INTO users(
-			psw, 
-			fname, 
-			lname, 
-			mail, 
-			intrest1, 
-			intrest2, 
-			intrest3, 
-			intrest4,
-			CHG_TIMESTAMP) VALUES (
-			${mysql.escape(body.psw)},
-			${mysql.escape(body.fname)},
-			${mysql.escape(body.lname)},
-			${mysql.escape(body.mail)},
-			${mysql.escape(body.intrest1)},
-			${mysql.escape(body.intrest2)},
-			${mysql.escape(body.intrest3)},
-			${mysql.escape(body.intrest4)},
-			'2021-03-26 15:03:10.000000');`;
-		DBConnection.query(sql, function (err, result) {
-		if (err) throw err;
+	return new Promise((resolve,reject) => {
+		try {
+			DBConnection.connect(function(err) {
+				if (err) 
+					reject(err);
+				let sql = `INSERT INTO users(
+					psw, 
+					fname, 
+					lname, 
+					mail, 
+					intrest1, 
+					intrest2, 
+					intrest3, 
+					intrest4,
+					CHG_TIMESTAMP) VALUES (
+					${mysql.escape(body.psw)},
+					${mysql.escape(body.fname)},
+					${mysql.escape(body.lname)},
+					${mysql.escape(body.mail)},
+					${mysql.escape(body.intrest1)},
+					${mysql.escape(body.intrest2)},
+					${mysql.escape(body.intrest3)},
+					${mysql.escape(body.intrest4)},
+					'2021-03-26 15:03:10.000000');`;
+
+				DBConnection.query(sql, function (err, result) {
+					if (err) 
+						reject(new Error(ValidationError));
+					resolve(result);
+				});
+				DBConnection.end();
+			});
+		}
+		catch {
+			reject(new Error(ValidationError));
+		}
+	});
+}
+
+function getUserEmail(mail) {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		try {
+			DBConnection.connect(function(err) {
+				if (err) 
+					reject(err)
+				DBConnection.query("SELECT mail FROM users WHERE mail = " + 
+					mysql.escape(mail), function (err, result, fields) {   
+					if(err) 
+						reject(err) 
+					else {
+						resolve(result);
+						DBConnection.end();
+					}
+				});
+			});
+		}
+		catch {
+			reject(new Error(ValidationError));
+		}
+	});
+}
+
+function getAllUserId() {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err) {
+			if (err) 
+                reject(err)
+			DBConnection.query("SELECT user_id FROM users WHERE user_state = 1",
+			function (err, result, fields) {   
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result);
+					DBConnection.end();
+				}
+			});
 		});
 	});
- return body;
 }
 
 function createInterest(body) {
@@ -131,6 +192,7 @@ function createInterest(body) {
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
 		});
+		DBConnection.end();
 	});
  return body;
 }
@@ -153,6 +215,7 @@ function createGroup(body) {
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
 		});
+		DBConnection.end();
 	});
 	return body;
 }
@@ -171,6 +234,7 @@ function createMessage(body) {
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
 		});
+		DBConnection.end();
 	});
 	return body;
 }
@@ -180,8 +244,7 @@ async function showAllTableContent(res) {
 	content.push(await getdata("interests"));
 	content.push(await getdata("users"));
 	content.push(await getdata("chatGroups"));
-	content.push(await getdata("messages"));
-	//const groupsResult = await getdata("groups");
+	//content.push(await getdata("messages"));
 	jsonResponse(res, content);
 }
 
@@ -194,6 +257,7 @@ function getdata(typeData) {
 				if (err) reject(err);
 				console.table(result);
 				resolve(result);
+				DBConnection.end();
 			});
 		});
 	});

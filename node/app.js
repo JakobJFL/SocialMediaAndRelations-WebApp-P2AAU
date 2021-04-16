@@ -1,22 +1,22 @@
 //We use EC6 modules!
-import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, reportError, startServer, extractJSONAuth, broadcastbroadcastAuth} from "./server.js";
-import {createUser, createGroup, createMessage, showAllTableContent, createInterest} from "./database.js";
+//Importing functions from other files
+import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastAuth} from "./server.js";
+import {createUser, createGroup, createMessage, showAllTableContent, createInterest, getUserEmail} from "./database.js";
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
+import {ValidationError, NoResourceError, reportError} from "./errors.js";
 
-const ValidationError="Validation Error";
-const AuthError="Authentication Error";
-const NoResourceError="No Such Resource";
-export {ValidationError, NoResourceError, AuthError, processReq};
-startServer();
+//Global constants
 
-//constants for validating input from the network client
-const minLoginLength=1;
-const maxLoginLength=50;
+export {processReq};
 
-//throw(new Error("kat"));
+startServer(); 
 
-//remove potentially dangerous/undesired characters 
+//Constants for validating input from the network client
+const minNameLength=1;
+const maxNameLength=50;
+
+//Remove potentially dangerous/undesired characters 
 function sanitize(str){
 	str=str
 	.replace(/&/g, "")
@@ -29,138 +29,139 @@ function sanitize(str){
 	return str.trim();
 }
 
-function validateLoginData(loginData){
-	console.log("Validating");
-	let email;
-	let password;
-	try { 
-		email = String(loginData.email);
-		email = sanitize(email); // Vi skal lige finde ud af om det skal være der
-		password = String(loginData.password);
-		password = sanitize(password); // Vi skal lige finde ud af om det skal være der
-
-	}catch(e){console.log("Invalid "+e);throw(new Error(ValidationError));}
-  
-	if((email.length>=minLoginLength) && (email.length<=maxLoginLength) &&
-		(password.length>=minLoginLength) && (password.length<=maxLoginLength)) {
-		let validloginData={email: loginData.email, password: loginData.password};
-		console.log("Validated: "); console.log(validloginData);
-		return validloginData;
-	} 
-  	else throw(new Error(ValidationError));
-}
-
 function validateUserData(userData) {
-	// Validates user ID by validating if group ID is an integer
-	if (userData.user_id === parseInt(userData.user_id,10)) {
-        return userData;
-	}  
-	else {
-        console.log("User ID is not valid");
-    }
-	return userData;
+	return new Promise((resolve,reject) => {
+		let validData;
+		try {
+			validData = {
+				psw: String(sanitize(userData.psw)),
+				fname: String(sanitize(userData.fname)),
+				lname: String(sanitize(userData.lname)),
+				mail: String(userData.mail).toLowerCase(),
+				intrest1: userData.intrest1,
+				intrest2: userData.intrest2,
+				intrest3: userData.intrest3,
+				intrest4: userData.intrest4
+			}
+		} catch {
+			reject(new Error(ValidationError))
+		}
+		if (isStrToLong(validData.psw) && isStrToLong(validData.mail) &&
+			isStrToLong(validData.fname) && isStrToLong(validData.fname) &&
+			!isInteger(userData.intrest1) && !isInteger(userData.intrest2) &&
+			!isInteger(userData.intrest3) && !isInteger(userData.intrest4)) {
+				reject(new Error(ValidationError));
+		}
+		if (!validateEmail(userData.mail))
+			reject(new Error(ValidationError));
+		else {
+			getUserEmail(userData.mail).then(result => {
+				if (result[0])
+					reject(new Error(ValidationError)); // make const for this 
+				else {
+					resolve(validData);
+				}
+			}).catch(err => reject(new Error(err)));
+		}
+	});
+	function validateEmail(email) {
+		return /\S+@\S+\.\S+/.test(email);
+	}
+	function isStrToLong(str) {
+		if (str >= minNameLength && str <= maxNameLength)
+			return false
+		return true;
+	}
 }
 
 function validateGroupData(groupData) {
-	// Validates group ID
-	if (isGroupValid(groupData.member_id1) &&
-		isGroupValid(groupData.member_id2) &&
-		isGroupValid(groupData.member_id3) &&
-		isGroupValid(groupData.member_id4) &&
-		isGroupValid(groupData.member_id5)) {
-		return groupData;
-	}
-	else {
-		throw(new Error(ValidationError));
-	}
+	return new Promise((resolve,reject) => {
+		if (isInteger(groupData.member_id1) &&
+			isInteger(groupData.member_id2) &&
+			isInteger(groupData.member_id3) &&
+			isInteger(groupData.member_id4) &&
+			isInteger(groupData.member_id5)) {
+			resolve(groupData);
+		}
+		else {
+			reject(new Error(ValidationError));
+		}
+	});	
 }
 
 function validateMessageData(messageData) {
-	// Character limit in chatbox 
-	const content_limit = 2000;
-	if (isStringTooLong(messageData.msg_content, content_limit)) {
-		return messageData;
-	}
-	else {
-		throw(new Error(ValidationError));
-	}
+	return new Promise((resolve,reject) => {
+			const content_limit = 2000;	// Character limit in chatbox 
+		if (messageData.msg_content >= content_limit || messageData.msg_content.length < 1) {
+			reject(new Error(ValidationError));
+		}
+		else if(isInteger(messageData.user_id) && isInteger(messageData.group_id)) {
+			resolve(messageData);
+		}
+		else 
+			reject(new Error(ValidationError));
+	});
 }
 
-function isStringTooLong (string, max_length){
-	//Help function to validate if string is too long. 
-    if (string.length >= max_length || string.length < 1) {
-		console.log("Too many characters");
-		return false
-	}
-	else 
-        return true;
-}
-
-function isGroupValid(memberID){
-	//Help function to validateGroupData
-	if (memberID === parseInt(memberID,10)){
+function isInteger(number){
+	if (number === parseInt(number,10) || number === null)
 		return true;
-	}
 	else {
-		console.log("group member ID not valid");
+		console.error("Not integer");
 		return false
 	}
 }
 
-/* *********************************************************************
-   Setup HTTP route handling: Called when a HTTP request is received 
-   ******************************************************************** */
+//Setup HTTP route handling: Called when a HTTP request is received | req=request & res = response
 function processReq(req, res) {
-	//console.log("GOT: " + req.method + " " +req.url);
-	let baseURL = 'http://' + req.headers.host + '/';    //https://github.com/nodejs/node/issues/12682
-	let url=new URL(req.url,baseURL);
-	let searchParms=new URLSearchParams(url.search);
-	let queryPath=decodeURIComponent(url.pathname); //Convert uri encoded special letters (eg æøå that is escaped by "%number") to JS string
+	//console.log("GOT: " + req.method + " " +req.url); HUSK AT SLE>TTE DET HER
+	let baseURL = 'http://' + req.headers.host + '/'; //https://github.com/nodejs/node/issues/12682
+	let url = new URL(req.url,baseURL);
+	let searchParms = new URLSearchParams(url.search);
+	let queryPath = decodeURIComponent(url.pathname); //Convert url encoded special letters (eg æøå that is escaped by "%number") to JS string
 
+	//Switching on request methods POST or GETn eg
 	switch(req.method) {
 		case "POST": {
 		let pathElements=queryPath.split("/"); 
-		//console.log(pathElements[1]);
-		switch(pathElements[1]){
+		switch(pathElements[1]) {
 			case "/makeUser":
 			case "makeUser": 
 				extractJSON(req)
 					.then(userData => validateUserData(userData))
-					.then(validatedData => jsonResponse(res, createUser(validatedData)))
-					.catch(err=>reportError(res,err));
+					.then(validatedData => createUser(validatedData))
+						.then(response => jsonResponse(res, response))
+						.catch(err => reportError(res, err))
+					.catch(err => reportError(res, err));
 			break;
 			case "/makeInterest":
 			case "makeInterest": 
 				extractJSON(req)
 					//.then(userData => validateUserData(userData))
 					.then(validatedData => jsonResponse(res, createInterest(validatedData)))
-					.catch(err=>reportError(res,err));
+					.catch(err => reportError(res, err));
 			break;
 			case "/makeGroup":
 			case "makeGroup": 
 				extractJSON(req)
 					.then(groupData => validateGroupData(groupData))
 					.then(validatedData => jsonResponse(res, createGroup(validatedData)))
-					.catch(err=>reportError(res,err));
+					.catch(err => reportError(res, err));
 			break;
-			case "/makeMessage":
+			case "/makeMessage": // NOT GOOD
 			case "makeMessage": 
 				extractJSON(req)
 					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
-					.catch(err=>reportError(res,err));
+					.catch(err => reportError(res, err));
 			break;
 			case "newMessageSSE": 
-			console.log("enj");
 				extractJSON(req)
-					//.then(messageData => validateMessageData(messageData))
+					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => {
-						broadcastbroadcastAuth(req, res, validatedData);
-					})
-					.catch(err => {
-						jsonResponse(res, String(err));
-						reportError(res,err);
-					});
+						broadcastAuth(req, res, validatedData);
+						createMessage(validatedData);
+					}).catch(err => reportError(res, err));
 			break;
 			default: 
 				console.error("Resource doesn't exist");
@@ -172,23 +173,27 @@ function processReq(req, res) {
 			let pathElements=queryPath.split("/"); 
 			//console.log(pathElements);
 			//USE "sp" from above to get query search parameters
-			switch(pathElements[1]){     
+			switch(pathElements[1]) {
 				case "": 
 					htmlResponse(res, printLoginPage());
 				break;
+				case "/chat":
 				case "chat": 
 					responseAuth(req, res);
 				break;
+				case "/chatSSE":
 				case "chatSSE": 
-					SSEResponse(req, res, "event: chat\ndata: Connected\n\n");
+					SSEResponse(req, res);
 				break;
-				case "chatHack": // SLET det her
+				case "/chatHack": // NOT GOOD
+				case "chatHack": // SLET det her - det er hackerbrian der er på spil
 					htmlResponse(res, printChatPage(1,""));
 				break;
-				case "showAllTable": 
+				case "/showAllTable": // NOT GOOD
+				case "showAllTable":  // SLET det her
 					showAllTableContent(res);
 				break;
-				default: //for anything else we assume it is a file to be served
+				default: //For anything else we assume it is a file to be served
 					fileResponse(res, req.url);
 				break;
 			}//path
