@@ -19,7 +19,7 @@ function login(loginData) {
 	return new Promise((resolve,reject) => {
 		DBConnection.connect(function(err) {
 			if (err) reject(err);
-			    DBConnection.query("SELECT user_id FROM users WHERE mail = " + 
+			    DBConnection.query("SELECT user_id, fname, lname FROM users WHERE mail = " + 
                     mysql.escape(loginData.email) + " AND psw = " + 
                     mysql.escape(loginData.password) , function (err, result, fields) {    
 				if(err) {
@@ -34,18 +34,24 @@ function login(loginData) {
 	});
 }
 
-function getGroups(userId) {
+function getGroups(userID) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT group_id FROM chatGroups WHERE member_id1 = " + 
-				mysql.escape(userId) + " OR member_id2 = " + 
-				mysql.escape(userId) + " OR member_id3 = " + 
-				mysql.escape(userId) + " OR member_id4 = " + 
-				mysql.escape(userId) + " OR member_id5 = " + 
-				mysql.escape(userId) , function (err, result, fields) {    
+			DBConnection.query("SELECT chatGroups.group_id, u1.fname AS u1, u2.fname AS u2, u3.fname AS u3, u4.fname AS u4, u5.fname AS u5 FROM chatGroups " + 
+			"INNER JOIN users u1 ON chatGroups.member_id1=u1.user_id " +
+			"INNER JOIN users u2 ON chatGroups.member_id2=u2.user_id " +
+			"INNER JOIN users u3 ON chatGroups.member_id3=u3.user_id " +
+			"INNER JOIN users u4 ON chatGroups.member_id4=u4.user_id " +
+			"INNER JOIN users u5 ON chatGroups.member_id5=u5.user_id " +
+			"WHERE member_id1 = " + 
+				mysql.escape(userID) + " OR member_id2 = " + 
+				mysql.escape(userID) + " OR member_id3 = " + 
+				mysql.escape(userID) + " OR member_id4 = " + 
+				mysql.escape(userID) + " OR member_id5 = " + 
+				mysql.escape(userID) , function (err, result, fields) {    
 					if(err) 
 						reject(err) 
 					else {
@@ -57,14 +63,14 @@ function getGroups(userId) {
 	});
 }
 
-function getGroupMembers(groupId) {
+function getGroupMembers(groupID) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
 			DBConnection.query("SELECT member_id1, member_id2, member_id3, member_id4, member_id5 FROM chatGroups WHERE group_id = " + 
-				mysql.escape(groupId), function (err, result, fields) {    
+				mysql.escape(groupID), function (err, result, fields) {    
 					if(err) 
 						reject(err) 
 					else {
@@ -76,19 +82,20 @@ function getGroupMembers(groupId) {
 	});
 }
 
-function getChats(groupId) {
+function getChats(groupID) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT * FROM ( SELECT * FROM messages WHERE group_id = "+ mysql.escape(groupId) + " ORDER BY message_id DESC LIMIT 100) sub ORDER BY message_id ASC", function (err, result, fields) {   
-					if(err) 
-						reject(err) 
-					else {
-						resolve(result);
-						DBConnection.end();
-					}
+			DBConnection.query("SELECT * FROM (SELECT messages.group_id, messages.user_ID, messages.msg_content, messages.message_id, messages.TIMESTAMP, users.fname, users.lname FROM messages INNER JOIN users ON messages.user_ID=users.user_id WHERE group_id = " 
+			+ mysql.escape(groupID) + " ORDER BY message_id DESC LIMIT 100) sub ORDER BY message_id ASC;", function (err, result, fields) {   
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result);
+					DBConnection.end();
+				}
 			});
 		});
 	});

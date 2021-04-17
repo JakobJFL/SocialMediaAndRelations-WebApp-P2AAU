@@ -16,7 +16,7 @@ function reportError(res,error){
 		    return errorResponse(res,404,error.message);
         default:
             console.log(InternalError + ": " +error);
-		    return errorResponse(res,500,"");
+		    return errorResponse(res,500,"Internal Error");
 
     }
 }

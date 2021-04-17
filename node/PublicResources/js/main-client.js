@@ -2,6 +2,8 @@
 //SEE: https://javascript.info/strict-
 let userID = 0; 
 let groupID = 0; 
+let thisFname = ""; 
+let thisLname = ""; 
 
 const messageLengthToAddDummy = 40;
 let loginData={};
@@ -32,6 +34,8 @@ function getChatSite() {
 	}).then(response => {
 		userID = response.headers.get('user_ID');
 		groupID = response.headers.get('group_id');
+		thisFname = response.headers.get('fname');
+		thisLname = response.headers.get('lname');
 		return response.text();
 	}).then(data => {
 		if (data.startsWith("Error:403")) {
@@ -110,16 +114,18 @@ function listenerChats() {
 	});
 	chat.addEventListener("chat", event => { // When a chat message arrives
 		let responseObj = JSON.parse(event.data);
-		//console.log(responseObj.user_id, user_ID);
-		//console.log(responseObj.group_id, groupID);
-		if (responseObj.group_id == groupID) {
-			if (String(responseObj.user_id) !== userID) {
-				let nodeStr = addChatSender(responseObj.msg_content, responseObj.user_id, "dd");
+		const monthNamesDK = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun","Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+		const dNow = new Date();
+		const month = monthNamesDK[dNow.getMonth()]
+		const dateStr = dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + dNow.getMinutes();
+		if (String(responseObj.group_id) == groupID) { //Allow type conversion
+			if (String(responseObj.user_id) != userID) { //Allow type conversion
+				let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
 				let allChat = document.getElementById("allChat");
 				allChat.insertAdjacentHTML('beforeend', nodeStr);
 			}
 			else {
-				let nodeStr = addChatReciever(responseObj.msg_content, "dff");
+				let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
 				let allChat = document.getElementById("allChat");
 				allChat.insertAdjacentHTML('beforeend', nodeStr);
 			}
@@ -136,7 +142,9 @@ function newMessage() {
 	let jsonBody = {
 		group_id: Number(groupID),
 		user_id: Number(userID),
-		msg_content: message
+		msg_content: message,
+		fname: thisFname,
+		lname: thisLname
 	};
 	document.getElementById("messageSenderBox").value = "";
   	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/newMessageSSE', {
@@ -153,8 +161,8 @@ function newMessage() {
 
 document.getElementById("loginBtn").addEventListener("submit", getChatSiteBtn);
 
-function changeGroup(group_id) {
-	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat?id='+group_id, {
+function changeGroup(cGroup_id) {
+	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat?id='+cGroup_id, {
 		method: 'GET', // or 'PUT'
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -168,7 +176,7 @@ function changeGroup(group_id) {
 		}
 		else {
 			document.body.innerHTML = data;
-			groupID = group_id;
+			groupID = cGroup_id;
 			document.getElementById("btnSender").addEventListener("click", newMessage);
 			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
 		}

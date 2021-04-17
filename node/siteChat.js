@@ -3,8 +3,8 @@ import {getGroups, getChats} from "./database.js";
 
 const messageLengthToAddDummy = 40;
 
-function printChatPage(userId, url) {
-	console.log("ID: " + userId + " loged on");
+function printChatPage(userID, fname, lname, url) {
+	console.log("ID: " + userID + " loged on");
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
@@ -14,7 +14,7 @@ function printChatPage(userId, url) {
     </html>`
 
     let bodyPromise = new Promise((resolve,reject) => {
-		printBody(userId, url).then(html => {
+		printBody(userID, fname, lname, url).then(html => {
 			let res = top+printHead()+html+bottom;
 			resolve(res);
 			if (!html) {
@@ -42,9 +42,9 @@ return `<head>
         <body>`;
 }
 
-function printBody(userId, url) {
+function printBody(userID, fname, lname, url) {
     let header = `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-                    <a class="navbar-brand" href="#">Dit ID: ${userId}</a>
+                    <a class="navbar-brand" href="#">${fname} ${lname}</a>
                     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                     </button>
@@ -130,37 +130,51 @@ function printBody(userId, url) {
       return resReciever;
     }
 
+    function makeCardTitle(group) {
+      let names = "";
+      for (let i = 1; i <= 5; i++) {
+        let key = "u"+i;
+        if (group[key] !== fname) {
+          names += group[key];
+          if (i !== 5) 
+            names += ", "
+        }
+      }
+      return names;
+    }
+
 	let promise = new Promise((resolve,reject) => {
 		let cards = topCard;
 		let urlSplit = url.split("=");
 		let groupID = urlSplit[1];
     let bottomChat = "";
-		getGroups(userId).then(groupsData => {
-      if (!groupsData) {
+		getGroups(userID).then(groupsData => {
+      if (!groupsData) 
 				reject("promiseReject(getGroups)");
-			}
 			for (const group of groupsData) {
+        let cardTitle = makeCardTitle(group);
 				if (!groupID) 
 				  groupID = group.group_id;
-        bottomChat = bottomChatFun(groupID);
-				if (group.group_id === groupID) 
-					cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu", group.group_id, "active");
+        bottomChat = bottomChatFun();
+				if (group.group_id == groupID) { //Type conversion - groupID is string
+          console.log();
+          cards += addCard(cardTitle, "Software", "Aktiv nu", group.group_id, "active");
+        }  
 				else 
-					cards += addCard("ID: " + group.group_id, "Software", "Aktiv nu", group.group_id, "");
+					cards += addCard(cardTitle, "Software", "Aktiv nu", group.group_id, "");
 			}
 			getChats(groupID).then(chatsData => {
-        if (!chatsData) {
+        if (!chatsData) 
 					reject("promiseReject(getChats)");
-				} 
 				let chats = "";
 				for (const chat of chatsData) {
 					let DBdate = String(chat.TIMESTAMP).split(/[- :]/);
 					//let date = new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]);
 					let dateFormatted = DBdate[2] + "/" + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5];
-					if (chat.user_ID === userId) 
+					if (chat.user_ID === userID) 
             chats += addChatReciever(chat.msg_content, dateFormatted); 
 					else 
-						chats += addChatSender(chat.msg_content, chat.user_ID, dateFormatted);
+						chats += addChatSender(chat.msg_content, chat.fname + " " + chat.lname, dateFormatted);
 				}
 
         let res = header+cards+bottomCard+topChat+chats+bottomChat;

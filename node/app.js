@@ -1,6 +1,6 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastAuth} from "./server.js";
+import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
 import {createUser, createGroup, createMessage, showAllTableContent, createInterest, getUserEmail} from "./database.js";
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
@@ -58,9 +58,8 @@ function validateUserData(userData) {
 			getUserEmail(userData.mail).then(result => {
 				if (result[0])
 					reject(new Error(ValidationError)); // make const for this 
-				else {
+				else 
 					resolve(validData);
-				}
 			}).catch(err => reject(new Error(err)));
 		}
 	});
@@ -159,7 +158,7 @@ function processReq(req, res) {
 				extractJSON(req)
 					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => {
-						broadcastAuth(req, res, validatedData);
+						broadcastMsgSSE(req, res, validatedData);
 						createMessage(validatedData);
 					}).catch(err => reportError(res, err));
 			break;

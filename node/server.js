@@ -4,16 +4,11 @@ import fs from "fs";
 import path  from "path";
 import process from "process";
 
-//import contentType from "content-type";
-//import url from "url";
-//import qs from "querystring";
-// import functions from other files 
-
 import {processReq} from "./app.js";
 import {ValidationError, AuthError, InternalError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, extractForm, fileResponse, SSEResponse, broadcastAuth, htmlResponse,responseAuth,jsonResponse,errorResponse};
+export {startServer,extractJSON, extractForm, fileResponse, SSEResponse, broadcastMsgSSE, htmlResponse,responseAuth,jsonResponse,errorResponse};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";
@@ -131,13 +126,13 @@ function htmlResponse(res, htmlString){
 function responseAuth(req, res) {
 	isAuthenticated(req).then(loginResult => {
 		console.log(loginResult[0].user_id);
-		printChatPage(loginResult[0].user_id, req.url)
-			.then(html => htmlResponseCHeader(res, html, loginResult[0].user_id))
+		printChatPage(loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname, req.url)
+			.then(html => htmlResponseCHeader(res, html, loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname))
 			.catch(err => console.error(err));
 	}).catch(err => reportError(res, err));
 }
 
-function htmlResponseCHeader(res, htmlString, user_id){
+function htmlResponseCHeader(res, htmlString, user_id, fname, lname){
 	let groupID = 0;
 	getGroups(user_id).then(groupsData => {
 		for (const group of groupsData) {
@@ -148,42 +143,46 @@ function htmlResponseCHeader(res, htmlString, user_id){
 		res.setHeader('Content-Type', "text/html");
 		res.setHeader('user_ID', user_id);
 		res.setHeader('group_id', groupID);
+		res.setHeader('fname', fname);
+		res.setHeader('lname', lname);
 		res.write(htmlString);
 		res.end('\n');
 	});
 }
 
 // THIS IS CRAZY!!!
-async function broadcastAuth(req, res, data) {
-	let loginResult;
-	try { loginResult = await isAuthenticated(req); }
-	catch(err) { reportError(res, err); }	
-
-	if (data.user_id === loginResult[0].user_id) {
-		let message = "data: " + JSON.stringify(data);
-		let event = `event: chat\n${message}\n\n`;
-		let groupID = 0;
-		let groupsData = await getGroups(loginResult[0].user_id);
-		for (const group of groupsData) {
-			if (data.group_id === group.group_id) // Is the user a part of group from JSON data?
-				groupID = group.group_id;
-		}
-		let groupsMembers = await getGroupMembers(groupID);
-		for (const client of clientsSSE) {
-			//console.log(client.SSEuserID);
-			if (groupsMembers[0].member_id1 === client.SSEuserID ||
-				groupsMembers[0].member_id2 === client.SSEuserID ||
-				groupsMembers[0].member_id3 === client.SSEuserID || 
-				groupsMembers[0].member_id4 === client.SSEuserID || 
-				groupsMembers[0].member_id5 === client.SSEuserID) {
-				//console.log("TRUE"+ client.SSEuserID);
-				res.writeHead(200).end();
-				client.SSEres.write(event); //ERR_STREAM_WRITE_AFTER_END
+async function broadcastMsgSSE(req, res, data) {
+	try { 
+		let loginResult = await isAuthenticated(req); 
+		if (data.user_id === loginResult[0].user_id) {
+			let message = "data: " + JSON.stringify(data);
+			let event = `event: chat\n${message}\n\n`;
+			let groupID = 0;
+			let groupsData = await getGroups(loginResult[0].user_id);
+			for (const group of groupsData) {
+				if (data.group_id === group.group_id) // Is the user a part of group from JSON data?
+					groupID = group.group_id;
+			}
+			let groupsMembers = await getGroupMembers(groupID);
+			for (const client of clientsSSE) {
+				//console.log(client.SSEuserID);
+				if (groupsMembers[0].member_id1 === client.SSEuserID ||
+					groupsMembers[0].member_id2 === client.SSEuserID ||
+					groupsMembers[0].member_id3 === client.SSEuserID || 
+					groupsMembers[0].member_id4 === client.SSEuserID || 
+					groupsMembers[0].member_id5 === client.SSEuserID) {
+					//console.log("TRUE"+ client.SSEuserID);
+					res.writeHead(200).end();
+					client.SSEres.write(event); //ERR_STREAM_WRITE_AFTER_END
+				}
 			}
 		}
+		else 
+			console.error("The userID is not the logged in user's");
 	}
-	else 
-		console.error("The userID is not the logged in user's");
+	catch(err) {
+		reportError(res, err); 
+	}	
 }
 
 /* send a response with a given HTTP error code, and reason string */ 
@@ -236,7 +235,6 @@ function collectPostBody(req){
 	}
 	return new Promise(collectPostBodyExecutor);
 }
-
 
 function extractJSON(req){
 	if(isJsonEncoded(req.headers['content-type']))
