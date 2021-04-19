@@ -158,10 +158,10 @@ function printBody(userID, fname, lname, url) {
         bottomChat = bottomChatFun();
 				if (group.group_id == groupID) { //Type conversion - groupID is string
           console.log();
-          cards += addCard(cardTitle, "Software", "Aktiv nu", group.group_id, "active");
+          cards += addCard(cardTitle, "Ej hvor det flot", "Aktiv nu", group.group_id, "active");
         }  
 				else 
-					cards += addCard(cardTitle, "Software", "Aktiv nu", group.group_id, "");
+					cards += addCard(cardTitle, "Ej hvor det flot", "Aktiv nu", group.group_id, "");
 			}
 			getChats(groupID).then(chatsData => {
         if (!chatsData) 
