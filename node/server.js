@@ -103,9 +103,8 @@ function SSEResponse(req, res) {
 		}
 		clientsSSE.push(clientsSSEObj); // Remember the response object so messages can be send in future
 
-		req.connection.on("end", () => {
+		req.connection.on("close", () => {
 			clientsSSE.splice(clientsSSE.indexOf(res), 1);
-			res.end();
 		});
 		res.writeHead(200, {  // Set headers and send an initial chat event to just this one client
 			"Content-Type": "text/event-stream", 
@@ -153,6 +152,7 @@ function htmlResponseCHeader(res, htmlString, user_id, fname, lname){
 // THIS IS CRAZY!!!
 async function broadcastMsgSSE(req, res, data) {
 	try { 
+		res.writeHead(200).end();
 		let loginResult = await isAuthenticated(req); 
 		if (data.user_id === loginResult[0].user_id) {
 			let message = "data: " + JSON.stringify(data);
@@ -172,7 +172,6 @@ async function broadcastMsgSSE(req, res, data) {
 					groupsMembers[0].member_id4 === client.SSEuserID || 
 					groupsMembers[0].member_id5 === client.SSEuserID) {
 					//console.log("TRUE"+ client.SSEuserID);
-					res.writeHead(200).end();
 					client.SSEres.write(event); //ERR_STREAM_WRITE_AFTER_END
 				}
 			}

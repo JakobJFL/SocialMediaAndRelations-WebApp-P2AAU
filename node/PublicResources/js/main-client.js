@@ -21,7 +21,7 @@ function getChatSiteBtn(event) {
   //let matches = cards[0].getAttribute("onclick");
   //console.log(matches);
 
-  listenerChats();
+  addListenerChats();
 }
 
 function getChatSite() {
@@ -106,7 +106,7 @@ function addChatReciever(message, date) {
   return resReciever;
 }
 
-function listenerChats() {
+function addListenerChats() {
 	let chat = new EventSourcePolyfill("https://sw2c2-19.p2datsw.cs.aau.dk/node0/chatSSE", {
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 

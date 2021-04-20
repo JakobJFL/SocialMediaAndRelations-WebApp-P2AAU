@@ -132,9 +132,12 @@ function printBody(userID, fname, lname, url) {
 
     function makeCardTitle(group) {
       let names = "";
+      let isNameDel = false;
       for (let i = 1; i <= 5; i++) {
-        let key = "u"+i;
-        if (group[key] !== fname) {
+        let key = "u"+i; 
+        if (group[key] === fname && !isNameDel)
+          isNameDel = true;
+        else {
           names += group[key];
           if (i !== 5) 
             names += ", "
