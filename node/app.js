@@ -90,12 +90,22 @@ function validateGroupData(groupData) {
 
 function validateMessageData(messageData) {
 	return new Promise((resolve,reject) => {
-			const content_limit = 2000;	// Character limit in chatbox 
-		if (messageData.msg_content >= content_limit || messageData.msg_content.length < 1) {
+		const content_limit = 2000;	// Character limit in chatbox 
+		let validData;
+		try {
+			validData = {
+				msg_content: String(messageData.msg_content),
+				user_id: messageData.user_id,
+				group_id: messageData.group_id
+			}
+		} catch {
+			reject(new Error(ValidationError))
+		}
+		if (validData.msg_content >= content_limit || validData.msg_content.length < 1) {
 			reject(new Error(ValidationError));
 		}
-		else if(isInteger(messageData.user_id) && isInteger(messageData.group_id)) {
-			resolve(messageData);
+		else if(isInteger(validData.user_id) && isInteger(validData.group_id)) {
+			resolve(validData);
 		}
 		else 
 			reject(new Error(ValidationError));
@@ -178,7 +188,7 @@ function processReq(req, res) {
 				break;
 				case "/chat":
 				case "chat": 
-					responseAuth(req, res);
+					responseAuth(req, res, searchParms.get("groupID"));
 				break;
 				case "/chatSSE":
 				case "chatSSE": 

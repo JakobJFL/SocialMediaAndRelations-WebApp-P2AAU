@@ -21,11 +21,11 @@ function getChatSiteBtn(event) {
   //let matches = cards[0].getAttribute("onclick");
   //console.log(matches);
 
-  addListenerChats();
+  addSEEListeners();
 }
 
 function getChatSite() {
-  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat', {
+  	fetch('../node0/chat', {
 		method: 'GET', // or 'PUT'
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -106,13 +106,22 @@ function addChatReciever(message, date) {
   return resReciever;
 }
 
-function addListenerChats() {
-	let chat = new EventSourcePolyfill("https://sw2c2-19.p2datsw.cs.aau.dk/node0/chatSSE", {
-		headers: {
-			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+function addSEEListeners() {
+	let chat = new EventSourcePolyfill("../node0/chatSSE", {
+			headers: {
+				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+			}
+		});
+	chat.addEventListener("chat", chatEventHander);
+	document.addEventListener("visibilitychange", function() {
+		if (document.hidden) {
+			chat.removeEventListener();
+		} else {
+			chat.addEventListener("chat", chatEventHander);
 		}
 	});
-	chat.addEventListener("chat", event => { // When a chat message arrives
+
+	function chatEventHander(event) {
 		let responseObj = JSON.parse(event.data);
 		const monthNamesDK = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun","Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
 		const dNow = new Date();
@@ -130,7 +139,7 @@ function addListenerChats() {
 				allChat.insertAdjacentHTML('beforeend', nodeStr);
 			}
 		}
-	});
+	}
 }
 
 function storeUser(usernameID) {
@@ -147,7 +156,7 @@ function newMessage() {
 		lname: thisLname
 	};
 	document.getElementById("messageSenderBox").value = "";
-  	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/newMessageSSE', {
+  	fetch('../node0/newMessageSSE', {
 		method: 'POST',
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -162,7 +171,7 @@ function newMessage() {
 document.getElementById("loginBtn").addEventListener("submit", getChatSiteBtn);
 
 function changeGroup(cGroup_id) {
-	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/chat?id='+cGroup_id, {
+	fetch('../node0/chat?groupID='+cGroup_id, {
 		method: 'GET', // or 'PUT'
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 

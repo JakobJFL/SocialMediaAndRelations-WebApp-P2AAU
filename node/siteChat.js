@@ -3,8 +3,8 @@ import {getGroups, getChats} from "./database.js";
 
 const messageLengthToAddDummy = 40;
 
-function printChatPage(userID, fname, lname, url) {
-	console.log("ID: " + userID + " loged on");
+function printChatPage(userID, fname, lname, parmsGroupID) {
+	console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
@@ -14,7 +14,7 @@ function printChatPage(userID, fname, lname, url) {
     </html>`
 
     let bodyPromise = new Promise((resolve,reject) => {
-		printBody(userID, fname, lname, url).then(html => {
+		printBody(userID, fname, lname, parmsGroupID).then(html => {
 			let res = top+printHead()+html+bottom;
 			resolve(res);
 			if (!html) {
@@ -42,7 +42,7 @@ return `<head>
         <body>`;
 }
 
-function printBody(userID, fname, lname, url) {
+function printBody(userID, fname, lname, parmsGroupID) {
     let header = `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
                     <a class="navbar-brand" href="#">${fname} ${lname}</a>
                     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,8 +148,7 @@ function printBody(userID, fname, lname, url) {
 
 	let promise = new Promise((resolve,reject) => {
 		let cards = topCard;
-		let urlSplit = url.split("=");
-		let groupID = urlSplit[1];
+		let groupID = parmsGroupID;
     let bottomChat = "";
 		getGroups(userID).then(groupsData => {
       if (!groupsData) 
@@ -160,7 +159,6 @@ function printBody(userID, fname, lname, url) {
 				  groupID = group.group_id;
         bottomChat = bottomChatFun();
 				if (group.group_id == groupID) { //Type conversion - groupID is string
-          console.log();
           cards += addCard(cardTitle, "Ej hvor det flot", "Aktiv nu", group.group_id, "active");
         }  
 				else 

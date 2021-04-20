@@ -122,10 +122,9 @@ function htmlResponse(res, htmlString){
 	res.end('\n');
 }
 
-function responseAuth(req, res) {
+function responseAuth(req, res, parmsGroupID) {
 	isAuthenticated(req).then(loginResult => {
-		console.log(loginResult[0].user_id);
-		printChatPage(loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname, req.url)
+		printChatPage(loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname, parmsGroupID)
 			.then(html => htmlResponseCHeader(res, html, loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname))
 			.catch(err => console.error(err));
 	}).catch(err => reportError(res, err));
