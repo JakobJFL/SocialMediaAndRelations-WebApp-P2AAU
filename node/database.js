@@ -104,65 +104,55 @@ function getChats(groupID) {
 function createUser(body) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
-		try {
-			DBConnection.connect(function(err) {
-				if (err) 
-					reject(err);
-				let sql = `INSERT INTO users(
-					psw, 
-					fname, 
-					lname, 
-					mail, 
-					intrest1, 
-					intrest2, 
-					intrest3, 
-					intrest4,
-					CHG_TIMESTAMP) VALUES (
-					${mysql.escape(body.psw)},
-					${mysql.escape(body.fname)},
-					${mysql.escape(body.lname)},
-					${mysql.escape(body.mail)},
-					${mysql.escape(body.intrest1)},
-					${mysql.escape(body.intrest2)},
-					${mysql.escape(body.intrest3)},
-					${mysql.escape(body.intrest4)},
-					'2021-03-26 15:03:10.000000');`;
+		DBConnection.connect(function(err) {
+			if (err) 
+				reject(err);
+			let sql = `INSERT INTO users(
+				psw, 
+				fname, 
+				lname, 
+				mail, 
+				intrest1, 
+				intrest2, 
+				intrest3, 
+				intrest4,
+				CHG_TIMESTAMP) VALUES (
+				${mysql.escape(body.psw)},
+				${mysql.escape(body.fname)},
+				${mysql.escape(body.lname)},
+				${mysql.escape(body.mail)},
+				${mysql.escape(body.intrest1)},
+				${mysql.escape(body.intrest2)},
+				${mysql.escape(body.intrest3)},
+				${mysql.escape(body.intrest4)},
+				'2021-03-26 15:03:10.000000');`;
 
-				DBConnection.query(sql, function (err, result) {
-					if (err) 
-						reject(new Error(ValidationError));
-					resolve(result);
-				});
-				DBConnection.end();
+			DBConnection.query(sql, function (err, result) {
+				if (err) 
+					reject(new Error(ValidationError));
+				resolve(result);
 			});
-		}
-		catch {
-			reject(new Error(ValidationError));
-		}
+			DBConnection.end();
+		});
 	});
 }
 
 function getUserEmail(mail) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
-		try {
-			DBConnection.connect(function(err) {
-				if (err) 
-					reject(err)
-				DBConnection.query("SELECT mail FROM users WHERE mail = " + 
-					mysql.escape(mail), function (err, result, fields) {   
-					if(err) 
-						reject(err) 
-					else {
-						resolve(result);
-						DBConnection.end();
-					}
-				});
+		DBConnection.connect(function(err) {
+			if (err) 
+				reject(err)
+			DBConnection.query("SELECT mail FROM users WHERE mail = " + 
+				mysql.escape(mail), function (err, result, fields) {   
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result);
+					DBConnection.end();
+				}
 			});
-		}
-		catch {
-			reject(new Error(ValidationError));
-		}
+		});
 	});
 }
 
@@ -206,44 +196,52 @@ function createInterest(body) {
 
 function createGroup(body) {
 	const DBConnection = dbConnect();
-	DBConnection.connect(function(err) {
-		if (err) throw err;
-		let sql = `INSERT INTO chatGroups(
-			member_id1, 
-			member_id2, 
-			member_id3, 
-			member_id4,
-			member_id5) VALUES (
-			${mysql.escape(body.member_id1)}, 
-			${mysql.escape(body.member_id2)}, 
-			${mysql.escape(body.member_id3)}, 
-			${mysql.escape(body.member_id4)},
-			${mysql.escape(body.member_id5)});`;
-		DBConnection.query(sql, function (err, result) {
-		if (err) throw err;
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err) {
+			if (err) 
+				reject(err);
+			let sql = `INSERT INTO chatGroups(
+				member_id1, 
+				member_id2, 
+				member_id3, 
+				member_id4,
+				member_id5) VALUES (
+				${mysql.escape(body.member_id1)}, 
+				${mysql.escape(body.member_id2)}, 
+				${mysql.escape(body.member_id3)}, 
+				${mysql.escape(body.member_id4)},
+				${mysql.escape(body.member_id5)});`;
+			DBConnection.query(sql, function (err, result) {
+				if (err) 
+					reject(new Error(ValidationError));
+				resolve(result)
+			});
+			DBConnection.end();
 		});
-		DBConnection.end();
 	});
-	return body;
 }
 
 function createMessage(body) {
 	const DBConnection = dbConnect();
-	DBConnection.connect(function(err) {
-		if (err) throw err;
-		let sql = `INSERT INTO messages(
-			group_id, 
-			user_id, 
-			msg_content) VALUES (
-			${mysql.escape(body.group_id)}, 
-			${mysql.escape(body.user_id)}, 
-			${mysql.escape(body.msg_content)});`;
-		DBConnection.query(sql, function (err, result) {
-		if (err) throw err;
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err) {
+			if (err) 
+				reject(err);
+			let sql = `INSERT INTO messages(
+				group_id, 
+				user_id, 
+				msg_content) VALUES (
+				${mysql.escape(body.group_id)}, 
+				${mysql.escape(body.user_id)}, 
+				${mysql.escape(body.msg_content)});`;
+			DBConnection.query(sql, function (err, result) {
+				if (err) 
+					reject(new Error(ValidationError));
+				resolve(result);
+			});
+			DBConnection.end();
 		});
-		DBConnection.end();
 	});
-	return body;
 }
 
 async function showAllTableContent(res) {

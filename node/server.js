@@ -103,7 +103,7 @@ function SSEResponse(req, res) {
 		}
 		clientsSSE.push(clientsSSEObj); // Remember the response object so messages can be send in future
 
-		req.connection.on("close", () => {
+		req.connection.on("end", () => {
 			clientsSSE.splice(clientsSSE.indexOf(res), 1);
 		});
 		res.writeHead(200, {  // Set headers and send an initial chat event to just this one client

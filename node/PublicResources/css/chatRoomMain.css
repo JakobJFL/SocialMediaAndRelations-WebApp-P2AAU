@@ -90,6 +90,13 @@ body {
   cursor: pointer;
 }
 
+.static {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  border: 1px solid #d6d6d6;
+  cursor: default;
+}
+
 #sidebarMenu {
   overflow-y: scroll;
 }

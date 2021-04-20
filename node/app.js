@@ -96,7 +96,9 @@ function validateMessageData(messageData) {
 			validData = {
 				msg_content: String(messageData.msg_content),
 				user_id: messageData.user_id,
-				group_id: messageData.group_id
+				group_id: messageData.group_id,
+				fname: messageData.fname,
+				lname: messageData.lname
 			}
 		} catch {
 			reject(new Error(ValidationError))
@@ -154,22 +156,19 @@ function processReq(req, res) {
 			case "makeGroup": 
 				extractJSON(req)
 					.then(groupData => validateGroupData(groupData))
-					.then(validatedData => jsonResponse(res, createGroup(validatedData)))
+					.then(validatedData => createGroup(validatedData)
+						.then(response => jsonResponse(res, response)))
+						.catch(err => reportError(res, err))
 					.catch(err => reportError(res, err));
 			break;
-			case "/makeMessage": // NOT GOOD
-			case "makeMessage": 
-				extractJSON(req)
-					.then(messageData => validateMessageData(messageData))
-					.then(validatedData => jsonResponse(res, createMessage(validatedData)))
-					.catch(err => reportError(res, err));
-			break;
+			case "/newMessageSSE":
 			case "newMessageSSE": 
 				extractJSON(req)
 					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => {
-						broadcastMsgSSE(req, res, validatedData);
-						createMessage(validatedData);
+						createMessage(validatedData)
+						.then(() => broadcastMsgSSE(req, res, validatedData))
+						.catch(err => reportError(res, err));
 					}).catch(err => reportError(res, err));
 			break;
 			default: 

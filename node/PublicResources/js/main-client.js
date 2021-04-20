@@ -20,13 +20,13 @@ function getChatSiteBtn(event) {
   //console.log(cards[0].innerHTML);
   //let matches = cards[0].getAttribute("onclick");
   //console.log(matches);
-
   addSEEListeners();
+  startCountDown();
 }
 
 function getChatSite() {
   	fetch('../node0/chat', {
-		method: 'GET', // or 'PUT'
+		method: 'GET', 
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
 			'Content-Type': 'text/html',
@@ -54,8 +54,6 @@ function getChatSite() {
 			document.getElementById("btnSender").addEventListener("click", newMessage);
 			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
 		}
-		//console.log(data);
-
 		//storeUser();
 	})
 	.catch((error) => {
@@ -172,7 +170,7 @@ document.getElementById("loginBtn").addEventListener("submit", getChatSiteBtn);
 
 function changeGroup(cGroup_id) {
 	fetch('../node0/chat?groupID='+cGroup_id, {
-		method: 'GET', // or 'PUT'
+		method: 'GET', 
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
 			'Content-Type': 'text/html',
@@ -189,9 +187,6 @@ function changeGroup(cGroup_id) {
 			document.getElementById("btnSender").addEventListener("click", newMessage);
 			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
 		}
-		//console.log(data);
-
-		//storeUser();
 	})
 	.catch((error) => {
 		console.error('Error:', error);
