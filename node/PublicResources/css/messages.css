@@ -73,12 +73,12 @@
     position: relative;
     padding-right: 20% !important;
     padding-top: 20px !important;
-
     float: left;
 }
 
 .rounded {
     border-radius: 15px !important;
+    float: left;
 }
 
 .send-btn {
@@ -88,6 +88,7 @@
 .top-text-muted {
     margin-left: 7px !important;
     margin-bottom: 3px !important;
+    white-space: nowrap;
 }
 
 #messageSenderBox {
