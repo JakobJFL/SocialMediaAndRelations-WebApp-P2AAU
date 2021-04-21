@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="dk">
 <head>
-	<meta charset="UTF-8">
+	<!-- <meta charset="UTF-8"> -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../css/signin.css">
 	<link rel="stylesheet" href="../bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="../css/createAccount.css">
-    <title>Social Media and Relations WebApp-P2AAU</title>
+    <title>Opret konto - Social Media and Relations WebApp-P2AAU</title>
 </head>
 <body>
 	<div class="text-center">
-		<form id="accInfo" action="javascript:void(0);" class="form-createAcc">
-			<div class="row header">
-				<h1 class="title"> Opret din konto</h1>
-			</div> 
+		<form id="accInfo" action="javascript:void(0);" style="width: 50rem;">
+			<h1 class="title">Opret din konto</h1>
 			<small class="identity text-muted">Hvad er dit for -og efternavn?</small>
 			<div class="container">
-				<div class="row one">
+				<div class="row">
 					<div class="col-md-6">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-two-tone/24/000000/person-male.png"/></span>
 								</div>
-							<input type="text" id="firstName" class="form-control" placeholder="Søren" required autofocus aria-label="Søren" aria-describedby="basic-addon1">
+							<input type="text" id="firstName" oninput="checkNames(this)" class="form-control" placeholder="Søren" required autofocus aria-label="Søren" aria-describedby="basic-addon1">
 						</div>
 					</div>
 					<div class="col">
@@ -32,14 +29,12 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-two-tone/24/000000/person-male.png"/></span>
 							</div>
-							<input type="text" id="lastName" class="form-control" placeholder="Sørensen" required> 
+							<input type="text" id="lastName" oninput="checkNames(this)" class="form-control" placeholder="Sørensen" required> 
 						</div>
 					</div>
 				</div>
-			</div>
 				<small class="identity text-muted">Hvad er din email?</small>	
-			<div class="container"> 
-				<div class="row two">
+				<div class="row">
 					<div class="col-md">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
@@ -49,26 +44,23 @@
 						</div>	
 					</div>
 				</div>
-			</div>
-			<div class="container">
-				<div class="row three">
+				<div class="row">
 					<div class="col-md-6">
+						<small class="identity text-muted">Hvornår er du født? </small>
 						<div class="input-group mb-3">
-							<label for="birthDate" class="col-md-8 control-label"><small class="identity text-muted">Hvornår er du født? </small></label>
-							<div class="col">
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="basic-addon4"><img src="https://img.icons8.com/material-outlined/24/000000/edit-calendar.png"/></span>
-									<input type="date" id="birthDate" class="form-control">
-								</div>
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="basic-addon4"><img src="https://img.icons8.com/material-outlined/24/000000/edit-calendar.png"/></span>
 							</div>
+							<input type="date" id="birthDate" required class="form-control">
 						</div>
 					</div>
-					<div class="col-md-6 mb-3"><small class="identity text-muted">Hvilket studie går du på?</small>
-						<div class="input-group mb-6 py-2">
+					<div class="col">
+						<small class="identity text-muted">Hvilket studie går du på?</small>
+						<div class="input-group mb-3">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-outlined/24/000000/literature--v1.png"/></span>
 							</div>
-							<select class="fieldsOfStudy" id="inputFieldsOfStudy">
+							<select class="form-control" id="inputFieldsOfStudy">
 								<option value="software">Software</option>
 								<option value="datalogi">Datalogi</option>
 								<option value="kemiteknologi">Kemiteknologi</option>
@@ -77,33 +69,35 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<small class="identity text-muted">Hvad skal din adgangskode være?</small>
-			<div class="row four">
-				<div class="col">
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
-							</div>
-						<input type="password" id="password" class="form-control" placeholder="Adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+				<small class="identity text-muted">Hvad skal din adgangskode være?</small>
+				<div class="row">
+					<div class="col">
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
+								</div>
+							<input type="password" id="password" class="form-control" placeholder="Adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row five">
-				<div class="col">
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
-							</div>
-						<input type="password" id="password" class="form-control" placeholder=" Gentag adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+				<div class="row">
+					<div class="col">
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
+								</div>
+							<input type="password" id="passwordRepeat" oninput="check(this)" class="form-control" placeholder="Gentag adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row six">
-				<div class="col-md">
-					<div><button class="btn btn-lg btn-primary btn-block" type="submit">Opret konto</button></div>
+				<p id="errorField" style="visibility:hidden" class="text-danger">Ukendt fejl</p>
+				<div class="row">
+					<div class="col-sm"></div>
+					<div class="col-sm">
+						<button class="btn btn-lg btn-primary btn-block submitBtn" type="submit">Opret konto</button>
+					</div>
+					<div class="col-sm"></div>
 				</div>
-			</div>
 		</form>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="../js/createAccount-client.js"></script>
