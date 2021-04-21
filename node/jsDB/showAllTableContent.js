@@ -1,4 +1,4 @@
-var mysql = require('mysql'); 
+import mysql from "mysql";
  
 var con = mysql.createConnection({ 
   host: "localhost", 
@@ -15,13 +15,13 @@ con.query("SELECT * FROM users", function (err, result, fields) {
 });
 
 
-con.query("SELECT * FROM groups", function (err, result, fields) {
+con.query("SELECT * FROM chatGroups", function (err, result, fields) {
     if (err) throw err;
     console.table(result);
 });
 
 
-con.query("SELECT * FROM message", function (err, result, fields) {
+con.query("SELECT * FROM messages", function (err, result, fields) {
     if (err) throw err;
     console.table(result);
 });

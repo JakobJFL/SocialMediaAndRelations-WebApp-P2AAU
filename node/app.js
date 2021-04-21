@@ -5,6 +5,8 @@ import {createUser, createGroup, createMessage, showAllTableContent, createInter
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
+import {makeFriends, genGroups} from "./onceADay.js";
+
 
 //Global constants
 
@@ -201,6 +203,10 @@ function processReq(req, res) {
 				case "showAllTable":  // SLET det her
 					showAllTableContent(res);
 				break;
+				case "/creategroups":
+					case "creategroups": 
+						makeFriends()
+					break;
 				default: //For anything else we assume it is a file to be served
 					fileResponse(res, req.url);
 				break;

@@ -1,4 +1,4 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createInterest, getUserEmail};
+export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createInterest, getUserEmail,getAllUserId,getAllGroups};
 import {ValidationError} from "./errors.js";
 
 import mysql from "mysql";
@@ -159,10 +159,29 @@ function getUserEmail(mail) {
 function getAllUserId() {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
-		DBConnection.connect(function(err) {
+		DBConnection.connect(function(err){
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT user_id FROM users WHERE user_state = 1",
+			DBConnection.query("SELECT user_id FROM users WHERE state = '1' ORDER BY user_id ASC",
+			function (err, result, fields) {   
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result);
+					DBConnection.end();
+				}
+			});
+		});
+	});
+}
+
+function getAllGroups() {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err){
+			if (err) 
+                reject(err)
+			DBConnection.query("SELECT * FROM chatGroups",
 			function (err, result, fields) {   
 				if(err) 
 					reject(err) 
