@@ -1,10 +1,24 @@
-document.getElementById("ID of form").addEventListener("submit", sendData); // køre sendData når klikkes på knappen, skriv id af det form eller btn 
+document.getElementById("accInfo").addEventListener("submit", sendData); // kører sendData når klikkes på knappen, skriv id af det form eller btn 
 
 function sendData() {
-	let coolTing = String(document.getElementById("ID of input").value); // skriv id af det input du vil bruge
+	console.log("lmao");
+
+	let firstName = String(document.getElementById("firstName").value); // skriv id af det input du vil bruge 
+	let lastName = String(document.getElementById("lastName").value);  
+	let inputEmail = String(document.getElementById("inputEmail").value); 
+	let password = String(document.getElementById("password").value); 
+	//let study = String(document.getElementById("inputFieldsOfStudy").value); Studieretning, dette skal måske tilføjes til senere brug
+
 	let jsonBody = {
-		kat: coolTing,
-		kat2: "hello"
+		fname: firstName,
+		lname: lastName,
+		mail: inputEmail,
+		intrest1: null,
+		intrest2: null,
+		intrest3: null,
+		intrest4: null,
+		psw: password
+
 	};
   	fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/makeUser', {
 		method: 'POST',
