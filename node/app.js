@@ -5,7 +5,7 @@ import {createUser, createGroup, createMessage, showAllTableContent, createInter
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
-import {makeFriends, genGroups} from "./onceADay.js";
+import {makeFriends} from "./onceADay.js";
 
 
 //Global constants
@@ -15,8 +15,11 @@ export {processReq};
 startServer(); 
 
 //Constants for validating input from the network client
-const minNameLength=1;
-const maxNameLength=50;
+const sMin=1;
+const minPasLen=8;
+const maxNameLen=15;
+const maxPasMailLen=30;
+const maxStudyLen=30;
 
 //Remove potentially dangerous/undesired characters 
 function sanitize(str){
@@ -40,20 +43,20 @@ function validateUserData(userData) {
 				fname: String(sanitize(userData.fname)),
 				lname: String(sanitize(userData.lname)),
 				mail: String(userData.mail).toLowerCase(),
-				intrest1: userData.intrest1,
-				intrest2: userData.intrest2,
-				intrest3: userData.intrest3,
-				intrest4: userData.intrest4
+				birthDate: String(userData.birthDate).toLowerCase(),
+				study: String(userData.study).toLowerCase()
 			}
 		} catch {
 			reject(new Error(ValidationError))
 		}
-		if (isStrToLong(validData.psw) && isStrToLong(validData.mail) &&
-			isStrToLong(validData.fname) && isStrToLong(validData.fname) &&
-			!isInteger(userData.intrest1) && !isInteger(userData.intrest2) &&
-			!isInteger(userData.intrest3) && !isInteger(userData.intrest4)) {
+		if (isStrLen(validData.psw, minPasLen, maxPasMailLen) && 
+			isStrLen(validData.mail, sMin, maxPasMailLen) &&
+			isStrLen(validData.fname, sMin, maxNameLen) && 
+			isStrLen(validData.lname, sMin, maxNameLen) && 
+			isStrLen(validData.birthDate, sMin, maxNameLen) &&
+			isStrLen(validData.study, sMin, maxStudyLen))
 				reject(new Error(ValidationError));
-		}
+
 		if (!validateEmail(userData.mail))
 			reject(new Error(ValidationError));
 		else {
@@ -68,8 +71,8 @@ function validateUserData(userData) {
 	function validateEmail(email) {
 		return /\S+@\S+\.\S+/.test(email);
 	}
-	function isStrToLong(str) {
-		if (str >= minNameLength && str <= maxNameLength)
+	function isStrLen(str, minLength, maxLength) {
+		if (str >= minLength && str <= maxLength)
 			return false
 		return true;
 	}

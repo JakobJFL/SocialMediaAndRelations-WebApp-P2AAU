@@ -1,7 +1,7 @@
 //Creates new groups and deletes old groups
 //Main call function makeFriends()
 import {getAllUserId, createGroup, getAllGroups} from "./database.js";
-export {makeFriends, genGroups};
+export {makeFriends};
 
 
 
