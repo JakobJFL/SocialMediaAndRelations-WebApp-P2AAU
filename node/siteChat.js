@@ -8,9 +8,9 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = 
     `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="js/src/eventsource.min.js"></script>
-    <script type="text/javascript" src="js/main-client.js"></script>
-    <script type="text/javascript" src="js/countdown.js"></script>
+    <script type="text/javascript" src="/js/eventsourceLib/eventsource.min.js"></script>
+    <script type="text/javascript" src="/js/main-client.js"></script>
+    <script type="text/javascript" src="/js/countdown.js"></script>
     </body>
     </html>`
 

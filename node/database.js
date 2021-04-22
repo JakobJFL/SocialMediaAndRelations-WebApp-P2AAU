@@ -1,4 +1,4 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createInterest, getUserEmail,getAllUserId,getAllGroups};
+export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createStudy, getUserEmail,getAllUserId,getAllGroups};
 import {ValidationError} from "./errors.js";
 
 import mysql from "mysql";
@@ -112,20 +112,14 @@ function createUser(body) {
 				fname, 
 				lname, 
 				mail, 
-				intrest1, 
-				intrest2, 
-				intrest3, 
-				intrest4,
-				CHG_TIMESTAMP) VALUES (
+				birthDate, 
+				study) VALUES (
 				${mysql.escape(body.psw)},
 				${mysql.escape(body.fname)},
 				${mysql.escape(body.lname)},
 				${mysql.escape(body.mail)},
-				${mysql.escape(body.intrest1)},
-				${mysql.escape(body.intrest2)},
-				${mysql.escape(body.intrest3)},
-				${mysql.escape(body.intrest4)},
-				'2021-03-26 15:03:10.000000');`;
+				${mysql.escape(body.birthDate)},
+				${mysql.escape(body.study)});`;
 
 			DBConnection.query(sql, function (err, result) {
 				if (err) 
@@ -194,17 +188,15 @@ function getAllGroups() {
 	});
 }
 
-function createInterest(body) {
+function createStudy(body) {
 	const DBConnection = dbConnect();
 	DBConnection.connect(function(err) {
 		if (err) throw err;
-		let sql = `INSERT INTO interests(
+		let sql = `INSERT INTO studys(
 			name, 
-			x, 
-			y) VALUES (
+			priority) VALUES (
 			${mysql.escape(body.name)},
-			${mysql.escape(body.x)},
-			${mysql.escape(body.y)});`;
+			${mysql.escape(body.priority)});`;
 		DBConnection.query(sql, function (err, result) {
 		if (err) throw err;
 		});
@@ -265,7 +257,7 @@ function createMessage(body) {
 
 async function showAllTableContent(res) {
 	let content = [];
-	content.push(await getdata("interests"));
+	content.push(await getdata("studys"));
 	content.push(await getdata("users"));
 	content.push(await getdata("chatGroups"));
 	//content.push(await getdata("messages"));

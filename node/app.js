@@ -1,9 +1,8 @@
 //We use EC6 modules!
 //Importing functions from other files
 import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
-import {createUser, createGroup, createMessage, showAllTableContent, createInterest, getUserEmail} from "./database.js";
+import {createUser, createGroup, createMessage, showAllTableContent, createStudy, getUserEmail} from "./database.js";
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
-import {printLoginPage} from "./siteLogin.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {makeFriends} from "./groups.js";
 
@@ -19,7 +18,6 @@ const sMin=1;
 const minPasLen=8;
 const maxNameLen=15;
 const maxPasMailLen=30;
-const maxStudyLen=30;
 
 //Remove potentially dangerous/undesired characters 
 function sanitize(str){
@@ -44,19 +42,17 @@ function validateUserData(userData) {
 				lname: String(sanitize(userData.lname)),
 				mail: String(userData.mail).toLowerCase(),
 				birthDate: userData.birthDate,
-				study: String(userData.study)
+				study: Number(userData.study)
 			}
 		} catch {
 			reject(new Error(ValidationError))
 		}
-		if (isStrLen(validData.psw, minPasLen, maxPasMailLen) && 
+		if (!(isStrLen(validData.psw, minPasLen, maxPasMailLen) && 
 			isStrLen(validData.mail, sMin, maxPasMailLen) &&
 			isStrLen(validData.fname, sMin, maxNameLen) && 
-			isStrLen(validData.lname, sMin, maxNameLen) && 
-			isStrLen(validData.birthDate, sMin, maxNameLen) &&
-			isStrLen(validData.study, sMin, maxStudyLen))
+			isStrLen(validData.lname, sMin, maxNameLen)))
 				reject(new Error(ValidationError));
-
+				
 		if (!validateEmail(userData.mail))
 			reject(new Error(ValidationError));
 		else {
@@ -72,8 +68,8 @@ function validateUserData(userData) {
 		return /\S+@\S+\.\S+/.test(email);
 	}
 	function isStrLen(str, minLength, maxLength) {
-		if (str >= minLength && str <= maxLength)
-			return false
+		if (str >= minLength && str <= maxLength) 
+			return false;
 		return true;
 	}
 }
@@ -120,8 +116,9 @@ function validateMessageData(messageData) {
 }
 
 function isInteger(number){
-	if (number === parseInt(number,10) || number === null)
+	if (number === parseInt(number,10) || number === null) {
 		return true;
+	}
 	else {
 		console.error("Not integer");
 		return false
@@ -150,11 +147,10 @@ function processReq(req, res) {
 						.catch(err => reportError(res, err))
 					.catch(err => reportError(res, err));
 			break;
-			case "/makeInterest":
-			case "makeInterest": 
+			case "/makeStudy":
+			case "makeStudy": 
 				extractJSON(req)
-					//.then(userData => validateUserData(userData))
-					.then(validatedData => jsonResponse(res, createInterest(validatedData)))
+					.then(validatedData => jsonResponse(res, createStudy(validatedData)))
 					.catch(err => reportError(res, err));
 			break;
 			case "/makeGroup":
@@ -188,7 +184,7 @@ function processReq(req, res) {
 			//USE "sp" from above to get query search parameters
 			switch(pathElements[1]) {
 				case "": 
-					htmlResponse(res, printLoginPage());
+					fileResponse(res, "html/login.html");
 				break;
 				case "/chat":
 				case "chat": 
@@ -197,6 +193,10 @@ function processReq(req, res) {
 				case "/chatSSE":
 				case "chatSSE": 
 					SSEResponse(req, res);
+				break;
+				case "/createAccount":
+				case "createAccount": 
+					fileResponse(res, "html/createAccount.html");
 				break;
 				case "/chatHack": // NOT GOOD
 				case "chatHack": // SLET det her - det er hackerbrian der er på spil
