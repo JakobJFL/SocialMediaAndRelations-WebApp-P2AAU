@@ -5,7 +5,7 @@ import {createUser, createGroup, createMessage, showAllTableContent, createInter
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {printLoginPage} from "./siteLogin.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
-import {makeFriends} from "./onceADay.js";
+import {makeFriends} from "./groups.js";
 
 
 //Global constants
@@ -43,8 +43,8 @@ function validateUserData(userData) {
 				fname: String(sanitize(userData.fname)),
 				lname: String(sanitize(userData.lname)),
 				mail: String(userData.mail).toLowerCase(),
-				birthDate: String(userData.birthDate).toLowerCase(),
-				study: String(userData.study).toLowerCase()
+				birthDate: userData.birthDate,
+				study: String(userData.study)
 			}
 		} catch {
 			reject(new Error(ValidationError))
