@@ -45,19 +45,19 @@ function getGroups(userID) {
 			"INNER JOIN users u2 ON chatGroups.member_id2=u2.user_id " +
 			"INNER JOIN users u3 ON chatGroups.member_id3=u3.user_id " +
 			"INNER JOIN users u4 ON chatGroups.member_id4=u4.user_id " +
-			"INNER JOIN users u5 ON chatGroups.member_id5=u5.user_id " +
-			"WHERE member_id1 = " + 
-				mysql.escape(userID) + " OR member_id2 = " + 
-				mysql.escape(userID) + " OR member_id3 = " + 
-				mysql.escape(userID) + " OR member_id4 = " + 
-				mysql.escape(userID) + " OR member_id5 = " + 
-				mysql.escape(userID) , function (err, result, fields) {    
-					if(err) 
-						reject(err) 
-					else {
-						resolve(result);
-						DBConnection.end();
-					}
+			"LEFT JOIN users u5 ON chatGroups.member_id5=u5.user_id " +
+			"WHERE chatGroups.member_id1 = " + 
+			mysql.escape(userID) + " OR chatGroups.member_id2 = " + 
+			mysql.escape(userID) + " OR chatGroups.member_id3 = " + 
+			mysql.escape(userID) + " OR chatGroups.member_id4 = " + 
+			mysql.escape(userID) + " OR chatGroups.member_id5 = " + 
+			mysql.escape(userID), function (err, result, fields) {    
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result);
+					DBConnection.end();
+				}
 			});
 		});
 	});
@@ -224,7 +224,7 @@ function createGroup(body) {
 				${mysql.escape(body.member_id5)});`;
 			DBConnection.query(sql, function (err, result) {
 				if (err) 
-					reject(new Error(ValidationError));
+					reject(err);
 				resolve(result)
 			});
 			DBConnection.end();
