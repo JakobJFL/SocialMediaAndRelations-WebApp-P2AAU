@@ -10,8 +10,6 @@ function makeFriends(){
   .then(userIds =>{
     getAllGroups()
     .then(prevGroups => {
-      console.table(userIds);
-      console.log(prevGroups);
       
       let newGroupArray = genGroups(userIds, prevGroups);
       
@@ -27,14 +25,6 @@ function makeFriends(){
   })
   .catch(err => console.log(err));
 }
-
-
-//Array med studier
-//Array af brugerid, hentet i ASC efter studie
-//Køre igennem alle studieretninger og laver et 2d array
-//Herefter shuffles hver linje
-//før listerne lægges sammen i et langt array liste
-//som så laves om til grupper i groupSplit og tjekkes for dublicater
 
 function genGroups(users, prevGroups){                          //Main function
 
@@ -60,18 +50,17 @@ function genGroups(users, prevGroups){                          //Main function
     groups = sortGroups(groups);
     console.log(groups);
     runs++;
-
-    console.log("1");
   }while(checkForDublicates(groups, prevGroupsArray)); 
 
   console.log("Runs before uniqe groups found: " + runs);
   let objectGroups = [];
  
   groups.forEach(group =>{
+    if(!group[4]){
+      group[4] = 0;
+    }
     objectGroups.push({member_id1:group[0],member_id2:group[1],member_id3:group[2],member_id4:group[3],member_id5:group[4]})
   })
-
-  //console.table(objectGroups);
   return objectGroups;
 
 function studySeperation(users){                //O(n)
@@ -81,7 +70,7 @@ function studySeperation(users){                //O(n)
   let lookFor = users[0].study;
 
 
-  for(let i = 0; i < users.length; i++){ //skulle gerne resultere i et array med arrays opdelt efter studie
+  for(let i = 0; i < users.length; i++){                     //skulle gerne resultere i et array med arrays opdelt efter studie
     if(lookFor == users[i].study){
       userArray.push(users[i].user_id);
     }
@@ -218,8 +207,6 @@ function arrayCompare(arr1, arr2) {
       };
     });
   });
-  console.log(arr1 +" og "+ arr2);
-  console.log(equals);
 
   if(equals <= 4){
     return false;

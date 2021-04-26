@@ -220,3 +220,36 @@ function processReq(req, res) {
 			reportError(res, NoResourceError); 
 	} //end switch method
 }
+
+
+
+
+
+
+
+
+
+function startCountDown() {
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours("16");
+    tomorrow.setMinutes("00");
+    let countDownDate = new Date(tomorrow).getTime();
+    setTime(countDownDate);
+
+    // Update the count down every 1 second
+    let x = setInterval(function() {
+        setTime(countDownDate);
+    }, 1000);
+
+    function setTime(countDownDate) {
+        let now = new Date().getTime();
+        
+        // Find the distance between now and the count down date
+        let distance = countDownDate - now;
+
+		if(distance = 0){
+			makeFriends()
+		}
+    }
+}
