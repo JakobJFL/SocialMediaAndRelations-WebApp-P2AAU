@@ -1,8 +1,7 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, htmlResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
+import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
 import {createUser, createGroup, createMessage, showAllTableContent, createStudy, getUserEmail} from "./database.js";
-import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {makeFriends} from "./groups.js";
 export {processReq, grupeSize};
@@ -74,17 +73,13 @@ function validateUserData(userData) {
 }
 
 function validateGroupData(groupData) {
-	return new Promise((resolve,reject) => {
-		if (isInteger(groupData.member_id1) &&
-			isInteger(groupData.member_id2) &&
-			isInteger(groupData.member_id3) &&
-			isInteger(groupData.member_id4) &&
-			isInteger(groupData.member_id5)) {
-			resolve(groupData);
+	return new Promise((resolve, reject) => {
+		for (let i = 1; i <= grupeSize; i++) {
+			let key = "member_id"+i; 
+			if (!isInteger(groupData[key])) 
+				reject(new Error(ValidationError));
 		}
-		else {
-			reject(new Error(ValidationError));
-		}
+		resolve(groupData);
 	});	
 }
 
@@ -114,13 +109,10 @@ function validateMessageData(messageData) {
 }
 
 function isInteger(number){
-	if (number === parseInt(number,10) || number === null) {
+	if (number === parseInt(number,10) || number === null) 
 		return true;
-	}
-	else {
-		console.error("Not integer");
-		return false
-	}
+	else 
+		return false;
 }
 
 //Setup HTTP route handling: Called when a HTTP request is received | req=request & res = response
@@ -130,95 +122,93 @@ function processReq(req, res) {
 	let url = new URL(req.url,baseURL);
 	let searchParms = new URLSearchParams(url.search);
 	let queryPath = decodeURIComponent(url.pathname); //Convert url encoded special letters (eg æøå that is escaped by "%number") to JS string
-
+	let pathElements=queryPath.split("/"); 
 	//Switching on request methods POST or GETn eg
+	
 	switch(req.method) {
-		case "POST": {
-		let pathElements=queryPath.split("/"); 
-		switch(pathElements[1]) {
-			case "/makeUser":
-			case "makeUser": 
-				extractJSON(req)
-					.then(userData => validateUserData(userData))
-					.then(validatedData => createUser(validatedData))
-						.then(response => jsonResponse(res, response))
-						.catch(err => reportError(res, err))
-					.catch(err => reportError(res, err));
+		case "POST": 
+			postHandler(req, res, pathElements[1]);
 			break;
-			case "/makeStudy":
-			case "makeStudy": 
-				extractJSON(req)
-					.then(validatedData => jsonResponse(res, createStudy(validatedData)))
-					.catch(err => reportError(res, err));
+		case "GET": 
+			getHandler(req, res, pathElements[1], searchParms)
 			break;
-			case "/makeGroup":
-			case "makeGroup": 
-				extractJSON(req)
-					.then(groupData => validateGroupData(groupData))
-					.then(validatedData => createGroup(validatedData)
-						.then(response => jsonResponse(res, response)))
-						.catch(err => reportError(res, err))
-					.catch(err => reportError(res, err));
-			break;
-			case "/newMessageSSE":
-			case "newMessageSSE": 
-				extractJSON(req)
-					.then(messageData => validateMessageData(messageData))
-					.then(validatedData => {
-						broadcastMsgSSE(req, res, validatedData)
-						.then(returnData => createMessage(returnData))
-						.catch(err => reportError(res, err));
-					}).catch(err => reportError(res, err));
-			break;
-			default: 
-				console.error("Resource doesn't exist");
-				reportError(res, NoResourceError); 
-			}
-		} 
-		break; //POST URL
-		case "GET":{
-			let pathElements=queryPath.split("/"); 
-			//console.log(pathElements);
-			//USE "sp" from above to get query search parameters
-			switch(pathElements[1]) {
-				case "": 
-					fileResponse(res, "html/login.html");
-				break;
-				case "/chat":
-				case "chat": 
-					responseAuth(req, res, searchParms.get("groupID"));
-				break;
-				case "/chatSSE":
-				case "chatSSE": 
-					SSEResponse(req, res);
-				break;
-				case "/createAccount":
-				case "createAccount": 
-					fileResponse(res, "html/createAccount.html");
-				break;
-				case "/chatHack": // NOT GOOD
-				case "chatHack": // SLET det her - det er hackerbrian der er på spil
-					htmlResponse(res, printChatPage(1,""));
-				break;
-				case "/showAllTable": // NOT GOOD
-				case "showAllTable":  // SLET det her
-					showAllTableContent(res);
-				break;
-				case "/creategroups":
-				case "creategroups": 
-					makeFriends()
-				break;
-				default: //For anything else we assume it is a file to be served
-					fileResponse(res, req.url);
-				break;
-			}//path
-		}//switch GET URL
-		break;
 		default:
 			reportError(res, NoResourceError); 
-	} //end switch method
+	} 
 }
 
+function postHandler(req, res, path) {
+	switch(path) {
+		case "/makeUser":
+		case "makeUser": 
+			extractJSON(req)
+				.then(userData => validateUserData(userData))
+				.then(validatedData => createUser(validatedData))
+					.then(response => jsonResponse(res, response))
+					.catch(err => reportError(res, err))
+				.catch(err => reportError(res, err));
+		break;
+		case "/makeStudy":
+		case "makeStudy": 
+			extractJSON(req)
+				.then(validatedData => jsonResponse(res, createStudy(validatedData)))
+				.catch(err => reportError(res, err));
+		break;
+		case "/makeGroup":
+		case "makeGroup": 
+			extractJSON(req)
+				.then(groupData => validateGroupData(groupData))
+				.then(validatedData => createGroup(validatedData)
+					.then(response => jsonResponse(res, response)))
+					.catch(err => reportError(res, err))
+				.catch(err => reportError(res, err));
+		break;
+		case "/newMessageSSE":
+		case "newMessageSSE": 
+			extractJSON(req)
+				.then(messageData => validateMessageData(messageData))
+				.then(validatedData => {
+					broadcastMsgSSE(req, res, validatedData)
+					.then(returnData => createMessage(returnData))
+					.catch(err => reportError(res, err));
+				}).catch(err => reportError(res, err));
+		break;
+		default: 
+			console.error("Resource doesn't exist");
+			reportError(res, NoResourceError); 
+	} 
+}
+
+function getHandler(req, res, path, searchParms) {
+	switch(path) {
+		case "": 
+			fileResponse(res, "html/login.html");
+		break;
+		case "/chat":
+		case "chat": 
+			responseAuth(req, res, searchParms.get("groupID"));
+		break;
+		case "/chatSSE":
+		case "chatSSE": 
+			SSEResponse(req, res);
+		break;
+		case "/createAccount":
+		case "createAccount": 
+			fileResponse(res, "html/createAccount.html");
+		break;
+		case "/showAllTable": // NOT GOOD
+		case "showAllTable":  // SLET det her
+			showAllTableContent(res);
+		break;
+		case "/creategroups":
+		case "creategroups": 
+			makeFriends()
+		break;
+		default: //For anything else we assume it is a file to be served
+			fileResponse(res, req.url);
+		break;
+	}
+}
 
 
 

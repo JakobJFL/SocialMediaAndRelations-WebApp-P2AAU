@@ -97,15 +97,14 @@ function addSSEListeners() {
 		const month = monthNamesDK[dNow.getMonth()]
 		const dateStr = dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + dNow.getMinutes();
 		if (String(responseObj.group_id) == groupID) { //Allow type conversion
+			let allChats = document.getElementById("allChat");
 			if (String(responseObj.user_id) != userID) { //Allow type conversion
 				let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
-				let allChat = document.getElementById("allChat");
-				allChat.insertAdjacentHTML('beforeend', nodeStr);
+				allChats.insertAdjacentHTML('beforeend', nodeStr);
 			}
 			else {
 				let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
-				let allChat = document.getElementById("allChat");
-				allChat.insertAdjacentHTML('beforeend', nodeStr);
+				allChats.insertAdjacentHTML('beforeend', nodeStr);
 			}
 		}
 	}

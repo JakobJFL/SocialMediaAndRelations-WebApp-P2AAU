@@ -8,7 +8,7 @@ import {processReq, grupeSize} from "./app.js";
 import {ValidationError, AuthError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, htmlResponse,responseAuth,jsonResponse,errorResponse};
+export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";
@@ -33,7 +33,6 @@ function securePath(userPath){
 // send contents as file as response
 function fileResponse(res, filename){
 	const sPath=securePath(filename);
-	//console.log("Reading:"+sPath);
 	fs.readFile(sPath, (err, data) => {
 		if (err) {
 			console.error(err);
@@ -110,37 +109,35 @@ function SSEResponse(req, res) {
 			"Connection": "keep-alive",
 			"Cache-Control": "no-cache"
 		});
-		res.write("event: chat\ndata: can\n\n"); // Keeping the connection open -> No response.end()
+		res.write("event: chat\ndata: \n\n"); // Keeping the connection open -> No response.end()
 	}).catch(err => reportError(res, err));
 }
 
 function responseAuth(req, res, parmsGroupID) {
 	isAuthenticated(req).then(loginResult => {
 		printChatPage(loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname, parmsGroupID)
-			.then(html => htmlResponseCHeader(res, html, loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname))
+			.then(html => htmlChatResponse(res, html, loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname))
 			.catch(err => console.error(err));
 	}).catch(err => reportError(res, err));
 }
 
-function htmlResponseCHeader(res, htmlString, user_id, fname, lname){
+function htmlChatResponse(res, htmlString, user_id, fname, lname){
 	let groupID = 0;
 	getGroups(user_id).then(groupsData => {
 		for (const group of groupsData) {
 			groupID = group.group_id;
 			break;
 		}
-		res.statusCode = 200;
-		res.setHeader('Content-Type', "text/html");
-		res.setHeader('user_ID', user_id);
-		res.setHeader('group_id', groupID);
-		res.setHeader('fname', fname);
-		res.setHeader('lname', lname);
-		res.write(htmlString);
-		res.end('\n');
+		let objHeaderArr = [];
+		objHeaderArr.push({key: "group_ID", value: groupID})
+		objHeaderArr.push({key: "user_ID", value: user_id})
+		objHeaderArr.push({key: "fname", value: fname})
+		objHeaderArr.push({key: "lname", value: lname})
+		sendResponse(res, 200, htmlString, "text/html", objHeaderArr)
 	});
 }
 
-// 
+// Broadcast new message from SSE
 async function broadcastMsgSSE(req, res, data) {
 	try { 
 		res.writeHead(200).end();
@@ -178,32 +175,34 @@ function isUserIdInGroup(groupsMembers, userId) {
 	return false;
 }
 
+/********* Response handling *********/
+
 // Send a error response with a given HTTP error code, and reason string 
-function errorResponse(res, code, reason){
-	res.statusCode = code;
-	res.setHeader('Content-Type', 'text/txt');
-	res.write("Error:" + code + " - " + reason);
-	res.end("\n");
+function errorResponse(res, code, reason) {
+	sendResponse(res, code, "Error:" + code + " - " + reason, "text/txt", null)
 }
 
 // Send 'obj' object as JSON as response
-function jsonResponse(res, obj){
-	res.statusCode = 200;
-	res.setHeader('Content-Type', 'application/json');
-	res.write(JSON.stringify(obj));
+function jsonResponse(res, obj) {
+	sendResponse(res, 200, JSON.stringify(obj), "application/json", null)
+}
+
+// Writes, sets headers and statusCode on response 
+function sendResponse(res, code, writeStr, conType, objHeaderArr) {
+	res.statusCode = code;
+	res.setHeader("Content-Type", conType);
+	if (objHeaderArr) {
+		for (const objHead of objHeaderArr)
+			res.setHeader(objHead.key, objHead.value);
+	}
+	res.write(writeStr);
 	res.end('\n');
 }
 
-// Send 'htmlString' string as response
-function htmlResponse(res, htmlString){
-	res.statusCode = 200;
-	res.setHeader('Content-Type', "text/html");
-	res.write(htmlString);
-	res.end('\n');
-}
+/********* Request handling *********/
 
 // Extracts json to object
-function extractJSON(req){
+function extractJSON(req) {
 	if (isJsonEncoded(req.headers['content-type']))
 	return collectPostBody(req).then(body=> {
 		let jsonBody = JSON.parse(body);
@@ -214,7 +213,7 @@ function extractJSON(req){
 }
 
 // Check if first header is application/json
-function isJsonEncoded(contentType){
+function isJsonEncoded(contentType) {
 	let ctType = contentType.split(";")[0];
 	ctType = ctType.trim();
 	return (ctType === "application/json"); 
@@ -223,7 +222,7 @@ function isJsonEncoded(contentType){
 /* As the body of a POST may be long the HTTP modules streams chunks of data
    that must first be collected and appended before the data can be operated on. 
    This function collects the body and returns a promise for the body data */
-function collectPostBody(req){
+function collectPostBody(req) {
 	return new Promise((resolve,reject) => {
 		if (1 > 1e7) {  // Protect againts DoS attack if sending an very very large post body
 			req.connection.destroy();
@@ -247,11 +246,11 @@ function collectPostBody(req){
 }
 
 /********* Setup HTTP server and route handling *********/
-  
+
 //This is the server object. For every request, the function requestHandler is called
 const server = http.createServer(requestHandler);
 
-function requestHandler(req,res){
+function requestHandler(req,res) {
 	try {
 		processReq(req,res);
 	}catch(err) {
