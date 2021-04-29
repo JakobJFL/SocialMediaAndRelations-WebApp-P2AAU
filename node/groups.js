@@ -7,11 +7,10 @@ function makeFriends(){
 	getAllUserId().then(userIds =>{
 		getAllGroups().then(prevGroups => {
 		let newGroupArray = genGroups(userIds, prevGroups);
-		
-		console.log(newGroupArray); 
+	
 		for (const groups of newGroupArray) {
 			createGroup(groups)
-			//.then(console.log("group with " + groupobject.member_id1,groupobject.member_id2,groupobject.member_id3,groupobject.member_id4,groupobject.member_id5 + " is created" ))
+			.then(console.log("group with " + groups.member_id1,groups.member_id2,groups.member_id3,groups.member_id4,groups.member_id5 + " is created" ))
 			.catch(err => console.log(err))
 		}
 		})
@@ -25,38 +24,40 @@ function genGroups(users, prevGroups){                          //Main function
 	prevGroups.forEach(group =>{
 		prevGroupsArray.push([group.member_id1,group.member_id2,group.member_id3,group.member_id4,group.member_id5])
 	})
-	console.table(users);
 
 	let studyArrays = studySeperation(users);
 	let shuffledStudys = [];
 	let runs = 0;
+  let maxRuns = 50;
 	let groups = [];
 
-	console.table(studyArrays);
 	do{
 		studyArrays.forEach(study =>{
 		shuffledStudys.push(shuffle(study));
 		})
 		groups = groupSplit(shuffledStudys);
 		groups = sortGroups(groups);
-		console.log(groups);
 		runs++;
-	} while(checkForDublicates(groups, prevGroupsArray)); 
-
-	console.log("Runs before uniqe groups found: " + runs);
-	let objectGroups = [];
-	
-	groups.forEach(group => {
-		objectGroups.push({
-			member_id1: group[0],
-			member_id2: group[1],
-			member_id3: group[2],
-			member_id4: group[3],
-			member_id5: group[4]
-		});
-	});
-	return objectGroups;
-
+	} while(checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); 
+  if(runs == maxRuns){
+    console.log("MAX RUNS EXCEEDED");
+  }
+  else{
+    console.log("Runs before uniqe groups found: " + runs);
+    let objectGroups = [];
+    
+    groups.forEach(group => {
+      objectGroups.push({
+        member_id1: group[0],
+        member_id2: group[1],
+        member_id3: group[2],
+        member_id4: group[3],
+        member_id5: group[4]
+      });
+    });
+    return objectGroups;
+  }
+}
 	function studySeperation(users){                //O(n)
 		let userArray = [];
 		let allUserArray = [];
@@ -98,13 +99,13 @@ function genGroups(users, prevGroups){                          //Main function
 		let groupsize = 5;                 
 		let full = Math.floor(usersShuffled.length/groupsize);
 		let rest = usersShuffled.length%groupsize;
-		let groups = [];
-		let group = [];
+    let groups = [];
+    let group = [];
 		let k = 0;
 
-		if(rest == 3){full -= 1; rest += 5}                       //5+3 = 8   //2 groups of 4
-		if(rest == 2){full -= 2; rest += 10}                      //10+2 = 12 //3 groups of 4
-		if(rest == 1){full -= 3; rest += 15}                      //15+1 = 16 //4 groups of 4
+		if(rest == 3){full -= 1; rest += groupsize}                        //5+3 = 8   //2 groups of 4
+		if(rest == 2){full -= 2; rest += groupsize*2}                      //10+2 = 12 //3 groups of 4
+		if(rest == 1){full -= 3; rest += groupsize*3}                      //15+1 = 16 //4 groups of 4
 
 		for(let i = 0; i < full; i++){                            //Splits full size groups
 			for(let j = 0; j < groupsize; j++){
@@ -126,16 +127,16 @@ function genGroups(users, prevGroups){                          //Main function
 		return groups;
 	}
 
-	function checkForDublicates(groups, prevGroups){              //Checks for dublicate groups between groups amd prevgroups
-		for(let i = 0; i < groups.length; i++){
-			for(let j = 0; j < prevGroups.length; j++){
-				if (arrayCompare(groups[i], prevGroups[j])) 
-					return true;
-
-			}
-		}
-		return false;
-	}
+  function checkForDublicates(groups, prevGroups){              //Checks for dublicate groups between groups amd prevgroups
+    for(let i = 0; i < groups.length; i++){
+      for(let j = 0; j < prevGroups.length; j++){
+        if (arrayCompare(groups[i], prevGroups[j])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
 	function sortGroups(groups){                                  //Sorts the induvidial groups in asending order
 		for(let i = 0; i < groups.length; i++){
@@ -178,19 +179,23 @@ function genGroups(users, prevGroups){                          //Main function
 		}
 		return i;
 	}
-	function arrayCompare(arr1, arr2) {
-		let equals = 0;
-		arr1.forEach(num1 => {
-			arr2.forEach(num2 => {
-			if(num1 === num2)
-				equals++
-			});
-		});
-		if(equals <= 4)
-			return false;
-		else
-			return true;
-	}
-}
+  function arrayCompare(arr1, arr2) {
+    let equals = 0;
+    arr1.forEach(num1 => {
+      arr2.forEach(num2 => {
+        if(num1 == num2){
+          equals++
+        };
+      });
+    });
+  
+    if(equals < 3){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
 
 
