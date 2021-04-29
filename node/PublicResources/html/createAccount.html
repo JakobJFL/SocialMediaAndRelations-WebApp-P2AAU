@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="../node0/css/signin.css">
 	<link rel="stylesheet" href="../node0/bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../node0/fontAwesome-free/css/all.css">
     <title>Opret konto - Social Media and Relations WebApp-P2AAU</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 					<div class="col-md-6">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-two-tone/24/000000/person-male.png"/></span>
+								<span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></span>
 								</div>
 							<input type="text" id="firstName" oninput="checkNames(this)" class="form-control" placeholder="Søren" required autofocus aria-label="Søren" aria-describedby="basic-addon1">
 						</div>
@@ -27,7 +27,7 @@
 					<div class="col">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-two-tone/24/000000/person-male.png"/></span>
+								<span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></span>
 							</div>
 							<input type="text" id="lastName" oninput="checkNames(this)" class="form-control" placeholder="Sørensen" required> 
 						</div>
@@ -38,7 +38,7 @@
 					<div class="col-md">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon3"><img src="https://img.icons8.com/material-outlined/24/000000/important-mail.png"/></span>
+								<span class="input-group-text" id="basic-addon3"><i class="fas fa-envelope"></i></span>
 							</div>
 							<input type="email" id="inputEmail" class="form-control" placeholder="sørensørensen@yahoo.dk" required aria-describedby="basic-addon3">
 						</div>	
@@ -49,7 +49,7 @@
 						<small class="identity text-muted">Hvornår er du født? </small>
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon4"><img src="https://img.icons8.com/material-outlined/24/000000/edit-calendar.png"/></span>
+								<span class="input-group-text" id="basic-addon4"><i class="fas fa-calendar-alt"></i></span>
 							</div>
 							<input type="date" id="birthDate" class="form-control" value="2000-01-01" min="1880-01-01" required>
 						</div>
@@ -58,7 +58,7 @@
 						<small class="identity text-muted">Hvilket studie går du på?</small>
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon1"><img src="https://img.icons8.com/material-outlined/24/000000/literature--v1.png"/></span>
+								<span class="input-group-text" id="basic-addon1"><i class="fas fa-book-open"></i></span>
 							</div>
 							<select class="form-control" id="inputFieldsOfStudy">
 								<option value="1">Software</option>
@@ -90,7 +90,7 @@
 					<div class="col">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
+								<span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
 								</div>
 							<input type="password" id="password" class="form-control" placeholder="Adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
 						</div>
@@ -100,7 +100,7 @@
 					<div class="col">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="basic-addon2"><img src="https://img.icons8.com/material-outlined/24/000000/lock.png" /></span>
+								<span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
 								</div>
 							<input type="password" id="passwordRepeat" oninput="check(this)" class="form-control" placeholder="Gentag adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
 						</div>

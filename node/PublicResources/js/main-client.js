@@ -20,7 +20,7 @@ function getChatSiteBtn(event) {
   //console.log(cards[0].innerHTML);
   //let matches = cards[0].getAttribute("onclick");
   //console.log(matches);
-  addSEEListeners();
+  addSSEListeners();
   startCountDown();
 }
 
@@ -68,6 +68,49 @@ function submitOnEnter(event){
 	}
 }
 
+function storeUser(usernameID) {
+	sessionStorage.setItem('usernameID', usernameID);
+}
+
+//EventSource
+function addSSEListeners() {
+	let chat = new EventSourcePolyfill("../node0/chatSSE", {
+			headers: {
+				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
+			}
+		});
+	chat.addEventListener("chat", chatEventHander);
+	/*
+	document.addEventListener("visibilitychange", function() {
+		if (document.hidden) {
+			chat.removeEventListener();
+		} else {
+			chat.addEventListener("chat", chatEventHander);
+		}
+	});
+	*/
+
+	function chatEventHander(event) {
+		let responseObj = JSON.parse(event.data);
+		const monthNamesDK = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun","Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+		const dNow = new Date();
+		const month = monthNamesDK[dNow.getMonth()]
+		const dateStr = dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + dNow.getMinutes();
+		if (String(responseObj.group_id) == groupID) { //Allow type conversion
+			if (String(responseObj.user_id) != userID) { //Allow type conversion
+				let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
+				let allChat = document.getElementById("allChat");
+				allChat.insertAdjacentHTML('beforeend', nodeStr);
+			}
+			else {
+				let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
+				let allChat = document.getElementById("allChat");
+				allChat.insertAdjacentHTML('beforeend', nodeStr);
+			}
+		}
+	}
+}
+
 function addChatSender(message, userName, date) {
 	let dummy = "";
 	if (message.length <= messageLengthToAddDummy )
@@ -104,51 +147,11 @@ function addChatReciever(message, date) {
   return resReciever;
 }
 
-function addSEEListeners() {
-	let chat = new EventSourcePolyfill("../node0/chatSSE", {
-			headers: {
-				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
-			}
-		});
-	chat.addEventListener("chat", chatEventHander);
-	document.addEventListener("visibilitychange", function() {
-		if (document.hidden) {
-			chat.removeEventListener();
-		} else {
-			chat.addEventListener("chat", chatEventHander);
-		}
-	});
-
-	function chatEventHander(event) {
-		let responseObj = JSON.parse(event.data);
-		const monthNamesDK = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun","Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
-		const dNow = new Date();
-		const month = monthNamesDK[dNow.getMonth()]
-		const dateStr = dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + dNow.getMinutes();
-		if (String(responseObj.group_id) == groupID) { //Allow type conversion
-			if (String(responseObj.user_id) != userID) { //Allow type conversion
-				let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
-				let allChat = document.getElementById("allChat");
-				allChat.insertAdjacentHTML('beforeend', nodeStr);
-			}
-			else {
-				let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
-				let allChat = document.getElementById("allChat");
-				allChat.insertAdjacentHTML('beforeend', nodeStr);
-			}
-		}
-	}
-}
-
-function storeUser(usernameID) {
-  	sessionStorage.setItem('usernameID', usernameID);
-}
-
+//POST new Message
 function newMessage() {
 	let message = String(document.getElementById("messageSenderBox").value);
 	let jsonBody = {
 		group_id: Number(groupID),
-		user_id: Number(userID),
 		msg_content: message,
 		fname: thisFname,
 		lname: thisLname

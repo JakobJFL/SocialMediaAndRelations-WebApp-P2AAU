@@ -1,13 +1,15 @@
 export {printChatPage};
+import {grupeSize} from "./app.js"
 import {getGroups, getChats} from "./database.js";
 
 const messageLengthToAddDummy = 40;
 
 function printChatPage(userID, fname, lname, parmsGroupID) {
-	console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
+	//console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
     let top = `<!DOCTYPE html><html lang="en">`;
     let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/js/eventsourceLib/eventsource.min.js"></script>
+    <script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
+	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.js"></script>
     <script type="text/javascript" src="/js/main-client.js"></script>
     <script type="text/javascript" src="/js/countdown.js"></script>
     </body>
@@ -31,7 +33,7 @@ function printHead() {
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+			<link rel="stylesheet" href="fontAwesome-free/css/all.css">
 
 			<link rel="stylesheet" href="css/messages.css">
 			<link rel="stylesheet" href="css/chatRoomMain.css">
@@ -78,7 +80,7 @@ function printBody(userID, fname, lname, parmsGroupID) {
                         <div class="input-group">
                             <textarea type="textbox" role="textbox" id="messageSenderBox" data-text="Skriv en besked" aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></textarea>
                             <div class="input-group-append">
-                            <button type="submit" id="btnSender" class="btn btn-outline-primary send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                            <button type="submit" id="btnSender" class="btn btn-outline-primary send-btn"><i class="fas fa-paper-plane"></i></button>
                             </div>
                         </div>
                         </form>
@@ -108,17 +110,17 @@ function printBody(userID, fname, lname, parmsGroupID) {
         if (message.length <= messageLengthToAddDummy )
             dummy = `<div class="dummy-space-left"></div>`
         let resSender = `<div class="media sender-msg mb-3">
-        <img src="pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
-        <div class="media-body py-2 ml-3">
-          <p class="small top-text-muted">${userName}</p>
-          <div class="bg-grey rounded py-2 px-3 mb-2">
-            <p class="text-small mb-0">${message}</p>
-          </div>
-        </div>
-        <p class="small text-muted text-bottom-sender">${date}</p>
-        ${dummy}
-      </div>`;
-      return resSender;
+			<img src="pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
+			<div class="media-body py-2 ml-3">
+				<p class="small top-text-muted">${userName}</p>
+				<div class="bg-grey rounded py-2 px-3 mb-2">
+					<p class="text-small mb-0">${message}</p>
+				</div>
+			</div>
+			<p class="small text-muted text-bottom-sender">${date}</p>
+			${dummy}
+    	</div>`;
+      	return resSender;
     }
 
     function addChatReciever(message, date) {
@@ -129,9 +131,9 @@ function printBody(userID, fname, lname, parmsGroupID) {
         let resReciever = `<div class="media reciever-msg mb-3">
         ${dummy}
         <div class="media-body">
-          <div class="bg-primary rounded py-2 px-3 mb-2">
-            <p class="text-small mb-0 text-white">${message}</p>
-          </div>
+        	<div class="bg-primary rounded py-2 px-3 mb-2">
+            	<p class="text-small mb-0 text-white">${message}</p>
+          	</div>
         </div>
         <p class="small text-muted text-bottom-reciever">${date}</p>
       </div>`;
@@ -139,24 +141,42 @@ function printBody(userID, fname, lname, parmsGroupID) {
     }
 
     function makeCardTitle(group) {
-      let names = "";
-      let isNameDel = false;
-	  let grupeLen = 5;
-      for (let i = 1; i <= grupeLen; i++) {
-        let key = "u"+i; 
-        if (group[key] === fname && !isNameDel)
-        	isNameDel = true;
-        else {
-			if (group[key]) {
-				names += group[key];
-				if (i !== grupeLen) 
-					names += ", "
+		let names = "";
+		let isNameDel = false;
+		for (let i = 1; i <= grupeSize; i++) {
+			let key = "u"+i; 
+			if (group[key] === fname && !isNameDel)
+				isNameDel = true;
+			else {
+				if (group[key]) {
+					names += group[key];
+					if (i !== grupeSize) 
+						names += ", "
+				}
 			}
-        }
-      }
-      return names;
+		}
+		return names;
     }
 
+	function makeCardSubtitle(group) {
+		let names = "";
+		let isNameDel = false;
+		for (let i = 1; i <= grupeSize; i++) {
+			let key = "s"+i; 
+			if (group[key] === fname && !isNameDel)
+				isNameDel = true;
+			else {
+			  	if (group[key]) {
+				  	names += group[key];
+				  	if (i !== grupeSize) 
+					  	names += ", "
+			  	}
+		  	}
+		}
+		return names;
+	  }
+
+    
 	let promise = new Promise((resolve,reject) => {
 		let cards = topCard+countdownCard;
 		let groupID = parmsGroupID;
@@ -166,13 +186,14 @@ function printBody(userID, fname, lname, parmsGroupID) {
 				reject("promiseReject(getGroups)");
 			for (const group of groupsData) {
 				let cardTitle = makeCardTitle(group);
+				let cardSubtitle = makeCardSubtitle(group);
 				if (!groupID) 
 					groupID = group.group_id;
 				bottomChat = bottomChatFun();
 				if (group.group_id == groupID) 
-					cards += addCard(cardTitle, "Ej hvor det flot", "Aktiv nu", group.group_id, "active");
+					cards += addCard(cardTitle, cardSubtitle, "Aktiv nu", group.group_id, "active");
 				else 
-					cards += addCard(cardTitle, "Ej hvor det flot", "Aktiv nu", group.group_id, "");
+					cards += addCard(cardTitle, cardSubtitle, "Aktiv nu", group.group_id, "");
 				getChats(groupID).then(chatsData => {
 					if (!chatsData) 
 						reject("promiseReject(getChats)");

@@ -5,13 +5,12 @@ import {createUser, createGroup, createMessage, showAllTableContent, createStudy
 import {printChatPage} from "./siteChat.js"; // DET skal væk når chatHack er SLET
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {makeFriends} from "./groups.js";
-
-
-//Global constants
-
-export {processReq};
+export {processReq, grupeSize};
 
 startServer(); 
+
+//Global constants
+const grupeSize = 5;
 
 //Constants for validating input from the network client
 const sMin=1;
@@ -96,7 +95,6 @@ function validateMessageData(messageData) {
 		try {
 			validData = {
 				msg_content: String(messageData.msg_content),
-				user_id: messageData.user_id,
 				group_id: messageData.group_id,
 				fname: messageData.fname,
 				lname: messageData.lname
@@ -107,7 +105,7 @@ function validateMessageData(messageData) {
 		if (validData.msg_content >= content_limit || validData.msg_content.length < 1) {
 			reject(new Error(ValidationError));
 		}
-		else if(isInteger(validData.user_id) && isInteger(validData.group_id)) {
+		else if(isInteger(validData.group_id)) {
 			resolve(validData);
 		}
 		else 
@@ -167,8 +165,8 @@ function processReq(req, res) {
 				extractJSON(req)
 					.then(messageData => validateMessageData(messageData))
 					.then(validatedData => {
-						createMessage(validatedData)
-						.then(() => broadcastMsgSSE(req, res, validatedData))
+						broadcastMsgSSE(req, res, validatedData)
+						.then(returnData => createMessage(returnData))
 						.catch(err => reportError(res, err));
 					}).catch(err => reportError(res, err));
 			break;
@@ -207,9 +205,9 @@ function processReq(req, res) {
 					showAllTableContent(res);
 				break;
 				case "/creategroups":
-					case "creategroups": 
-						makeFriends()
-					break;
+				case "creategroups": 
+					makeFriends()
+				break;
 				default: //For anything else we assume it is a file to be served
 					fileResponse(res, req.url);
 				break;

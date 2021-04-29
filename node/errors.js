@@ -1,10 +1,11 @@
-export {ValidationError, NoResourceError, AuthError, InternalError, reportError};
+export {ValidationError, NoResourceError, AuthError, InternalError, MessageTooLongError, reportError};
 import {errorResponse} from "./server.js";
 
 const InternalError = "Internal Error";
 const ValidationError = "Validation Error";
 const AuthError = "Authentication Error";
 const NoResourceError = "No Such Resource";
+const MessageTooLongError="MsgTooLong";
 
 function reportError(res,error){
     switch (error.message){

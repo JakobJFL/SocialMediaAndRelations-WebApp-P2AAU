@@ -40,7 +40,9 @@ function getGroups(userID) {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT chatGroups.group_id, u1.fname AS u1, u2.fname AS u2, u3.fname AS u3, u4.fname AS u4, u5.fname AS u5 FROM chatGroups " + 
+			DBConnection.query("SELECT chatGroups.group_id, u1.fname AS u1, u2.fname AS u2, u3.fname AS u3, u4.fname AS u4, u5.fname AS u5, " +
+			"u1.study AS s1, u2.study AS s2, u3.study AS s3, u4.study AS s4, u5.study AS s5 FROM chatGroups " + 
+			//"INNER JOIN studys studyJoin ON us.study=studyJoin.study_id " +
 			"INNER JOIN users u1 ON chatGroups.member_id1=u1.user_id " +
 			"INNER JOIN users u2 ON chatGroups.member_id2=u2.user_id " +
 			"INNER JOIN users u3 ON chatGroups.member_id3=u3.user_id " +
@@ -74,7 +76,7 @@ function getGroupMembers(groupID) {
 					if(err) 
 						reject(err) 
 					else {
-						resolve(result);
+						resolve(result[0]); // Resolve first in array - There should only be one
 						DBConnection.end();
 					}
 			});
