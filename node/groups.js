@@ -32,11 +32,16 @@ function genGroups(users, prevGroups){                          //Main function
 	let groups = [];
 
 	do{
+    groups = [];
+    shuffledStudys = [];
+    console.log(groups);
+
 		studyArrays.forEach(study =>{
 		shuffledStudys.push(shuffle(study));
 		})
 		groups = groupSplit(shuffledStudys);
 		groups = sortGroups(groups);
+    console.log(groups);
 		runs++;
 	} while(checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); 
   if(runs == maxRuns){
@@ -188,8 +193,9 @@ function genGroups(users, prevGroups){                          //Main function
         };
       });
     });
+    console.log(equals);
   
-    if(equals < 3){
+    if(equals < 4){
       return false;
     }
     else{
