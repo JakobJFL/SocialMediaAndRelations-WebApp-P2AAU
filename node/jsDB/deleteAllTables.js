@@ -11,30 +11,32 @@ var con = mysql.createConnection({
 con.connect(function(err) { 
     if (err) throw err; 
     console.log("Database Connected"); 
+    let sql = "";
     
-    var sql = "DROP TABLE `messages`"; 
+    sql = "DROP TABLE `messages`"; 
     con.query(sql, function (err, result) { 
       if (err) throw err; 
       console.log("messages DELETED"); 
     }); 
 
-    var sql = "DROP TABLE `chatGroups`"; 
+
+    sql = "DROP TABLE `chatGroups`"; 
     con.query(sql, function (err, result) { 
       if (err) throw err; 
       console.log("chatGroups DELETED"); 
       
     });
 
-    var sql = "DROP TABLE `users`"; 
+    sql = "DROP TABLE `users`"; 
     con.query(sql, function (err, result) { 
       if (err) throw err; 
       console.log("users DELETED"); 
     }); 
-    
-    var sql = "DROP TABLE `interests`"; 
+    /*
+    sql = "DROP TABLE `studys`"; 
     con.query(sql, function (err, result) { 
       if (err) throw err; 
-      console.log("interests DELETED"); 
+      console.log("studys DELETED"); 
     }); 
-    
+    */
   }); 

@@ -4,6 +4,7 @@ import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, star
 import {createUser, createGroup, createMessage, showAllTableContent, createStudy, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {makeFriends} from "./groups.js";
+import {createAllNewUsers} from "./createAllUsers.js";
 export {processReq, grupeSize};
 
 startServer(); 
@@ -97,7 +98,7 @@ function validateMessageData(messageData) {
 		} catch {
 			reject(new Error(ValidationError))
 		}
-		if (validData.msg_content >= content_limit || validData.msg_content.length < 1) {
+		if (validData.msg_content.length >= content_limit || validData.msg_content.length < 1) {
 			reject(new Error(ValidationError));
 		}
 		else if(isInteger(validData.group_id)) {
@@ -203,6 +204,10 @@ function getHandler(req, res, path, searchParms) {
 		case "/creategroups":
 		case "creategroups": 
 			makeFriends()
+		break;
+		case "/createAllNewUsers":
+		case "createAllNewUsers": 
+			createAllNewUsers()
 		break;
 		default: //For anything else we assume it is a file to be served
 			fileResponse(res, req.url);

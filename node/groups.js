@@ -25,6 +25,7 @@ function makeFriends() {
 					.then(console.log("group with " + groups.member_id1,groups.member_id2,groups.member_id3,groups.member_id4,groups.member_id5 + " is created" ))
 					.catch(err => console.log(err))
 				}
+
 			}
 			else{
 				console.error("NO GROUPS CREATED");
@@ -56,6 +57,7 @@ function genGroups(users, prevGroups) {                           			//Main func
 
 		groups = groupSplit(shuffledStudys);								 //Splits groups to groups of 5 if possible else groups of 4
 		groups = sortGroups(groups);										 //Sorts induvidual groups in the 2d array to check for dublicates
+		//groups = removeDublicates(groups, prevGroupsArray);
 		runs++;
 	} while (checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); //Runs til uniqe groups or maxRuns has been reached
 
@@ -147,7 +149,7 @@ function genGroups(users, prevGroups) {                           			//Main func
 		}
 		return groups;
 	}
-
+ 
   function checkForDublicates(groups, prevGroups) {              			//Checks for dublicate groups between groups amd prevgroups
     for(let i = 0; i < groups.length; i++) {
       for(let j = 0; j < prevGroups.length; j++) {
@@ -165,6 +167,72 @@ function genGroups(users, prevGroups) {                           			//Main func
 		}
 		return groups;
 	}
+
+
+
+
+
+
+
+
+
+
+	function removeDublicates(groups, prevGroupsArray){
+		//console.log("in");
+		//console.table(groups);
+        for(let i = 0; i < groups.length; i++) {
+
+            if(checkForDublicates([groups[i]], prevGroupsArray)){
+
+                let newGroups = unicorn(groups, prevGroupsArray,i,groups[i])
+
+				//console.table(newGroups);
+				for(let j = 0; j < newGroups.length; j++) {
+					groups[i+j] = newGroups[j];
+				}
+            }
+        }
+		//console.log("out");
+		//console.table(groups);
+		return groups;
+    }   
+
+
+
+    function unicorn(groups,prevGroupsArray,index,dublicateShufflearray){
+        let newGroups = [];
+		if(!groups[index+1]){
+			//console.error("NEJ");
+			return false
+		}
+		groups[index+1].forEach(user => {
+			dublicateShufflearray.push(user);
+		});
+
+		//console.log(dublicateShufflearray);
+
+        shuffle(dublicateShufflearray);
+
+        newGroups = groupSplit(dublicateShufflearray);								 
+		newGroups = sortGroups(newGroups);
+
+        if(checkForDublicates(newGroups, prevGroupsArray)){
+            unicorn(groups,prevGroupsArray,index+1,dublicateShufflearray);
+        }
+		//console.log("new");
+		//console.table(newGroups);
+        return newGroups;
+    }
+
+
+
+
+
+
+
+
+
+
 
 	function QuickSort(arr, left = 0, right = arr.length - 1) {
 		let len = arr.length, index;
@@ -201,7 +269,7 @@ function genGroups(users, prevGroups) {                           			//Main func
 		return i;
 	}
   function arrayCompare(arr1, arr2) {										//Checks to make sure a max of 3 groupsmembers have been a groups before 
-	let maxAlike = 3;														//Max groupmembers in the same group compared to previous groups
+	let maxAlike = 4;														//Max groupmembers in the same group compared to previous groups
     let equals = 0;
     arr1.forEach(num1 => {
       arr2.forEach(num2 => {
