@@ -4,22 +4,20 @@ let userID = 0;
 let groupID = 0; 
 let thisFname = ""; 
 let thisLname = ""; 
-
+let loginData = {};
 const messageLengthToAddDummy = 40;
-let loginData={};
-function getLoginData() {
-    loginData.email=String(document.getElementById("inputEmail").value);
-    loginData.password=String(document.getElementById("inputPassword").value);
-  }
 
-function getChatSiteBtn(event) {
-  event.preventDefault(); //we handle the interaction with the server rather than browsers form submission
+function getLoginData() {
+    loginData.email = String(document.getElementById("inputEmail").value);
+    loginData.password = String(document.getElementById("inputPassword").value);
+}
+
+document.getElementById("loginBtn").addEventListener("submit", loginBtn_Submit);
+
+function loginBtn_Submit(event) {
+  event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
   getLoginData();
   getChatSite();
-
-  //console.log(cards[0].innerHTML);
-  //let matches = cards[0].getAttribute("onclick");
-  //console.log(matches);
   addSSEListeners();
   startCountDown();
 }
@@ -38,18 +36,12 @@ function getChatSite() {
 		thisLname = response.headers.get('lname');
 		return response.text();
 	}).then(data => {
-		if (data.startsWith("Error:403")) {
-			let errorField = document.getElementById("errorField");
-			errorField.innerHTML = "Adgangskode eller brugernavn er forkert";
-			errorField.style = "visibility:show";
-		}
-		else if (data.startsWith("Error")) {
-			let errorField = document.getElementById("errorField");
-			errorField.innerHTML = "Der er opstået en ukendt fejl";
-			errorField.style = "visibility:show";
-		}
+		if (data.startsWith("Error:403")) 
+			showError("Adgangskode eller brugernavn er forkert");
+		else if (data.startsWith("Error")) 
+			showError("Der er opstået en ukendt fejl");
 		else {
-			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); // SRY men ved ellers ikke hvordan
+			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); 
 			document.body.innerHTML = data;
 			document.getElementById("btnSender").addEventListener("click", newMessage);
 			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
@@ -59,6 +51,12 @@ function getChatSite() {
 	.catch((error) => {
 		console.error('Error:', error);
 	});
+}
+
+function showError(msg) {
+	let errorField = document.getElementById("errorField");
+	errorField.innerHTML = msg;
+	errorField.style = "visibility:show";
 }
 
 function submitOnEnter(event){
@@ -167,8 +165,6 @@ function newMessage() {
 		console.error('Error:', error);
 	});
 }
-
-document.getElementById("loginBtn").addEventListener("submit", getChatSiteBtn);
 
 function changeGroup(cGroup_id) {
 	fetch('../node0/chat?groupID='+cGroup_id, {

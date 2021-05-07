@@ -1,0 +1,9 @@
+#outputBox {
+    background-color: rgb(235, 235, 235);
+    border: 2px solid rgb(46, 46, 46);
+    width: 400px;
+}
+
+.outputText {
+    margin: 2px;
+}
