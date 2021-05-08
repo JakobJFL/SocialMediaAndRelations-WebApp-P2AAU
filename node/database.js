@@ -1,5 +1,6 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createStudy, getUserEmail,getAllUserId,getAllGroups};
+export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createStudy, getUserEmail, getAllUserId, getAllGroups, getLastMessage};
 import {ValidationError} from "./errors.js";
+import {grupeSize} from "./app.js";
 
 import mysql from "mysql";
 //const mysql = require('mysql');
@@ -40,20 +41,31 @@ function getGroups(userID) {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT chatGroups.group_id, u1.fname AS u1, u2.fname AS u2, u3.fname AS u3, u4.fname AS u4, u5.fname AS u5, " +
-			"u1.study AS s1, u2.study AS s2, u3.study AS s3, u4.study AS s4, u5.study AS s5 FROM chatGroups " + 
-			//"INNER JOIN studys studyJoin ON us.study=studyJoin.study_id " +
-			"INNER JOIN users u1 ON chatGroups.member_id1=u1.user_id " +
-			"INNER JOIN users u2 ON chatGroups.member_id2=u2.user_id " +
-			"INNER JOIN users u3 ON chatGroups.member_id3=u3.user_id " +
-			"INNER JOIN users u4 ON chatGroups.member_id4=u4.user_id " +
-			"LEFT JOIN users u5 ON chatGroups.member_id5=u5.user_id " +
-			"WHERE chatGroups.member_id1 = " + 
-			mysql.escape(userID) + " OR chatGroups.member_id2 = " + 
-			mysql.escape(userID) + " OR chatGroups.member_id3 = " + 
-			mysql.escape(userID) + " OR chatGroups.member_id4 = " + 
-			mysql.escape(userID) + " OR chatGroups.member_id5 = " + 
-			mysql.escape(userID), function (err, result, fields) {    
+			let sql = "SELECT chatGroups.group_id, "
+
+			for (let i = 1; i <= grupeSize; i++) 
+				sql += "u"+i+".fname AS u"+i+", ";
+			for (let i = 1; i <= grupeSize; i++) 
+				if (i === grupeSize)
+					sql += "s"+i+".name AS s"+i;
+				else
+					sql += "s"+i+".name AS s"+i+", ";
+
+			sql += " FROM chatGroups ";
+			for (let i = 1; i <= grupeSize; i++) 
+				sql += "LEFT JOIN users u"+i+" ON chatGroups.member_id"+i+"=u"+i+".user_id ";
+			for (let i = 1; i <= grupeSize; i++) 
+				sql += "INNER JOIN studys s"+i+" ON u"+i+".study=s"+i+".study_id ";
+
+			sql += "WHERE "
+			for (let i = 1; i <= grupeSize; i++) {
+				if (i === 1)
+					sql += "chatGroups.member_id"+i+" = " + mysql.escape(userID);
+				else 
+					sql += " OR chatGroups.member_id"+i+" = " + mysql.escape(userID);
+			}
+
+			DBConnection.query(sql, function (err, result, fields) {    
 				if(err) 
 					reject(err) 
 				else {
@@ -71,6 +83,14 @@ function getGroupMembers(groupID) {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
+			let sql = "SELECT ";
+			for (let i = 1; i <= grupeSize; i++) {
+				if (i === 1)
+					sql += "member_id"+i;
+				else 
+					sql += ", member_id"+i;
+			}
+
 			DBConnection.query("SELECT member_id1, member_id2, member_id3, member_id4, member_id5 FROM chatGroups WHERE group_id = " + 
 				mysql.escape(groupID), function (err, result, fields) {    
 					if(err) 
@@ -90,8 +110,10 @@ function getChats(groupID) {
 		DBConnection.connect(function(err) {
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT * FROM (SELECT messages.group_id, messages.user_ID, messages.msg_content, messages.message_id, messages.TIMESTAMP, users.fname, users.lname FROM messages INNER JOIN users ON messages.user_ID=users.user_id WHERE group_id = " 
-			+ mysql.escape(groupID) + " ORDER BY message_id DESC LIMIT 100) sub ORDER BY message_id ASC;", function (err, result, fields) {   
+			DBConnection.query("SELECT * FROM (SELECT messages.group_id, messages.user_ID, messages.msg_content, " +
+				"messages.message_id, messages.TIMESTAMP, users.fname, users.lname FROM messages "+ 
+				"INNER JOIN users ON messages.user_ID=users.user_id WHERE group_id = " +
+				mysql.escape(groupID) + " ORDER BY message_id DESC LIMIT 100) sub ORDER BY message_id ASC;", function (err, result, fields) {   
 				if(err) 
 					reject(err) 
 				else {
@@ -99,36 +121,6 @@ function getChats(groupID) {
 					DBConnection.end();
 				}
 			});
-		});
-	});
-}
-
-function createUser(body) {
-	const DBConnection = dbConnect();
-	return new Promise((resolve,reject) => {
-		DBConnection.connect(function(err) {
-			if (err) 
-				reject(err);
-			let sql = `INSERT INTO users(
-				psw, 
-				fname, 
-				lname, 
-				mail, 
-				birthDate, 
-				study) VALUES (
-				${mysql.escape(body.psw)},
-				${mysql.escape(body.fname)},
-				${mysql.escape(body.lname)},
-				${mysql.escape(body.mail)},
-				${mysql.escape(body.birthDate)},
-				${mysql.escape(body.study)});`;
-
-			DBConnection.query(sql, function (err, result) {
-				if (err) 
-					reject(new Error(ValidationError));
-				resolve(result);
-			});
-			DBConnection.end();
 		});
 	});
 }
@@ -190,13 +182,54 @@ function getAllGroups() {
 	});
 }
 
+function getLastMessage(groupID) {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err){
+			if (err) 
+                reject(err)
+			DBConnection.query("SELECT TIMESTAMP FROM messages WHERE group_ID = " + mysql.escape(groupID) + " ORDER BY message_id DESC LIMIT 1",
+			function (err, result, fields) {   
+				if(err) 
+					reject(err) 
+				else {
+					resolve(result[0]);
+					DBConnection.end();
+				}
+			});
+		});
+	});
+}
+
+function createUser(body) {
+	const DBConnection = dbConnect();
+	return new Promise((resolve,reject) => {
+		DBConnection.connect(function(err) {
+			if (err) 
+				reject(err);
+			let sql = `INSERT INTO users(psw, fname, lname, mail, birthDate, study) VALUES (
+				${mysql.escape(body.psw)},
+				${mysql.escape(body.fname)},
+				${mysql.escape(body.lname)},
+				${mysql.escape(body.mail)},
+				${mysql.escape(body.birthDate)},
+				${mysql.escape(body.study)});`;
+
+			DBConnection.query(sql, function (err, result) {
+				if (err) 
+					reject(new Error(ValidationError));
+				resolve(result);
+			});
+			DBConnection.end();
+		});
+	});
+}
+
 function createStudy(body) {
 	const DBConnection = dbConnect();
 	DBConnection.connect(function(err) {
 		if (err) throw err;
-		let sql = `INSERT INTO studys(
-			name, 
-			priority) VALUES (
+		let sql = `INSERT INTO studys(name, priority) VALUES (
 			${mysql.escape(body.name)},
 			${mysql.escape(body.priority)});`;
 		DBConnection.query(sql, function (err, result) {
@@ -213,12 +246,7 @@ function createGroup(body) {
 		DBConnection.connect(function(err) {
 			if (err) 
 				reject(err);
-			let sql = `INSERT INTO chatGroups(
-				member_id1, 
-				member_id2, 
-				member_id3, 
-				member_id4,
-				member_id5) VALUES (
+			let sql = `INSERT INTO chatGroups(member_id1, member_id2, member_id3, member_id4, member_id5) VALUES (
 				${mysql.escape(body.member_id1)}, 
 				${mysql.escape(body.member_id2)}, 
 				${mysql.escape(body.member_id3)}, 
@@ -240,10 +268,7 @@ function createMessage(body) {
 		DBConnection.connect(function(err) {
 			if (err) 
 				reject(err);
-			let sql = `INSERT INTO messages(
-				group_id, 
-				user_id, 
-				msg_content) VALUES (
+			let sql = `INSERT INTO messages(group_id, user_id, msg_content) VALUES (
 				${mysql.escape(body.group_id)}, 
 				${mysql.escape(body.user_id)}, 
 				${mysql.escape(body.msg_content)});`;

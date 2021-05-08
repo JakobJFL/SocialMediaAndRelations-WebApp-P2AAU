@@ -15,11 +15,11 @@ function getLoginData() {
 document.getElementById("loginBtn").addEventListener("submit", loginBtn_Submit);
 
 function loginBtn_Submit(event) {
-  event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
-  getLoginData();
-  getChatSite();
-  addSSEListeners();
-  startCountDown();
+	event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
+	getLoginData();
+	getChatSite();
+	addSSEListeners();
+	startCountDown();
 }
 
 function getChatSite() {
@@ -31,7 +31,6 @@ function getChatSite() {
 		},
 	}).then(response => {
 		userID = response.headers.get('user_ID');
-		groupID = response.headers.get('group_id');
 		thisFname = response.headers.get('fname');
 		thisLname = response.headers.get('lname');
 		return response.text();
@@ -43,8 +42,6 @@ function getChatSite() {
 		else {
 			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); 
 			document.body.innerHTML = data;
-			document.getElementById("btnSender").addEventListener("click", newMessage);
-			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
 		}
 		//storeUser();
 	})

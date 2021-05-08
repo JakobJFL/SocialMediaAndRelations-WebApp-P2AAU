@@ -4,7 +4,7 @@ import fs from "fs";
 import path  from "path";
 import process from "process";
 
-import {processReq, grupeSize} from "./app.js";
+import {processReq, grupeSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
@@ -122,19 +122,11 @@ function responseAuth(req, res, parmsGroupID) {
 }
 
 function htmlChatResponse(res, htmlString, user_id, fname, lname){
-	let groupID = 0;
-	getGroups(user_id).then(groupsData => {
-		for (const group of groupsData) {
-			groupID = group.group_id;
-			break;
-		}
-		let objHeaderArr = [];
-		objHeaderArr.push({key: "group_ID", value: groupID})
-		objHeaderArr.push({key: "user_ID", value: user_id})
-		objHeaderArr.push({key: "fname", value: fname})
-		objHeaderArr.push({key: "lname", value: lname})
-		sendResponse(res, 200, htmlString, "text/html", objHeaderArr)
-	});
+	let objHeaderArr = [];
+	objHeaderArr.push({key: "user_ID", value: user_id});
+	objHeaderArr.push({key: "fname", value: fname});
+	objHeaderArr.push({key: "lname", value: lname});
+	sendResponse(res, 200, htmlString, "text/html", objHeaderArr);
 }
 
 // Broadcast new message from SSE
@@ -261,7 +253,8 @@ function requestHandler(req,res) {
 
 //Start server listening for request on port and hostname
 function startServer(){
+	startAutoCreateGroups();
 	server.listen(port, hostname, () => {
-	console.log(`Server is running`);
+		console.log("Server is running");
 	});
 }

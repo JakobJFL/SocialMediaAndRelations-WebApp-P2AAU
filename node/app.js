@@ -3,9 +3,9 @@
 import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
 import {createUser, createGroup, createMessage, showAllTableContent, createStudy, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
-import {makeFriends} from "./groups.js";
+import {createNewGroups} from "./groups.js";
 import {createAllNewUsers} from "./createAllUsers.js";
-export {processReq, grupeSize};
+export {processReq, startAutoCreateGroups, grupeSize};
 
 startServer(); 
 
@@ -201,9 +201,9 @@ function getHandler(req, res, path, searchParms) {
 		case "showAllTable":  // SLET det her
 			showAllTableContent(res);
 		break;
-		case "/creategroups":
-		case "creategroups": 
-			makeFriends()
+		case "/createGroups":
+		case "createGroups": 
+			createNewGroups();
 		break;
 		case "/createAllNewUsers":
 		case "createAllNewUsers": 
@@ -215,34 +215,23 @@ function getHandler(req, res, path, searchParms) {
 	}
 }
 
-
-
-
-
-
-
-
-function startCountDown() {
+function startAutoCreateGroups() {
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours("16");
     tomorrow.setMinutes("00");
     let countDownDate = new Date(tomorrow).getTime();
     setTime(countDownDate);
-
-    // Update the count down every 1 second
+    // Update the count down every 1 minute
     let x = setInterval(function() {
         setTime(countDownDate);
-    }, 1000);
-
+    }, 3600);
     function setTime(countDownDate) {
         let now = new Date().getTime();
-        
         // Find the distance between now and the count down date
         let distance = countDownDate - now;
 
-		if(distance = 0){
-			makeFriends()
-		}
+		if(distance = 0)
+			createNewGroups();
     }
 }
