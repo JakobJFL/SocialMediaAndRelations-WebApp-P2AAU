@@ -1,6 +1,6 @@
 export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createStudy, getUserEmail, getAllUserId, getAllGroups, getLastMessage};
 import {ValidationError} from "./errors.js";
-import {grupeSize} from "./app.js";
+import {groupSize} from "./app.js";
 
 import mysql from "mysql";
 //const mysql = require('mysql');
@@ -43,22 +43,22 @@ function getGroups(userID) {
                 reject(err)
 			let sql = "SELECT chatGroups.group_id, "
 
-			for (let i = 1; i <= grupeSize; i++) 
+			for (let i = 1; i <= groupSize; i++) 
 				sql += "u"+i+".fname AS u"+i+", ";
-			for (let i = 1; i <= grupeSize; i++) 
-				if (i === grupeSize)
+			for (let i = 1; i <= groupSize; i++) 
+				if (i === groupSize)
 					sql += "s"+i+".name AS s"+i;
 				else
 					sql += "s"+i+".name AS s"+i+", ";
 
 			sql += " FROM chatGroups ";
-			for (let i = 1; i <= grupeSize; i++) 
+			for (let i = 1; i <= groupSize; i++) 
 				sql += "LEFT JOIN users u"+i+" ON chatGroups.member_id"+i+"=u"+i+".user_id ";
-			for (let i = 1; i <= grupeSize; i++) 
+			for (let i = 1; i <= groupSize; i++) 
 				sql += "INNER JOIN studys s"+i+" ON u"+i+".study=s"+i+".study_id ";
 
 			sql += "WHERE "
-			for (let i = 1; i <= grupeSize; i++) {
+			for (let i = 1; i <= groupSize; i++) {
 				if (i === 1)
 					sql += "chatGroups.member_id"+i+" = " + mysql.escape(userID);
 				else 
@@ -84,7 +84,7 @@ function getGroupMembers(groupID) {
 			if (err) 
                 reject(err)
 			let sql = "SELECT ";
-			for (let i = 1; i <= grupeSize; i++) {
+			for (let i = 1; i <= groupSize; i++) {
 				if (i === 1)
 					sql += "member_id"+i;
 				else 

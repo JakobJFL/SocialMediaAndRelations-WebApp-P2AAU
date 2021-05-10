@@ -5,12 +5,12 @@ import {createUser, createGroup, createMessage, showAllTableContent, createStudy
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
 import {createAllNewUsers} from "./createAllUsers.js";
-export {processReq, startAutoCreateGroups, grupeSize};
+export {processReq, startAutoCreateGroups, groupSize};
 
 startServer(); 
 
 //Global constants
-const grupeSize = 5;
+const groupSize = 5;
 
 //Constants for validating input from the network client
 const sMin=1;
@@ -75,7 +75,7 @@ function validateUserData(userData) {
 
 function validateGroupData(groupData) {
 	return new Promise((resolve, reject) => {
-		for (let i = 1; i <= grupeSize; i++) {
+		for (let i = 1; i <= groupSize; i++) {
 			let key = "member_id"+i; 
 			if (!isInteger(groupData[key])) 
 				reject(new Error(ValidationError));

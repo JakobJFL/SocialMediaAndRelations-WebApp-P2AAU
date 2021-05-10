@@ -4,7 +4,7 @@ import fs from "fs";
 import path  from "path";
 import process from "process";
 
-import {processReq, grupeSize, startAutoCreateGroups} from "./app.js";
+import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
@@ -159,7 +159,7 @@ function createEventMsg(dataStr) {
 }
 
 function isUserIdInGroup(groupsMembers, userId) {
-	for (let i = 1; i <= grupeSize; i++) {
+	for (let i = 1; i <= groupSize; i++) {
 		let key = "member_id"+i; 
 		if (groupsMembers[key] === userId) 
 			return true;

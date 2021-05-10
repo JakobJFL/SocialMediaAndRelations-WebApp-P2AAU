@@ -1,5 +1,5 @@
 export {printChatPage};
-import {grupeSize} from "./app.js"
+import {groupSize} from "./app.js"
 import {getGroups, getChats, getLastMessage} from "./database.js";
 
 const messageLengthToAddDummy = 40;
@@ -116,7 +116,7 @@ function insertCards(group, lastMessage, fname, groupID) {
 function getCardTitle(group, fname) {
 	let names = "";
 	let isNameDel = false;
-	for (let i = 1; i <= grupeSize; i++) {
+	for (let i = 1; i <= groupSize; i++) {
 		let key = "u"+i; 
 		if (group[key] === fname && !isNameDel)
 			isNameDel = true;
@@ -134,7 +134,7 @@ function getCardTitle(group, fname) {
 function getCardSubtitle(group) {
 	let groups = "";
 	let preGroups = "";
-	for (let i = 1; i <= grupeSize; i++) {
+	for (let i = 1; i <= groupSize; i++) {
 		let key = "s"+i; 
 		if (preGroups !== group[key]) {
 			if (i !== 1) 

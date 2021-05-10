@@ -1,6 +1,7 @@
 //Creates new groups and deletes old groups
 //Main call function makeFriends()
 import {getAllUserId, createGroup, getAllGroups} from "./database.js";
+import {groupSize} from "./app.js";
 export {createNewGroups};
 
 const maxRuns = 10;
@@ -111,21 +112,20 @@ function groupSplit(shuffledStudys) { //Splits array into groups between 4 and 5
 	let usersShuffled = [];
 	for(let i = 0; i < shuffledStudys.length; i++)
 		usersShuffled = usersShuffled.concat(shuffledStudys[i]);
-
-	let groupsize = 5;              
-	let full = Math.floor(usersShuffled.length/groupsize);
-	let rest = usersShuffled.length%groupsize;
+             
+	let full = Math.floor(usersShuffled.length/groupSize);
+	let rest = usersShuffled.length%groupSize;
 	let groups = [];
 	let group = [];
 	let k = 0;
 
 	if(!rest==0){
-		full -= (groupsize-rest);
-		rest = (groupsize-rest)*(groupsize-1);
+		full -= (groupSize-rest);
+		rest = (groupSize-rest)*(groupSize-1);
 	}
 	
 	for(let i = 0; i < full; i++) { //Splits full size groups
-		for(let j = 0; j < groupsize; j++) {
+		for(let j = 0; j < groupSize; j++) {
 			group.push(usersShuffled[k]);
 			k++;
 		}
