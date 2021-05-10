@@ -53,7 +53,7 @@ function genGroups(users, prevGroups) { //Main function
 
 		groups = groupSplit(shuffledStudys); //Splits groups to groups of 5 if possible else groups of 4
 		groups = sortGroups(groups); //Sorts induvidual groups in the 2d array to check for dublicates
-		//groups = removeDublicates(groups, prevGroupsArray);
+		groups = removeDublicates(groups, prevGroupsArray);
 		runs++;
 	} while (checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); //Runs til uniqe groups or maxRuns has been reached
 
@@ -112,14 +112,14 @@ function groupSplit(shuffledStudys) { //Splits array into groups between 4 and 5
 	for(let i = 0; i < shuffledStudys.length; i++)
 		usersShuffled = usersShuffled.concat(shuffledStudys[i]);
 
-	let groupsize = 5;                 
+	let groupsize = 5;              
 	let full = Math.floor(usersShuffled.length/groupsize);
 	let rest = usersShuffled.length%groupsize;
 	let groups = [];
 	let group = [];
 	let k = 0;
 
-	if (rest == 3) {full -= 1; rest += groupsize} //5+3 = 8   //2 groups of 4
+	if (rest == 3) {full -= 1; rest += groupsize}   //5+3 = 8   //2 groups of 4
 	if (rest == 2) {full -= 2; rest += groupsize*2} //10+2 = 12 //3 groups of 4
 	if (rest == 1) {full -= 3; rest += groupsize*3} //15+1 = 16 //4 groups of 4
 
@@ -160,22 +160,17 @@ function sortGroups(groups) { //Sorts the induvidial groups in asending order
 }
 
 function removeDublicates(groups, prevGroupsArray) {
-	//console.log("in");
-	//console.table(groups);
 	for(let i = 0; i < groups.length; i++) {
 		if(checkForDublicates([groups[i]], prevGroupsArray)){
-			let newGroups = unicorn(groups, prevGroupsArray, i, groups[i])
-			//console.table(newGroups);
+			let newGroups = removeDublicatesRek(groups, prevGroupsArray, i, groups[i])
 			for(let j = 0; j < newGroups.length; j++) 
 				groups[i+j] = newGroups[j];
 		}
 	}
-	//console.log("out");
-	//console.table(groups);
 	return groups;
 }   
 
-function unicorn(groups,prevGroupsArray,index,dublicateShufflearray) {
+function removeDublicatesRek(groups,prevGroupsArray,index,dublicateShufflearray) {
 	let newGroups = [];
 	if(!groups[index+1])
 		return false
@@ -184,8 +179,6 @@ function unicorn(groups,prevGroupsArray,index,dublicateShufflearray) {
 		dublicateShufflearray.push(user);
 	});
 
-	//console.log(dublicateShufflearray);
-
 	shuffle(dublicateShufflearray);
 
 	newGroups = groupSplit(dublicateShufflearray);								 
@@ -193,8 +186,6 @@ function unicorn(groups,prevGroupsArray,index,dublicateShufflearray) {
 
 	if(checkForDublicates(newGroups, prevGroupsArray))
 		unicorn(groups,prevGroupsArray,index+1,dublicateShufflearray);
-	//console.log("new");
-	//console.table(newGroups);
 	return newGroups;
 }
 
