@@ -119,10 +119,11 @@ function groupSplit(shuffledStudys) { //Splits array into groups between 4 and 5
 	let group = [];
 	let k = 0;
 
-	if (rest == 3) {full -= 1; rest += groupsize}   //5+3 = 8   //2 groups of 4
-	if (rest == 2) {full -= 2; rest += groupsize*2} //10+2 = 12 //3 groups of 4
-	if (rest == 1) {full -= 3; rest += groupsize*3} //15+1 = 16 //4 groups of 4
-
+	if(!rest==0){
+		full -= (groupsize-rest);
+		rest = (groupsize-rest)*(groupsize-1);
+	}
+	
 	for(let i = 0; i < full; i++) { //Splits full size groups
 		for(let j = 0; j < groupsize; j++) {
 			group.push(usersShuffled[k]);
