@@ -10,7 +10,7 @@ export {processReq, startAutoCreateGroups, groupSize};
 startServer(); 
 
 //Global constants
-const groupSize = 5;
+const groupSize = 5; //min 3 max 12
 
 //Constants for validating input from the network client
 const sMin=1;
