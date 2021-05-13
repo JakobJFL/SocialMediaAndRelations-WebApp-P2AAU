@@ -23,17 +23,18 @@ body {
   padding: 20px 20px 20px 20px;
 }
 
-.profileBtn:hover, #navbar-text:hover {
+.profileBtn:hover, .navbar-text:hover {
   opacity: 60%;
   transition-duration: 0.1s;
 }
 
-#navbar-text {
+.navbar-text {
   color: white;
   position: absolute;
   right: 50px;
   top: 50%;
   transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .navbar-left {

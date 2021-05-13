@@ -7,16 +7,34 @@ let thisLname = "";
 let loginData = {};
 const messageLengthToAddDummy = 40;
 
+window.addEventListener("load", getLoginData);
+document.getElementById("loginBtn").addEventListener("submit", loginBtn_Submit);
+
 function getLoginData() {
-    loginData.email = String(document.getElementById("inputEmail").value);
-    loginData.password = String(document.getElementById("inputPassword").value);
+	let email = sessionStorage.getItem('email');
+	let password = sessionStorage.getItem('password');
+	if (email && password) {
+		loginData.email = email;
+		loginData.password = password;
+		console.log(loginData);
+		getChatSite();
+		addSSEListeners();
+		startCountDown();
+	}
+	else 
+		console.log("no");
 }
 
-document.getElementById("loginBtn").addEventListener("submit", loginBtn_Submit);
+function logOut() {
+	sessionStorage.removeItem('email');
+	sessionStorage.removeItem('password');
+	location.reload();
+}
 
 function loginBtn_Submit(event) {
 	event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
-	getLoginData();
+	loginData.email = String(document.getElementById("inputEmail").value);
+    loginData.password = String(document.getElementById("inputPassword").value);
 	getChatSite();
 	addSSEListeners();
 	startCountDown();
@@ -40,10 +58,11 @@ function getChatSite() {
 		else if (data.startsWith("Error")) 
 			showError("Der er opstået en ukendt fejl");
 		else {
+			storeUser(loginData.email, loginData.password);
 			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); 
 			document.body.innerHTML = data;
+			document.getElementById("logOutBtn").addEventListener("click", logOut);
 		}
-		//storeUser();
 	})
 	.catch((error) => {
 		console.error('Error:', error);
@@ -63,8 +82,9 @@ function submitOnEnter(event){
 	}
 }
 
-function storeUser(usernameID) {
-	sessionStorage.setItem('usernameID', usernameID);
+function storeUser(email, password) {
+	sessionStorage.setItem('email', email);
+	sessionStorage.setItem('password', password);
 }
 
 //EventSource
@@ -181,6 +201,7 @@ function changeGroup(cGroup_id) {
 			groupID = cGroup_id;
 			document.getElementById("btnSender").addEventListener("click", newMessage);
 			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
+			document.getElementById("logOutBtn").addEventListener("click", logOut);
 		}
 	})
 	.catch((error) => {

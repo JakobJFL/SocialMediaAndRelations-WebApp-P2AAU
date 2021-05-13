@@ -6,7 +6,7 @@ const messageLengthToAddDummy = 40;
 
 function printChatPage(userID, fname, lname, parmsGroupID) {
 	//console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
-    let top = `<!DOCTYPE html><html lang="en">`;
+    let top = `<!DOCTYPE html><html lang="dk">`;
     let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
 	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.js"></script>
@@ -29,7 +29,6 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
 
 function printHead() {
 	return `<head>
-			<meta charset="UTF-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
@@ -87,7 +86,30 @@ async function printBody(userID, fname, lname, parmsGroupID) {
 	}
 	let main;
 	if (!groupID) {
-		main = `<div class="welcome-box p-2 px-4 py-5 my-4"><h1>Velkommen til denne ting</h1></div>`
+		main = `<div class="welcome-box p-2 px-4 py-5 my-4">
+		<div class="container">
+			<div class="jumbotron">
+					<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="../node0/pictures/logo.png" alt="" width="75" height="75"></h1>
+				<p class="lead">Den sociale platform, til dig som ingen venner har på studiet.
+				</p>
+				<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
+				<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Når du er kommet en gruppe kan vælge hvilken gruppesamtale du vil skrive i venstre meny.</div>
+				<br>
+				<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Gruppedannelse</small></h2>
+				<div>Hver dag klokken 16:00 GMT+2, vil der blive dannet nye samtalegrupper.</div>
+				<div>Grupperne bliver tilfældigt sammensat udfra din studieretning. Hvis der er ikke er nok bruger med den samme studieretning vil bruger med studieretninger der minder om din blive en del af din gruppe. Gruppe størrelsen er 4-5 personer</div>
+				
+			</div>
+			<div class="jumbotron">
+				<h2><i class="fa fa-book text-muted"></i> <small class="text-muted"> Om projektet</small></h2>
+				<p>Study Buddies er udviklet på Aalborg Universitet af gruppen SW C2-19 som P2 projekt på software. Koden bag projektet kan findes på GitHub <a href="https://github.com/JakobJFL/SocialMediaAndRelations-WebApp-P2AAU">her</a>.</p>
+				<p>Der er udviklet en rapport som en del af projektet.</p>
+				<p class="lead">
+					<a class="btn btn-primary btn" href="#" role="button">Se rapport</a>
+				</p>
+			</div>
+		</div>
+	</div>`
 		return getHeader(fname, lname)+cards+bottomCard+topMain+main;
 	}
 	else {
@@ -244,7 +266,7 @@ function getHeader(fname, lname) {
 	<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="navbar-left px-1">
-	<a class="nav-link" id="navbar-text" href="http://127.0.0.1:3280/">Log ud</a>
+	<a class="nav-link navbar-text" id="logOutBtn">Log ud</a>
 	<a class="profileBtn" href="html/profile.html"></a>
 	</div>
 	</header>`;   
