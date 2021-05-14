@@ -186,7 +186,7 @@ function partition(arr, left, right) {
 		while(arr[j] > pivot) //Move right pointer to the left until the value at the right is less than the pivot value
 			j--;
 
-		if (i <= j) { //If  the left pointer is less than or equal to the right pointer, then swap values
+		if (i <= j) { //If the left pointer is less than or equal to the right pointer, then swap values
 			[arr[i], arr[j]] = [arr[j], arr[i]]; //ES6 destructuring swap
 			i++;
 			j--;

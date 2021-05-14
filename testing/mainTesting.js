@@ -9,10 +9,10 @@ function startTesting() {
         study: 1,
         birthDate: "1800-07-20"
     }
-    sendGet("makeUser", obj)
+    sendPost("makeUser", obj);
 }
 
-function sendGet(path, obj) {
+function sendPost(path, obj) {
     fetch('https://sw2c2-19.p2datsw.cs.aau.dk/node0/' + path)
     .then((response) => response.json())
     .then((data) => {

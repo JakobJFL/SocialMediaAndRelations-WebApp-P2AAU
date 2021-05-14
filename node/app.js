@@ -1,13 +1,15 @@
 //We use EC6 modules!
 //Importing functions from other files
 import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
-import {createUser, createGroup, createMessage, showAllTableContent, createStudy, getUserEmail} from "./database.js";
+import {createUser, createMessage, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
 import {createAllNewUsers} from "./createAllUsers.js";
+import {runTesting} from "./testing.js";
 export {processReq, startAutoCreateGroups, groupSize};
 
 startServer(); 
+runTesting();
 
 //Global constants
 const groupSize = 5; //min 3 max 12
@@ -71,17 +73,6 @@ function validateUserData(userData) {
 			return false;
 		return true;
 	}
-}
-
-function validateGroupData(groupData) {
-	return new Promise((resolve, reject) => {
-		for (let i = 1; i <= groupSize; i++) {
-			let key = "member_id"+i; 
-			if (!isInteger(groupData[key])) 
-				reject(new Error(ValidationError));
-		}
-		resolve(groupData);
-	});	
 }
 
 function validateMessageData(messageData) {
@@ -149,21 +140,6 @@ function postHandler(req, res, path) {
 					.catch(err => reportError(res, err))
 				.catch(err => reportError(res, err));
 		break;
-		case "/makeStudy":
-		case "makeStudy": 
-			extractJSON(req)
-				.then(validatedData => jsonResponse(res, createStudy(validatedData)))
-				.catch(err => reportError(res, err));
-		break;
-		case "/makeGroup":
-		case "makeGroup": 
-			extractJSON(req)
-				.then(groupData => validateGroupData(groupData))
-				.then(validatedData => createGroup(validatedData)
-					.then(response => jsonResponse(res, response)))
-					.catch(err => reportError(res, err))
-				.catch(err => reportError(res, err));
-		break;
 		case "/newMessageSSE":
 		case "newMessageSSE": 
 			extractJSON(req)
@@ -197,18 +173,10 @@ function getHandler(req, res, path, searchParms) {
 		case "createAccount": 
 			fileResponse(res, "html/createAccount.html");
 		break;
-		case "/showAllTable": // NOT GOOD
-		case "showAllTable":  // SLET det her
-			showAllTableContent(res);
-		break;
-		case "/createGroups":
-		case "createGroups": 
-			createNewGroups();
-		break;
-		case "/createAllNewUsers":
-		case "createAllNewUsers": 
-			createAllNewUsers()
-		break;
+		case "/createAllNewUsers": // DEMO
+		case "createAllNewUsers": // DEMO
+			createAllNewUsers(); // DEMO
+		break; // DEMO
 		default: //For anything else we assume it is a file to be served
 			fileResponse(res, req.url);
 		break;

@@ -225,21 +225,6 @@ function createUser(body) {
 	});
 }
 
-function createStudy(body) {
-	const DBConnection = dbConnect();
-	DBConnection.connect(function(err) {
-		if (err) throw err;
-		let sql = `INSERT INTO studys(name, priority) VALUES (
-			${mysql.escape(body.name)},
-			${mysql.escape(body.priority)});`;
-		DBConnection.query(sql, function (err, result) {
-		if (err) throw err;
-		});
-		DBConnection.end();
-	});
- return body;
-}
-
 function createGroup(body) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
@@ -278,30 +263,6 @@ function createMessage(body) {
 				resolve(result);
 			});
 			DBConnection.end();
-		});
-	});
-}
-
-async function showAllTableContent(res) {
-	let content = [];
-	content.push(await getdata("studys"));
-	content.push(await getdata("users"));
-	content.push(await getdata("chatGroups"));
-	//content.push(await getdata("messages"));
-	jsonResponse(res, content);
-}
-
-function getdata(typeData) {
-	const DBConnection = dbConnect();
-	return new Promise((resolve,reject) => {
-		DBConnection.connect(function(err) {
-			if (err) reject(err);
-			DBConnection.query("SELECT * FROM " + typeData, function (err, result, fields) {
-				if (err) reject(err);
-				console.table(result);
-				resolve(result);
-				DBConnection.end();
-			});
 		});
 	});
 }

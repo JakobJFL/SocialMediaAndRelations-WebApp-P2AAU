@@ -193,9 +193,8 @@ function changeGroup(cGroup_id) {
 	})
 	.then(response => response.text())
 	.then(data => {
-		if (data.startsWith("Error:403")) {
+		if (data.startsWith("Error:403")) 
 			console.error("Adgangskode eller brugernavn er forkert");
-		}
 		else {
 			document.body.innerHTML = data;
 			groupID = cGroup_id;
