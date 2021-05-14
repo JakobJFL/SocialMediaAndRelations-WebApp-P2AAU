@@ -8,7 +8,7 @@ import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse};
+export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";

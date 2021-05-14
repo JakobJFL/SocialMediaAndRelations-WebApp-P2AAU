@@ -6,7 +6,7 @@ import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
 import {createAllNewUsers} from "./createAllUsers.js";
 import {runTesting} from "./testing.js";
-export {processReq, startAutoCreateGroups, groupSize};
+export {processReq, startAutoCreateGroups, isStrLen, validateEmail, groupSize};
 
 startServer(); 
 runTesting();
@@ -48,10 +48,10 @@ function validateUserData(userData) {
 		} catch {
 			reject(new Error(ValidationError))
 		}
-		if (!(isStrLen(validData.psw, minPasLen, maxPasMailLen) && 
-			isStrLen(validData.mail, sMin, maxPasMailLen) &&
-			isStrLen(validData.fname, sMin, maxNameLen) && 
-			isStrLen(validData.lname, sMin, maxNameLen)))
+		if (isStrLen(validData.psw, minPasLen, maxPasMailLen) || 
+			isStrLen(validData.mail, sMin, maxPasMailLen) ||
+			isStrLen(validData.fname, sMin, maxNameLen) || 
+			isStrLen(validData.lname, sMin, maxNameLen))
 				reject(new Error(ValidationError));
 				
 		if (!validateEmail(userData.mail))
@@ -65,14 +65,16 @@ function validateUserData(userData) {
 			}).catch(err => reject(new Error(err)));
 		}
 	});
-	function validateEmail(email) {
-		return /\S+@\S+\.\S+/.test(email);
-	}
-	function isStrLen(str, minLength, maxLength) {
-		if (str >= minLength && str <= maxLength) 
-			return false;
-		return true;
-	}
+}
+
+function validateEmail(email) {
+	return /\S+@\S+\.\S+/.test(email);
+}
+
+function isStrLen(str, minLength, maxLength) {
+	if (str.length >= minLength && str.length <= maxLength) 
+		return false;
+	return true;
 }
 
 function validateMessageData(messageData) {
