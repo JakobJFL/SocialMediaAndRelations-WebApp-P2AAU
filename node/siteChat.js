@@ -6,7 +6,6 @@ const messageLengthToAddDummy = 40;
 
 function printChatPage(userID, fname, lname, parmsGroupID) {
 	//console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
-    let top = `<!DOCTYPE html><html lang="dk">`;
     let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
 	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.js"></script>
@@ -17,7 +16,7 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
 
     let bodyPromise = new Promise((resolve,reject) => {
 		printBody(userID, fname, lname, parmsGroupID).then(html => {
-			let res = top+printHead()+html+bottom;
+			let res = html+bottom;
 			resolve(res);
 			if (!html) {
 				reject("promiseReject(printChatPage)");
@@ -25,22 +24,6 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
 		}).catch(err => console.error(err));
     });
     return bodyPromise;
-}
-
-function printHead() {
-	return `<head>
-			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-			<link rel="stylesheet" href="fontAwesome-free/css/all.css">
-
-			<link rel="stylesheet" href="css/messages.css">
-			<link rel="stylesheet" href="css/chatRoomMain.css">
-			<link rel="stylesheet" href="css/color.css">
-
-			<title>Social Media and Relations WebApp-P2AAU</title>
-		</head>
-		<body>`;
 }
 
 async function printBody(userID, fname, lname, parmsGroupID) {
@@ -261,7 +244,7 @@ function addChatReciever(message, date) {
 
 function getHeader(fname, lname) {
 	return `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-	<a class="navbar-brand" href="#">${fname} ${lname}</a>
+	<a class="navbar-brand text-white">Study Buddies</a>
 	<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
 	<span class="navbar-toggler-icon"></span>
 	</button>

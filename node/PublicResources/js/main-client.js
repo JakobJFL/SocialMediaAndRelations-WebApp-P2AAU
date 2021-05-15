@@ -60,6 +60,7 @@ function getChatSite() {
 		else {
 			storeUser(loginData.email, loginData.password);
 			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); 
+			document.head.innerHTML = printHead();
 			document.body.innerHTML = data;
 			document.getElementById("logOutBtn").addEventListener("click", logOut);
 		}
@@ -73,6 +74,18 @@ function showError(msg) {
 	let errorField = document.getElementById("errorField");
 	errorField.innerHTML = msg;
 	errorField.style = "visibility:show";
+}
+
+function printHead() {
+	return `<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+			<link rel="stylesheet" href="fontAwesome-free/css/all.css">
+			<link rel="stylesheet" href="css/messages.css">
+			<link rel="stylesheet" href="css/chatRoomMain.css">
+			<link rel="stylesheet" href="css/color.css">
+			<title>Study Buddies</title>`;
 }
 
 function submitOnEnter(event){

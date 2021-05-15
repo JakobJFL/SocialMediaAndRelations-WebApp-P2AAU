@@ -41,10 +41,12 @@ function sendData() {
 			window.location.replace("https://sw2c2-19.p2datsw.cs.aau.dk/node0/");
 		}
 		else if (response.status === 400) {
-			errorField.innerHTML = "Input er forkert, check email adresse og undgå specialtegn";
+			errorField.innerHTML = "Input er forkert, check e-mail adresse og undgå specialtegn";
+			errorField.style = "visibility:show";
 		}
 		else {
 			errorField.innerHTML = "Der er opstået en ukendt fejl";
+			errorField.style = "visibility:show";
 		}
 	})
 	.catch((error) => {
