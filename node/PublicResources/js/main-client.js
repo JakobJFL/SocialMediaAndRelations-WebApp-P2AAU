@@ -16,13 +16,10 @@ function getLoginData() {
 	if (email && password) {
 		loginData.email = email;
 		loginData.password = password;
-		console.log(loginData);
 		getChatSite();
 		addSSEListeners();
 		startCountDown();
 	}
-	else 
-		console.log("no");
 }
 
 function logOut() {
@@ -77,7 +74,7 @@ function showError(msg) {
 }
 
 function printHead() {
-	return `<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	return `<meta charset="UTF-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
@@ -117,13 +114,16 @@ function addSSEListeners() {
 		}
 	});
 	*/
+	function getDateNow() {
+		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const dNow = new Date();
+		const month = monthNames[dNow.getMonth()]
+		return dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + (dNow.getMinutes()<10?'0':'')+dNow.getMinutes();
+	}
 
 	function chatEventHander(event) {
 		let responseObj = JSON.parse(event.data);
-		const monthNamesDK = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun","Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
-		const dNow = new Date();
-		const month = monthNamesDK[dNow.getMonth()]
-		const dateStr = dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + dNow.getMinutes();
+		const dateStr = getDateNow();
 		if (String(responseObj.group_id) == groupID) { //Allow type conversion
 			let allChats = document.getElementById("allChat");
 			if (String(responseObj.user_id) != userID) { //Allow type conversion

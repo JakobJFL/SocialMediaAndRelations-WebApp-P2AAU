@@ -5,7 +5,6 @@ import {getGroups, getChats, getLastMessage} from "./database.js";
 const messageLengthToAddDummy = 40;
 
 function printChatPage(userID, fname, lname, parmsGroupID) {
-	//console.log("ID: " + userID + " loged on - Group: " + parmsGroupID);
     let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
 	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.js"></script>
@@ -73,7 +72,7 @@ async function printBody(userID, fname, lname, parmsGroupID) {
 		<div class="container">
 			<div class="jumbotron">
 					<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="../node0/pictures/logo.png" alt="" width="75" height="75"></h1>
-				<p class="lead">Den sociale platform, til dig som ingen venner har på studiet.
+				<p class="lead">Den sociale platform, til dig som ingen venner har på stdiet.
 				</p>
 				<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
 				<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Når du er kommet en gruppe kan vælge hvilken gruppesamtale du vil skrive i venstre meny.</div>
@@ -112,7 +111,7 @@ function insertCards(group, lastMessage, fname, groupID) {
 		lastMessageDate = timeSince(lastMessage.TIMESTAMP);
 
 	if (group.group_id == groupID) 
-		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "active");
+		cards += addCard(cardTitle + "|"+groupID, cardSubtitle, lastMessageDate, group.group_id, "active"); // SLET HER!
 	else 
 		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "");
 	return cards;
@@ -197,7 +196,6 @@ function addChats(chatsData, userID) {
 		reject("promiseReject(getChats)");
 	for (const chat of chatsData) {
 		let DBdate = String(chat.TIMESTAMP).split(/[- :]/);
-		//let date = new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]);
 		let dateFormatted = DBdate[2] + "/" + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5];
 		if (chat.user_ID === userID) 
 			chats += addChatReciever(chat.msg_content, dateFormatted); 

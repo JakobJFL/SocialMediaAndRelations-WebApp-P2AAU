@@ -84,14 +84,17 @@ function validateMessageData(messageData) {
 		try {
 			validData = {
 				msg_content: String(messageData.msg_content),
-				group_id: messageData.group_id,
-				fname: messageData.fname,
-				lname: messageData.lname
+				group_id: Number(messageData.group_id),
+				fname: String(sanitize(messageData.fname)),
+				lname: String(sanitize(messageData.lname))
 			}
 		} catch {
 			reject(new Error(ValidationError))
 		}
-		if (validData.msg_content.length >= content_limit || validData.msg_content.length < 1) {
+		if (isStrLen(validData.fname, sMin, maxNameLen) || 
+			isStrLen(validData.lname, sMin, maxNameLen))
+				reject(new Error(ValidationError));
+		else if (validData.msg_content.length >= content_limit || validData.msg_content.length < 1) {
 			reject(new Error(ValidationError));
 		}
 		else if(isInteger(validData.group_id)) {
@@ -110,31 +113,35 @@ function isInteger(number){
 }
 
 //Setup HTTP route handling: Called when a HTTP request is received | req=request & res = response
-function processReq(req, res) {
-	//console.log("GOT: " + req.method + " " +req.url); HUSK AT SLE>TTE DET HER
-	let baseURL = 'http://' + req.headers.host + '/'; //https://github.com/nodejs/node/issues/12682
-	let url = new URL(req.url,baseURL);
-	let searchParms = new URLSearchParams(url.search);
-	let queryPath = decodeURIComponent(url.pathname); //Convert url encoded special letters (eg æøå that is escaped by "%number") to JS string
-	let pathElements=queryPath.split("/"); 
-	//Switching on request methods POST or GETn eg
+function processReq(req, res) {	
+	try {
+		let baseURL = 'http://' + req.headers.host + '/'; //https://github.com/nodejs/node/issues/12682
+		let url = new URL(req.url,baseURL);
+		let searchParms = new URLSearchParams(url.search);
+		let queryPath = decodeURIComponent(url.pathname); //Convert url encoded special letters (eg æøå that is escaped by "%number") to JS string
+		let pathElements=queryPath.split("/"); 
+
+		switch(req.method) {
+			case "POST": 
+				postHandler(req, res, pathElements[1]);
+				break;
+			case "GET": 
+				getHandler(req, res, pathElements[1], searchParms)
+				break;
+			default:
+				reportError(res, new Error(NoResourceError)); 
+		} 
+	} catch {
+		reportError(res, new Error(ValidationError)); 
+	}
 	
-	switch(req.method) {
-		case "POST": 
-			postHandler(req, res, pathElements[1]);
-			break;
-		case "GET": 
-			getHandler(req, res, pathElements[1], searchParms)
-			break;
-		default:
-			reportError(res, NoResourceError); 
-	} 
 }
 
 function postHandler(req, res, path) {
 	switch(path) {
 		case "/makeUser":
 		case "makeUser": 
+		console.log("dsd")
 			extractJSON(req)
 				.then(userData => validateUserData(userData))
 				.then(validatedData => createUser(validatedData))
@@ -153,8 +160,8 @@ function postHandler(req, res, path) {
 				}).catch(err => reportError(res, err));
 		break;
 		default: 
-			console.error("Resource doesn't exist");
-			reportError(res, NoResourceError); 
+			console.error("Resource hello exist");
+			reportError(res, new Error(NoResourceError)); 
 	} 
 }
 
@@ -175,6 +182,12 @@ function getHandler(req, res, path, searchParms) {
 		case "createAccount": 
 			fileResponse(res, "html/createAccount.html");
 		break;
+		case "/mus":
+		case "mus": 
+			createNewGroups();
+			res.write("FUCK YOU");
+			res.end('\n');
+		break;
 		case "/createAllNewUsers": // DEMO
 		case "createAllNewUsers": // DEMO
 			createAllNewUsers(); // DEMO
@@ -186,22 +199,10 @@ function getHandler(req, res, path, searchParms) {
 }
 
 function startAutoCreateGroups() {
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours("16");
-    tomorrow.setMinutes("00");
-    let countDownDate = new Date(tomorrow).getTime();
-    setTime(countDownDate);
-    // Update the count down every 1 minute
-    let x = setInterval(function() {
-        setTime(countDownDate);
-    }, 3600);
-    function setTime(countDownDate) {
-        let now = new Date().getTime();
-        // Find the distance between now and the count down date
-        let distance = countDownDate - now;
-
-		if(distance = 0)
-			createNewGroups();
-    }
+	let now = new Date();
+	let millisLeft = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0, 0, 0) - now; // milliseconds until 16 o'clock
+	if (millisLeft < 0) {
+		millisLeft += 86400000; // it's after 16 o'clock, try at 16 o'clock tomorrow.
+	}
+	setTimeout(function(){createNewGroups(); startAutoCreateGroups()}, millisLeft);
 }

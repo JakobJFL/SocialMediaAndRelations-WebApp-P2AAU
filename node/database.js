@@ -1,4 +1,4 @@
-export {login, createUser, createGroup, createMessage, showAllTableContent, getGroups, getChats, getGroupMembers, createStudy, getUserEmail, getAllUserId, getAllGroups, getLastMessage};
+export {login, createUser, createGroup, createMessage, getGroups, getChats, getGroupMembers, getUserEmail, getAllUserId, getAllGroups, deleteGroup, getLastMessage};
 import {ValidationError} from "./errors.js";
 import {groupSize} from "./app.js";
 
@@ -91,7 +91,7 @@ function getGroupMembers(groupID) {
 					sql += ", member_id"+i;
 			}
 
-			DBConnection.query("SELECT member_id1, member_id2, member_id3, member_id4, member_id5 FROM chatGroups WHERE group_id = " + 
+			DBConnection.query(sql + " FROM chatGroups WHERE group_id = " + 
 				mysql.escape(groupID), function (err, result, fields) {    
 					if(err) 
 						reject(err) 
@@ -169,7 +169,15 @@ function getAllGroups() {
 		DBConnection.connect(function(err){
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT * FROM chatGroups",
+			let sql = "SELECT ";
+			for (let i = 1; i <= groupSize; i++) {
+				if (i === 1)
+					sql += "chatGroups.member_id"+i;
+				else 
+					sql += ", chatGroups.member_id"+i;
+			}
+			DBConnection.query(sql + ", chatGroups.TIMESTAMP AS gTime, MAX(messages.TIMESTAMP) AS mTime, chatGroups.group_id FROM chatGroups " +
+			"LEFT JOIN messages ON chatGroups.group_id=messages.group_ID GROUP BY chatGroups.group_id",
 			function (err, result, fields) {   
 				if(err) 
 					reject(err) 
@@ -267,3 +275,18 @@ function createMessage(body) {
 	});
 }
 
+function deleteGroup(groupID) {
+	const DBConnection = dbConnect();
+	DBConnection.connect(function(err){
+		if (err) 
+			console.error(err);
+		DBConnection.query("DELETE FROM chatGroups WHERE group_id = " + mysql.escape(groupID),
+		function (err, result, fields) {   
+			if(err) 
+				console.error(err);
+			else {
+				DBConnection.end();
+			}
+		});
+	});
+}

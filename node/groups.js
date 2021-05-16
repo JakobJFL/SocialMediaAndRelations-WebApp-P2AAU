@@ -1,9 +1,10 @@
 //Creates new groups and deletes old groups
 //Main call function makeFriends()
-import {getAllUserId, createGroup, getAllGroups} from "./database.js";
+import {getAllUserId, createGroup, getAllGroups, deleteGroup} from "./database.js";
 import {groupSize} from "./app.js";
 export {createNewGroups};
 const maxRuns = 10;
+const msIn5Days = 432000000;
 
 function createNewGroups() {
 	getAllUserId().then(userIds =>{
@@ -23,8 +24,40 @@ function createNewGroups() {
 				insertGroupsDB(newGroupArray);
 			else
 				console.error("NO GROUPS CREATED");
+
+			deleteInactiveGroups(prevGroups);
 		}).catch(err => console.log(err));
 	}).catch(err => console.log(err));
+}
+
+function convertDBTime(time) {
+	if (time) {
+		let DBdate = String(time).split(/[- :]/);
+		return new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]).getTime();
+	}
+	else 
+		return undefined;
+}
+
+function deleteInactiveGroups(groups) {	
+	let newD = new Date();
+	let timeNow = newD.getTime();
+	let groupsToDelete = [];
+	for (const group of groups) {
+		let DBdateGro = convertDBTime(group.gTime);
+		let DBdateMsg = convertDBTime(group.mTime);
+
+		if (DBdateMsg) {
+			if (timeNow-msIn5Days > DBdateMsg) 
+				groupsToDelete.push(group.group_id);
+		}
+		else if (timeNow-msIn5Days > DBdateGro) 
+			groupsToDelete.push(group.group_id);
+	}
+	for (const group of groupsToDelete) {
+		deleteGroup(group);
+	}
+	console.log(groupsToDelete.length + " groups deleted")
 }
 
 function genGroups(users, prevGroups) { //Main function
@@ -43,12 +76,12 @@ function genGroups(users, prevGroups) { //Main function
 		groups = groupSplit(shuffledStudys); //Splits groups to groups of 5 if possible else groups of 4
 		groups = sortGroups(groups); //Sorts induvidual groups in the 2d array to check for dublicates
 		runs++;
-	} while (checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); //Runs til uniqe groups or maxRuns has been reached
+	} while (checkForDublicates(groups, prevGroupsArray) && runs != maxRuns); //Runs til unique groups or maxRuns has been reached
 
   	if (runs === maxRuns) 
 		console.error("MAX RUNS EXCEEDED");
   	else {
-		console.log("Runs before uniqe groups found: " + runs);
+		console.log("Runs before unique groups found: " + runs);
 		return arr2DToArrOfObj(groups);
 	}
 }

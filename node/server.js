@@ -5,7 +5,7 @@ import path  from "path";
 import process from "process";
 
 import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
-import {ValidationError, AuthError, InternalError, MessageTooLongError, reportError} from "./errors.js";
+import {ValidationError, AuthError, NoAccessGroupError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers} from "./database.js";
 import {printChatPage} from "./siteChat.js";
 export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
@@ -26,7 +26,6 @@ function securePath(userPath){
 	}
 	userPath = publicResources+userPath;
 	let p = path.join(rootFileSystem,path.normalize(userPath)); 
-	//console.log("The path is:"+p);
 	return p;
 }
 
@@ -126,31 +125,29 @@ function htmlChatResponse(res, htmlString, user_id, fname, lname){
 	objHeaderArr.push({key: "user_ID", value: user_id});
 	objHeaderArr.push({key: "fname", value: fname});
 	objHeaderArr.push({key: "lname", value: lname});
-	sendResponse(res, 200, htmlString, "text/html", objHeaderArr);
+	objHeaderArr.push({key: "Content-Length", value: Buffer.byteLength(htmlString, 'utf8')});
+	sendResponse(res, 200, htmlString, "text/html; charset=UTF-8", objHeaderArr);
 }
 
 // Broadcast new message from SSE
 async function broadcastMsgSSE(req, res, data) {
-	try { 
-		res.writeHead(200).end();
-		let loginResult = await isAuthenticated(req); 
-		data.user_id = loginResult[0].user_id;
-		let groupID = 0;
-		let groupsData = await getGroups(loginResult[0].user_id);
-		for (const group of groupsData) {
-			if (data.group_id === group.group_id) // Is the user a part of group from JSON data?
-				groupID = group.group_id;
-		}
-		let groupsMembers = await getGroupMembers(groupID);
-		for (const client of clientsSSE) {
-			if (isUserIdInGroup(groupsMembers, client.SSEuserID)) 
-				client.SSEres.write(createEventMsg(data));
-		}
-		return data;
+	let loginResult = await isAuthenticated(req); 
+	data.user_id = loginResult[0].user_id;
+	let groupID;
+	let groupsData = await getGroups(loginResult[0].user_id);
+	for (const group of groupsData) {
+		if (data.group_id === group.group_id) // Is the user a part of group from JSON data?
+			groupID = group.group_id;
 	}
-	catch(err) {
-		reportError(res, err); 
+	if (!groupID) 
+		throw new Error(NoAccessGroupError);
+	let groupsMembers = await getGroupMembers(groupID);
+	res.writeHead(200).end();
+	for (const client of clientsSSE) {
+		if (isUserIdInGroup(groupsMembers, client.SSEuserID)) 
+			client.SSEres.write(createEventMsg(data));
 	}
+	return data;
 }
 
 function createEventMsg(dataStr) {
@@ -187,7 +184,7 @@ function sendResponse(res, code, writeStr, conType, objHeaderArr) {
 		for (const objHead of objHeaderArr)
 			res.setHeader(objHead.key, objHead.value);
 	}
-	res.write(writeStr);
+	res.write(writeStr, "utf-8");
 	res.end('\n');
 }
 
