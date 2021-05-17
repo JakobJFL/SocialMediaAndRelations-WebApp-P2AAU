@@ -1,6 +1,6 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE, adminLogin} from "./server.js";
+import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE, adminGetUser, adminMakeGroup} from "./server.js";
 import {createUser, createMessage, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
@@ -156,6 +156,12 @@ function postHandler(req, res, path) {
 					.catch(err => reportError(res, err));
 				}).catch(err => reportError(res, err));
 		break;
+		case "/adminMakeGroup":
+		case "adminMakeGroup": 
+			extractJSON(req)
+				.then(data => adminMakeGroup(req, res, data))
+				.catch(err => reportError(res, err));
+		break;
 		default: 
 			console.error("Resource hello exist");
 			reportError(res, new Error(NoResourceError)); 
@@ -179,9 +185,9 @@ function getHandler(req, res, path, searchParms) {
 		case "createAccount": 
 			fileResponse(res, "html/createAccount.html");
 		break;
-		case "/admin":
-		case "admin": 
-			adminLogin(req, res, searchParms.get("do"));
+		case "/adminGetUser":
+		case "adminGetUser": 
+			adminGetUser(req, res);
 		break;
 		default: //For anything else assume it is a file to be served
 			fileResponse(res, req.url);
