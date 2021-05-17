@@ -1,7 +1,7 @@
 {
   "name": "nodeweb2-server",
   "version": "1.0.0",
-  "description": "TestApp",
+  "description": "webApp",
   "main": "app.js",
   "type": "module",
   "dependencies": {
