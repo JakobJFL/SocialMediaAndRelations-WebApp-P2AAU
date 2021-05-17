@@ -152,7 +152,7 @@ function addChatSender(message, userName, date) {
 		dummy = `<div class="dummy-space-left"></div>`
 
 	let resSender = `<div class="media sender-msg mb-3">
-	<img src="pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
+	<img src="pictures/profile.jpg" alt="user" width="50" class="rounded-circle">
 	<div class="media-body py-2 ml-3">
 	  <p class="small top-text-muted">${userName}</p>
 	  <div class="bg-grey rounded py-2 px-3 mb-2">
