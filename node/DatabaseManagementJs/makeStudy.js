@@ -1,3 +1,5 @@
+import mysql from "mysql";
+
 function dbConnect() {
 	return mysql.createConnection({ 
 		host: "localhost", 

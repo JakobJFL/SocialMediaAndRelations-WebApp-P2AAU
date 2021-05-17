@@ -236,7 +236,7 @@ function showWelcomeBox() {
 		<p class="lead">Den sociale platform, til dig som gerne vil skabe nye relationer blandt dine medstuderende.
 		</p>
 		<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
-		<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. I menuen i venstre side af skærmen, vises de grupper du er medlem af. Her kan du vælge hvilken gruppesamtale du vil skrive i.</div>
+		<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Find chatmenuen i venstre side af skærmen, eller hvis du er på mobil med denne knap: <i class="fa fa-bars text-muted"></i>. Her får du vist de grupper du er medlem af og du kan vælge hvilken gruppesamtale du vil skrive i.</div>
 		<br>
 		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Gruppedannelse</small></h2>
 		<div>Hver dag klokken 16:00 GMT+2, vil der blive dannet nye samtalegrupper.</div>

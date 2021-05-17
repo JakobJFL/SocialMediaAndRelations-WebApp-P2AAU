@@ -10,6 +10,10 @@ body {
   vertical-align: text-bottom;
 }
 
+.navbar-toggler {
+  background-color: #4fa380;
+}
+
 .profileBtn {
   background-image: url(../pictures/profile.jpg);
   background-size: cover;
