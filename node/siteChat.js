@@ -4,9 +4,9 @@ import {getGroups, getChats, getLastMessage} from "./database.js";
 
 const messageLengthToAddDummy = 40;
 
-function printChatPage(userID, fname, lname, parmsGroupID) {
-    let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
+function printChatPage(userID, fname, parmsGroupID) {
+    let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"crossorigin="anonymous"></script>
+	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
 	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.js"></script>
     <script type="text/javascript" src="/js/main-client.js"></script>
     <script type="text/javascript" src="/js/countdown.js"></script>
@@ -14,7 +14,7 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
     </html>`
 
     let bodyPromise = new Promise((resolve,reject) => {
-		printBody(userID, fname, lname, parmsGroupID).then(html => {
+		printBody(userID, fname, parmsGroupID).then(html => {
 			let res = html+bottom;
 			resolve(res);
 			if (!html) {
@@ -25,7 +25,7 @@ function printChatPage(userID, fname, lname, parmsGroupID) {
     return bodyPromise;
 }
 
-async function printBody(userID, fname, lname, parmsGroupID) {
+async function printBody(userID, fname, parmsGroupID) {
     let countdownCard = `<ul class="nav flex-column">
 						<li class="nav-item">
 							<div class="nav-link" aria-current="page" href="#">
@@ -69,13 +69,13 @@ async function printBody(userID, fname, lname, parmsGroupID) {
 	let main;
 	if (!groupID) {
 		main = `<div class="welcome-box p-2 px-4 py-5 my-4" id="welcomeBox"></div>`;
-		return getHeader(fname, lname)+cards+bottomCard+topMain+main;
+		return getHeader()+cards+bottomCard+topMain+main;
 	}
 	else {
-		let chatsData = await getChats(groupID, userID);
+		let chatsData = await getChats(groupID);
 		main = topChat;
 		main += addChats(chatsData, userID);
-		return getHeader(fname, lname)+cards+bottomCard+topMain+main+bottomChat;
+		return getHeader()+cards+bottomCard+topMain+main+bottomChat;
 	} 
 }
 
@@ -88,7 +88,7 @@ function insertCards(group, lastMessage, fname, groupID) {
 		lastMessageDate = timeSince(lastMessage.TIMESTAMP);
 
 	if (group.group_id == groupID) 
-		cards += addCard(cardTitle + "|"+groupID, cardSubtitle, lastMessageDate, group.group_id, "active"); // SLET HER!
+		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "active"); 
 	else 
 		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "");
 	return cards;
@@ -217,15 +217,15 @@ function addChatReciever(message, date) {
   	return resReciever;
 }
 
-function getHeader(fname, lname) {
+function getHeader() {
 	return `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
 	<a class="navbar-brand text-white">Study Buddies</a>
 	<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-	<span class="navbar-toggler-icon"></span>
+		<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="navbar-left px-1">
 	<a class="nav-link navbar-text" id="logOutBtn">Log ud</a>
-	<a class="profileBtn" href="html/profile.html"></a>
+	<a class="profileBtn" href="#"></a>
 	</div>
 	</header>`;   
 }

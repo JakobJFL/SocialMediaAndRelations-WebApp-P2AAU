@@ -27,7 +27,7 @@ function sendData() {
 		study: fieldsOfStudy,
 		psw: password
 	}; 
-	fetch('../node0/makeUser', {
+	fetch('makeUser', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ function sendData() {
 	})
 	.then(response => {
 		if (response.status === 200) {
-			window.location.replace("../node0/");
+			window.location.replace("../");
 		}
 		else if (response.status === 400) 
 			showError("Input er forkert, check e-mail adresse og undgå specialtegn");

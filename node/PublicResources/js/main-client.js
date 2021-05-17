@@ -38,7 +38,7 @@ function loginBtn_Submit(event) {
 }
 
 function getChatSite() {
-  	fetch('../node0/chat', {
+  	fetch('chat', {
 		method: 'GET', 
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -78,6 +78,13 @@ function printHead() {
 	return `<meta charset="UTF-8">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<link rel="apple-touch-icon" sizes="180x180" href="pictures/faviconPackage/apple-touch-icon.png">
+			<link rel="icon" type="image/png" sizes="32x32" href="pictures/faviconPackage/favicon-32x32.png">
+			<link rel="icon" type="image/png" sizes="16x16" href="pictures/faviconPackage/favicon-16x16.png">
+			<link rel="manifest" href="pictures/faviconPackage/site.webmanifest">
+			<link rel="mask-icon" href="pictures/faviconPackage/safari-pinned-tab.svg" color="#5bbad5">
+			<meta name="msapplication-TileColor" content="#da532c">
+			<meta name="theme-color" content="#55be92">
 			<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 			<link rel="stylesheet" href="fontAwesome-free/css/all.css">
 			<link rel="stylesheet" href="css/messages.css">
@@ -100,7 +107,7 @@ function storeUser(email, password) {
 
 //EventSource
 function addSSEListeners() {
-	let chat = new EventSourcePolyfill("../node0/chatSSE", {
+	let chat = new EventSourcePolyfill("chatSSE", {
 			headers: {
 				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
 			}
@@ -145,7 +152,7 @@ function addChatSender(message, userName, date) {
 		dummy = `<div class="dummy-space-left"></div>`
 
 	let resSender = `<div class="media sender-msg mb-3">
-	<img src="../node0/pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
+	<img src="pictures/WICKED.png" alt="user" width="50" class="rounded-circle">
 	<div class="media-body py-2 ml-3">
 	  <p class="small top-text-muted">${userName}</p>
 	  <div class="bg-grey rounded py-2 px-3 mb-2">
@@ -185,7 +192,7 @@ function newMessage() {
 		lname: thisLname
 	};
 	document.getElementById("messageSenderBox").value = "";
-  	fetch('../node0/newMessageSSE', {
+  	fetch('newMessageSSE', {
 		method: 'POST',
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -198,7 +205,7 @@ function newMessage() {
 }
 
 function changeGroup(cGroup_id) {
-	fetch('../node0/chat?groupID='+cGroup_id, {
+	fetch('chat?groupID='+cGroup_id, {
 		method: 'GET', 
 		headers: {
 			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -223,11 +230,9 @@ function changeGroup(cGroup_id) {
 }
 
 function showWelcomeBox() {
-	const div = document.createElement('div');
-
-	div.innerHTML = `<div class="container">
+	let html = `<div>
 	<div class="jumbotron">
-			<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="../node0/pictures/logo.png" alt="" width="75" height="75"></h1>
+			<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="pictures/logo.png" alt="" width="75" height="75"></h1>
 		<p class="lead">Den sociale platform, til dig som gerne vil skabe nye relationer blandt dine medstuderende.
 		</p>
 		<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
@@ -249,6 +254,7 @@ function showWelcomeBox() {
 			<a class="btn btn-primary btn" href="#" role="button">Se rapport</a>
 		</p>
 	</div>
-</div>`;
-	document.getElementById('welcomeBox').appendChild(div);
+</div>
+</main>`;
+	document.getElementById('welcomeBox').innerHTML = html;
 }

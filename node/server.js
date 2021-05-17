@@ -114,7 +114,7 @@ function SSEResponse(req, res) {
 
 function responseAuth(req, res, parmsGroupID) {
 	isAuthenticated(req).then(loginResult => {
-		printChatPage(loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname, parmsGroupID)
+		printChatPage(loginResult[0].user_id, loginResult[0].fname, parmsGroupID)
 			.then(html => htmlChatResponse(res, html, loginResult[0].user_id, loginResult[0].fname, loginResult[0].lname))
 			.catch(err => console.error(err));
 	}).catch(err => reportError(res, err));
@@ -125,8 +125,7 @@ function htmlChatResponse(res, htmlString, user_id, fname, lname){
 	objHeaderArr.push({key: "user_ID", value: user_id});
 	objHeaderArr.push({key: "fname", value: fname});
 	objHeaderArr.push({key: "lname", value: lname});
-	objHeaderArr.push({key: "Content-Length", value: Buffer.byteLength(htmlString, 'utf8')});
-	sendResponse(res, 200, htmlString, "text/html; charset=UTF-8", objHeaderArr);
+	sendResponse(res, 200, htmlString, "text/html", objHeaderArr);
 }
 
 // Broadcast new message from SSE
@@ -184,7 +183,7 @@ function sendResponse(res, code, writeStr, conType, objHeaderArr) {
 		for (const objHead of objHeaderArr)
 			res.setHeader(objHead.key, objHead.value);
 	}
-	res.write(writeStr, "utf-8");
+	res.write(writeStr);
 	res.end('\n');
 }
 
