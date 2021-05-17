@@ -18,7 +18,7 @@ const groupSize = 5; //min 3 max 12
 const sMin=1;
 const minPasLen=8;
 const maxNameLen=15;
-const maxPasMailLen=30;
+const maxPasMailLen=50;
 
 //Remove potentially dangerous/undesired characters 
 function sanitize(str){
