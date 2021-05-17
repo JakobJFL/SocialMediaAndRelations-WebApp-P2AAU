@@ -1,13 +1,15 @@
-import {isStrLen, validateEmail} from "./app.js";
+import {isStrLen, validateEmail, isInteger} from "./app.js";
 import {createEventMsg} from "./server.js";
 export {runTesting};
 
 function runTesting() {    
-    testcreateEventMsg();
-    testStrLen();
-    testStrLenBad();
-    testValidateEmail();
-    testValidateEmailBad();
+    //testcreateEventMsg();
+    //testStrLen();
+    //testStrLenBad();
+    //testValidateEmail();
+    //testValidateEmailBad();
+    //testIsInteger();
+    //testIsIntegerBad();
 }
 
 function assert(expression, msg) {
@@ -58,4 +60,16 @@ function testValidateEmailBad() {
     let testEmail = "abcmail.com"
     console.log("Email: " + testEmail);
     assert(validateEmail(testEmail) === false, "in testValidateEmailBad");
+}
+
+function testIsInteger() {
+    let testInt = 1;
+    console.log("Integer: " + testInt);
+    assert(isInteger(testInt) === false, "in testIsInteger");
+}
+
+function testIsIntegerBad() {
+    let testInt = 2.5;
+    console.log("Integer: " + testInt);
+    assert(isInteger(testInt) === false, "in testIsInteger");
 }

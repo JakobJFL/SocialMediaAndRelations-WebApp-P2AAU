@@ -6,7 +6,7 @@ import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
 import {createAllNewUsers} from "./createAllUsers.js";
 import {runTesting} from "./testing.js";
-export {processReq, startAutoCreateGroups, isStrLen, validateEmail, groupSize};
+export {processReq, startAutoCreateGroups, isStrLen, validateEmail, groupSize, isInteger};
 
 startServer(); 
 runTesting();

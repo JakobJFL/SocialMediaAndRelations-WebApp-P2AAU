@@ -228,23 +228,23 @@ function showWelcomeBox() {
 	div.innerHTML = `<div class="container">
 	<div class="jumbotron">
 			<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="../node0/pictures/logo.png" alt="" width="75" height="75"></h1>
-		<p class="lead">Den sociale platform, til dig som ingen venner har på stdiet.
+		<p class="lead">Den sociale platform, til dig som gerne vil skabe nye relationer blandt dine medstuderende.
 		</p>
 		<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
-		<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Når du er kommet en gruppe kan vælge hvilken gruppesamtale du vil skrive i venstre meny.</div>
+		<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. I menuen i venstre side af skærmen, vises de grupper du er medlem af. Her kan du vælge hvilken gruppesamtale du vil skrive i.</div>
 		<br>
 		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Gruppedannelse</small></h2>
 		<div>Hver dag klokken 16:00 GMT+2, vil der blive dannet nye samtalegrupper.</div>
-		<div>Grupperne bliver tilfældigt sammensat udfra din studieretning. Hvis der er ikke er nok bruger med den samme studieretning vil bruger med studieretninger der minder om din blive en del af din gruppe. Gruppe størrelsen er 4-5 personer</div>
+		<div>Grupperne bliver tilfældigt sammensat ud fra din studieretning. Hvis der er ikke er nok brugere med den samme studieretning som dig, vil brugere med studieretninger der minder om din, blive en del af din gruppe. Størrelsen for en gruppe er 4-5 personer.</div>
 		<br>
-		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Sletning af grupper</small></h2>
-		<p>Grupperne bliver automatisk slettet hvis der ikke er skrevet i dem i 5 dage eller hvis de har været inaktive i mere end 5 dage.</p>
+		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Inaktive grupper</small></h2>
+		<p>Grupperne bliver automatisk slettet, hvis der ikke har været aktivitet i gruppen efter 5 dage.</p>
 		
 	</div>
 	<div class="jumbotron">
 		<h2><i class="fa fa-book text-muted"></i> <small class="text-muted"> Om projektet</small></h2>
-		<p>Study Buddies er udviklet på Aalborg Universitet af gruppen SW C2-19 som P2 projekt på software. Koden bag projektet kan findes på GitHub <a href="https://github.com/JakobJFL/SocialMediaAndRelations-WebApp-P2AAU">her</a>.</p>
-		<p>Der er udviklet en rapport som en del af projektet.</p>
+		<p>Study Buddies er udviklet på Aalborg Universitet af gruppen C2-19 i deres software projekt på 2. semester. Koden bag projektet kan findes på GitHub <a href="https://github.com/JakobJFL/SocialMediaAndRelations-WebApp-P2AAU">her</a>.</p>
+		<p>Der er også udviklet en rapport som en del af projektet.</p>
 		<p class="lead">
 			<a class="btn btn-primary btn" href="#" role="button">Se rapport</a>
 		</p>
