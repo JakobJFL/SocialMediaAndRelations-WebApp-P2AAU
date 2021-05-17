@@ -25,7 +25,7 @@ function createNewGroups() {
 			else
 				console.error("NO GROUPS CREATED");
 
-			deleteInactiveGroups(prevGroups);
+			deleteInactiveGroups(prevGroups); //Delete old inactive groups
 		}).catch(err => console.log(err));
 	}).catch(err => console.log(err));
 }
@@ -48,10 +48,10 @@ function deleteInactiveGroups(groups) {
 		let DBdateMsg = convertDBTime(group.mTime);
 
 		if (DBdateMsg) {
-			if (timeNow-msIn5Days > DBdateMsg) 
+			if (timeNow-msIn5Days > DBdateMsg) //checks if group has send messeage in specified period
 				groupsToDelete.push(group.group_id);
 		}
-		else if (timeNow-msIn5Days > DBdateGro) 
+		else if (timeNow-msIn5Days > DBdateGro) //if no messages is found checks age of group
 			groupsToDelete.push(group.group_id);
 	}
 	for (const group of groupsToDelete) {
@@ -60,7 +60,7 @@ function deleteInactiveGroups(groups) {
 	console.log(groupsToDelete.length + " groups deleted")
 }
 
-function genGroups(users, prevGroups) { //Main function
+function genGroups(users, prevGroups) { //Main function to gennerate groups
 	let studyArrays = studySeperation(users); //Seperates array with objects into 2d arrays with first to last study
 	let shuffledStudys = [];
 	let runs = 0;
