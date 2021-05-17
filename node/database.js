@@ -150,7 +150,7 @@ function getAllUserId() {
 		DBConnection.connect(function(err){
 			if (err) 
                 reject(err)
-			DBConnection.query("SELECT user_id, study FROM users WHERE state = '1' ORDER BY study ASC",
+			DBConnection.query("SELECT user_id, study, fname FROM users WHERE state = '1' ORDER BY study ASC",
 			function (err, result, fields) {   
 				if(err) 
 					reject(err) 

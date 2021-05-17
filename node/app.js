@@ -1,10 +1,9 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE} from "./server.js";
+import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE, adminLogin} from "./server.js";
 import {createUser, createMessage, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
-import {createAllNewUsers} from "./createAllUsers.js";
 import {runTesting} from "./testing.js";
 export {processReq, startAutoCreateGroups, isStrLen, validateEmail, groupSize, isInteger};
 
@@ -180,11 +179,11 @@ function getHandler(req, res, path, searchParms) {
 		case "createAccount": 
 			fileResponse(res, "html/createAccount.html");
 		break;
-		case "/createAllNewUsers": // DEMO
-		case "createAllNewUsers": // DEMO
-			createAllNewUsers(); // DEMO
-		break; // DEMO
-		default: //For anything else we assume it is a file to be served
+		case "/admin":
+		case "admin": 
+			adminLogin(req, res, searchParms.get("do"));
+		break;
+		default: //For anything else assume it is a file to be served
 			fileResponse(res, req.url);
 		break;
 	}

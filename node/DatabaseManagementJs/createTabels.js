@@ -31,7 +31,6 @@ con.connect(function(err) {
 
 	sql = "CREATE TABLE `messages` (`message_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,`group_ID` int(11),`user_ID` int(11),`msg_content` varchar(2001) NOT NULL,`TIMESTAMP` timestamp NOT NULL DEFAULT current_timestamp(),FOREIGN KEY(group_ID) REFERENCES chatGroups(group_id) ON DELETE SET NULL,FOREIGN KEY(user_ID) REFERENCES users(user_id) ON DELETE SET NULL);"; 
 	con.query(sql, function (err, result) { 
-		console.log(result); 
 		if (err) throw err; 
 		console.log("messages created"); 
 	}); 

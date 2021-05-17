@@ -6,9 +6,10 @@ import process from "process";
 
 import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, NoAccessGroupError, InternalError, MessageTooLongError, reportError} from "./errors.js";
-import {login, getGroups, getGroupMembers} from "./database.js";
+import {login, getGroups, getGroupMembers, getAllUserId} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer,extractJSON, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
+import {createNewGroups} from "./groups.js";
+export {startServer, extractJSON, adminLogin, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";
@@ -65,6 +66,32 @@ function getFileType(fileName){
 		"docx": 'application/msword'
 	};
 	return (ext2Mime[fileExtension]||"text/plain");
+}
+
+function adminLogin(req, res, toDo) {
+	let authheader = req.headers.authorization;
+	if (!authheader) 
+		reject(new Error(AuthError));
+	if (authheader === "Basic amFrb2I6a2F0ZW41NQ==") { // base64 encoded admin username and password
+		if (toDo === "makegroups") {
+			createNewGroups();
+			sendResponse(res, 200, "Making groups", "text/txt", null);
+		}
+		else if (toDo === "getUsers") {
+			getAllUserId().then(users => {
+				let print = "";
+				for (const user of users) {
+					print += user.user_id + " | " + user.fname + " | " + user.study + "\n"; 
+				}
+				sendResponse(res, 200, print, "text/txt", null);
+			});
+		}
+		else 
+			sendResponse(res, 400, "SearchParms not valid", "text/txt", null);
+	}
+	else {
+		reject(new Error(AuthError));
+	}
 }
 
 function isAuthenticated(req) {
