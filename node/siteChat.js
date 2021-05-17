@@ -68,30 +68,7 @@ async function printBody(userID, fname, lname, parmsGroupID) {
 	}
 	let main;
 	if (!groupID) {
-		main = `<div class="welcome-box p-2 px-4 py-5 my-4">
-		<div class="container">
-			<div class="jumbotron">
-					<h1 class="display-4">Velkommen til Study Buddies! <img class="mb-4" src="../node0/pictures/logo.png" alt="" width="75" height="75"></h1>
-				<p class="lead">Den sociale platform, til dig som ingen venner har på stdiet.
-				</p>
-				<h2><i class="fa fa-question-circle text-muted"></i> <small class="text-muted"> Guide</small></h2>
-				<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Når du er kommet en gruppe kan vælge hvilken gruppesamtale du vil skrive i venstre meny.</div>
-				<br>
-				<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Gruppedannelse</small></h2>
-				<div>Hver dag klokken 16:00 GMT+2, vil der blive dannet nye samtalegrupper.</div>
-				<div>Grupperne bliver tilfældigt sammensat udfra din studieretning. Hvis der er ikke er nok bruger med den samme studieretning vil bruger med studieretninger der minder om din blive en del af din gruppe. Gruppe størrelsen er 4-5 personer</div>
-				
-			</div>
-			<div class="jumbotron">
-				<h2><i class="fa fa-book text-muted"></i> <small class="text-muted"> Om projektet</small></h2>
-				<p>Study Buddies er udviklet på Aalborg Universitet af gruppen SW C2-19 som P2 projekt på software. Koden bag projektet kan findes på GitHub <a href="https://github.com/JakobJFL/SocialMediaAndRelations-WebApp-P2AAU">her</a>.</p>
-				<p>Der er udviklet en rapport som en del af projektet.</p>
-				<p class="lead">
-					<a class="btn btn-primary btn" href="#" role="button">Se rapport</a>
-				</p>
-			</div>
-		</div>
-	</div>`
+		main = `<div class="welcome-box p-2 px-4 py-5 my-4" id="welcomeBox"></div>`;
 		return getHeader(fname, lname)+cards+bottomCard+topMain+main;
 	}
 	else {

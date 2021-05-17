@@ -581,7 +581,7 @@
 
   function throwError(e) {
     setTimeout(function () {
-      throw e;
+      //throw e;
     }, 0);
   }
 
@@ -910,7 +910,7 @@
         es.dispatchEvent(event);
         fire(es, es.onerror, event);
         if (error != undefined) {
-          console.error(error);
+          //console.error(error);
         }
       }
     };

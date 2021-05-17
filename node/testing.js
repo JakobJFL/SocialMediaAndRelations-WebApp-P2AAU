@@ -3,11 +3,11 @@ import {createEventMsg} from "./server.js";
 export {runTesting};
 
 function runTesting() {    
-    //testcreateEventMsg();
-    //testStrLen();
-    //testStrLenBad();
-    //testValidateEmail();
-    //testValidateEmailBad();
+    testcreateEventMsg();
+    testStrLen();
+    testStrLenBad();
+    testValidateEmail();
+    testValidateEmailBad();
 }
 
 function assert(expression, msg) {

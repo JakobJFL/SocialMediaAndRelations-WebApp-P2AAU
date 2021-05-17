@@ -134,14 +134,12 @@ function processReq(req, res) {
 	} catch {
 		reportError(res, new Error(ValidationError)); 
 	}
-	
 }
 
 function postHandler(req, res, path) {
 	switch(path) {
 		case "/makeUser":
 		case "makeUser": 
-		console.log("dsd")
 			extractJSON(req)
 				.then(userData => validateUserData(userData))
 				.then(validatedData => createUser(validatedData))
@@ -181,12 +179,6 @@ function getHandler(req, res, path, searchParms) {
 		case "/createAccount":
 		case "createAccount": 
 			fileResponse(res, "html/createAccount.html");
-		break;
-		case "/mus":
-		case "mus": 
-			createNewGroups();
-			res.write("FUCK YOU");
-			res.end('\n');
 		break;
 		case "/createAllNewUsers": // DEMO
 		case "createAllNewUsers": // DEMO
