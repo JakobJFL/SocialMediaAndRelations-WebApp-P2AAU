@@ -70,7 +70,7 @@ function checkPas(input) {
 
 function checkNames(input) {
 	if (String(input.value).length > 15) {
-		input.setCustomValidity('Navn er for lang');
+		input.setCustomValidity('Navnet er for langt');
 	} else {
 		// input is valid -- reset the error message
 		input.setCustomValidity('');
