@@ -115,7 +115,7 @@ function addSSEListeners() {
 				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
 			}
 		});
-	chat.addEventListener("chat", chatEventHander);
+	chat.addEventListener("chat", chatEventHandler);
 	/*
 	document.addEventListener("visibilitychange", function() {
 		if (document.hidden) {
@@ -125,14 +125,7 @@ function addSSEListeners() {
 		}
 	});
 	*/
-	function getDateNow() {
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		const dNow = new Date();
-		const month = monthNames[dNow.getMonth()]
-		return dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + (dNow.getMinutes()<10?'0':'')+dNow.getMinutes();
-	}
-
-	function chatEventHander(event) {
+	function chatEventHandler(event) {
 		let responseObj = JSON.parse(event.data);
 		const dateStr = getDateNow();
 		if (String(responseObj.group_id) == groupID) { //Allow type conversion
@@ -146,6 +139,13 @@ function addSSEListeners() {
 				allChats.insertAdjacentHTML('beforeend', nodeStr);
 			}
 		}
+	}
+	
+	function getDateNow() {
+		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const dNow = new Date();
+		const month = monthNames[dNow.getMonth()]
+		return dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + (dNow.getMinutes()<10?'0':'')+dNow.getMinutes();
 	}
 }
 
