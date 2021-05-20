@@ -137,13 +137,22 @@ function timeSince(date) {
 	  	return Math.floor(interval) + " Måneder";
 	interval = seconds / 86400;
 	if (interval > 1) 
-	  	return Math.floor(interval) + " Dage";
+		if (interval < 2)
+			return Math.floor(interval) + " Dag";
+		else
+			return Math.floor(interval) + " Dage";
 	interval = seconds / 3600;
 	if (interval > 1) 
-	  	return Math.floor(interval) + " Timer";
+		if (interval < 2)
+			return Math.floor(interval) + " Time";
+		else
+			return Math.floor(interval) + " Timer";
 	interval = seconds / 60;
 	if (interval > 1) 
-	  	return Math.floor(interval) + " Minutter";
+		if (interval < 2)
+	  		return Math.floor(interval) + " Minut";
+		else
+			return Math.floor(interval) + " Minutter";
 	return "Aktiv nu";
 }
 
