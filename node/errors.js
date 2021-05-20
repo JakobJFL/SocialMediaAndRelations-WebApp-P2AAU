@@ -9,7 +9,7 @@ const NoResourceError = "No Such Resource";
 const InternalError = "Internal Error";
 
 function reportError(res,error){
-    switch (error.message){
+    switch (error.message) {
         case ValidationError: 
             return errorResponse(res, 400, error.message);
         case MessageTooLongError: 

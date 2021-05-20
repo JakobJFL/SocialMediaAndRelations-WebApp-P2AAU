@@ -16,9 +16,7 @@ function getLoginData() {
 	if (email && password) {
 		loginData.email = email;
 		loginData.password = password;
-		getChatSite();
-		addSSEListeners();
-		startCountDown();
+		setMainPage();
 	}
 }
 
@@ -32,39 +30,44 @@ function loginBtn_Submit(event) {
 	event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
 	loginData.email = String(document.getElementById("inputEmail").value);
     loginData.password = String(document.getElementById("inputPassword").value);
-	getChatSite();
-	addSSEListeners();
-	startCountDown();
+	setMainPage();
+}
+
+function setMainPage() {
+	getChatSite().then(data => {
+		storeUser(loginData.email, loginData.password);
+		document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); // Delete old stylesheets
+		document.head.innerHTML = printHead();
+		document.body.innerHTML = data;
+		document.getElementById("logOutBtn").addEventListener("click", logOut);
+		showWelcomeBox();
+		addSSEListeners();
+		startCountDown();
+	}).catch((err) => showError(err.message));;
 }
 
 function getChatSite() {
-  	fetch('chat', {
-		method: 'GET', 
-		headers: {
-			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
-			'Content-Type': 'text/html',
-		},
-	}).then(response => {
-		userID = response.headers.get('user_ID');
-		thisFname = response.headers.get('fname');
-		thisLname = response.headers.get('lname');
-		return response.text();
-	}).then(data => {
-		if (data.startsWith("Error:403")) 
-			showError("Adgangskode eller brugernavn er forkert");
-		else if (data.startsWith("Error")) 
-			showError("Der er opstået en ukendt fejl");
-		else {
-			storeUser(loginData.email, loginData.password);
-			document.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.parentNode.removeChild(el)); 
-			document.head.innerHTML = printHead();
-			document.body.innerHTML = data;
-			document.getElementById("logOutBtn").addEventListener("click", logOut);
-			showWelcomeBox();
-		}
-	})
-	.catch((error) => {
-		console.error('Error:', error);
+	return new Promise((resolve, reject) => {
+		fetch('chat', {
+			method: 'GET', 
+			headers: {
+				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
+				'Content-Type': 'text/html',
+			},
+		}).then(response => {
+			userID = response.headers.get('user_ID');
+			thisFname = response.headers.get('fname');
+			thisLname = response.headers.get('lname');
+			if (response.status === 200) {
+				return response.text();
+			} 
+			else if (response.status === 403)
+				throw new Error("Adgangskode eller brugernavn er forkert");
+			else
+				throw new Error("Der er opstået en ukendt fejl");
+		}).then(data => {
+			resolve(data);
+		}).catch((err) => reject(err));
 	});
 }
 
