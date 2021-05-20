@@ -9,15 +9,17 @@ const msIn5Days = 432000000;
 function createNewGroups() {
 	getAllUserId().then(userIds =>{
 		getAllGroups().then(prevGroups => {
-			let newGroupArray = genGroups(userIds, prevGroups);
+			if(checkIfEnoughUsers(userIds.length)){
+				let newGroupArray = genGroups(userIds, prevGroups);
 
-			if (!newGroupArray) {
-				newGroupArray = genGroups(userIds.reverse(), prevGroups);
 				if (!newGroupArray) {
-					userIds.forEach(user => {
-						user.study = 0;
-					});
-					newGroupArray = genGroups(userIds, prevGroups);
+					newGroupArray = genGroups(userIds.reverse(), prevGroups);
+					if (!newGroupArray) {
+						userIds.forEach(user => {
+							user.study = 0;
+						});
+						newGroupArray = genGroups(userIds, prevGroups);
+					}
 				}
 			}
 			if (newGroupArray) 
@@ -30,34 +32,14 @@ function createNewGroups() {
 	}).catch(err => console.log(err));
 }
 
-function convertDBTime(time) {
-	if (time) {
-		let DBdate = String(time).split(/[- :]/);
-		return new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]).getTime();
-	}
-	else 
-		return undefined;
-}
 
-function deleteInactiveGroups(groups) {	
-	let newD = new Date();
-	let timeNow = newD.getTime();
-	let groupsToDelete = [];
-	for (const group of groups) {
-		let DBdateGro = convertDBTime(group.gTime);
-		let DBdateMsg = convertDBTime(group.mTime);
-
-		if (DBdateMsg) {
-			if (timeNow-msIn5Days > DBdateMsg) //checks if group has send messeage in specified period
-				groupsToDelete.push(group.group_id);
-		}
-		else if (timeNow-msIn5Days > DBdateGro) //if no messages is found checks age of group
-			groupsToDelete.push(group.group_id);
-	}
-	for (const group of groupsToDelete) {
-		deleteGroup(group);
-	}
-	console.log(groupsToDelete.length + " groups deleted")
+function checkIfEnoughUsers(length){
+    if(length < (groupSize-1)*4){
+        console.error("Not enough users for groups");
+        return false;
+    }
+	else
+		return true
 }
 
 function genGroups(users, prevGroups) { //Main function to gennerate groups
@@ -66,6 +48,7 @@ function genGroups(users, prevGroups) { //Main function to gennerate groups
 	let runs = 0;
 	let groups;
 	let prevGroupsArray = ArrOfObjToArr2D(prevGroups);
+
 	
 	do {
     	groups = [];
@@ -246,4 +229,34 @@ function insertGroupsDB(groupArray) {
 		createGroup(groups).catch(err => console.error(err));
 	}
 	console.log("groups createt");
+}
+
+function deleteInactiveGroups(groups) {	
+	let newD = new Date();
+	let timeNow = newD.getTime();
+	let groupsToDelete = [];
+	for (const group of groups) {
+		let DBdateGro = convertDBTime(group.gTime);
+		let DBdateMsg = convertDBTime(group.mTime);
+
+		if (DBdateMsg) {
+			if (timeNow-msIn5Days > DBdateMsg) //checks if group has send messeage in specified period
+				groupsToDelete.push(group.group_id);
+		}
+		else if (timeNow-msIn5Days > DBdateGro) //if no messages is found checks age of group
+			groupsToDelete.push(group.group_id);
+	}
+	for (const group of groupsToDelete) {
+		deleteGroup(group);
+	}
+	console.log(groupsToDelete.length + " groups deleted")
+}
+
+function convertDBTime(time) {
+	if (time) {
+		let DBdate = String(time).split(/[- :]/);
+		return new Date(DBdate[2] + " " + DBdate[1] + " " + DBdate[3] + " " + DBdate[4] + ":" + DBdate[5]).getTime();
+	}
+	else 
+		return undefined;
 }
