@@ -49,7 +49,6 @@ function genGroups(users, prevGroups) { //Main function to gennerate groups
 	let groups;
 	let prevGroupsArray = ArrOfObjToArr2D(prevGroups);
 
-	
 	do {
     	groups = [];
     	shuffledStudys = [];

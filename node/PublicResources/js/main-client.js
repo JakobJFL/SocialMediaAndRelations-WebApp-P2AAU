@@ -5,6 +5,7 @@ let groupID = 0;
 let thisFname = ""; 
 let thisLname = ""; 
 let loginData = {};
+let evtSource;
 const messageLengthToAddDummy = 40;
 
 window.addEventListener("load", getLoginData);
@@ -40,15 +41,19 @@ function setMainPage() {
 		document.head.innerHTML = printHead();
 		document.body.innerHTML = data;
 		document.getElementById("logOutBtn").addEventListener("click", logOut);
+		
 		showWelcomeBox();
-		addSSEListeners();
+		addSSEListener();
 		startCountDown();
-	}).catch((err) => showError(err.message));;
+	}).catch((err) => showError(err.message));
 }
 
-function getChatSite() {
+function getChatSite(cGroup_id) {
 	return new Promise((resolve, reject) => {
-		fetch('chat', {
+		let changeGroup = "";
+		if (cGroup_id) 
+			changeGroup = "?groupID="+cGroup_id;
+		fetch('chat'+changeGroup, {
 			method: 'GET', 
 			headers: {
 				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
@@ -65,14 +70,14 @@ function getChatSite() {
 				throw new Error("Adgangskode eller brugernavn er forkert");
 			else
 				throw new Error("Der er opstået en ukendt fejl");
-		}).then(data => {
-			resolve(data);
-		}).catch((err) => reject(err));
+		}).then(data => resolve(data))
+		.catch((err) => reject(err));
 	});
 }
 
 function showError(msg) {
 	let errorField = document.getElementById("errorField");
+	console.error(msg)
 	errorField.innerHTML = msg;
 	errorField.style = "visibility:show";
 }
@@ -109,44 +114,52 @@ function storeUser(email, password) {
 }
 
 //EventSource
-function addSSEListeners() {
-	let chat = new EventSourcePolyfill("chatSSE", {
+
+function addSSEListener() {
+	evtSource = new EventSourcePolyfill("chatSSE", {
+		headers: {
+			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
+		}
+	});
+	evtSource.addEventListener("chat", chatEventHandler, false);
+
+	/*document.addEventListener("visibilitychange", function() {
+		if (document.hidden) {
+			evtSource.close();
+			evtSource.removeEventListener();
+		} else {
+			evtSource = new EventSourcePolyfill("chatSSE", {
 			headers: {
 				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
-			}
-		});
-	chat.addEventListener("chat", chatEventHandler);
-	/*
-	document.addEventListener("visibilitychange", function() {
-		if (document.hidden) {
-			chat.removeEventListener();
-		} else {
-			chat.addEventListener("chat", chatEventHander);
+				}
+			});
+			evtSource.addEventListener("chat", chatEventHandler);
 		}
 	});
 	*/
-	function chatEventHandler(event) {
-		let responseObj = JSON.parse(event.data);
-		const dateStr = getDateNow();
-		if (String(responseObj.group_id) == groupID) { //Allow type conversion
-			let allChats = document.getElementById("allChat");
-			if (String(responseObj.user_id) != userID) { //Allow type conversion
-				let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
-				allChats.insertAdjacentHTML('beforeend', nodeStr);
-			}
-			else {
-				let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
-				allChats.insertAdjacentHTML('beforeend', nodeStr);
-			}
+}
+
+function chatEventHandler(event) {
+	let responseObj = JSON.parse(event.data);
+	const dateStr = getDateNow();
+	if (String(responseObj.group_id) == groupID) { //Allow type conversion
+		let allChats = document.getElementById("allChat");
+		if (String(responseObj.user_id) != userID) { //Allow type conversion
+			let nodeStr = addChatSender(responseObj.msg_content, responseObj.fname + " " + responseObj.lname, dateStr);
+			allChats.insertAdjacentHTML('beforeend', nodeStr);
+		}
+		else {
+			let nodeStr = addChatReciever(responseObj.msg_content, dateStr);
+			allChats.insertAdjacentHTML('beforeend', nodeStr);
 		}
 	}
-	
-	function getDateNow() {
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		const dNow = new Date();
-		const month = monthNames[dNow.getMonth()]
-		return dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + (dNow.getMinutes()<10?'0':'')+dNow.getMinutes();
-	}
+}
+
+function getDateNow() {
+	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const dNow = new Date();
+	const month = monthNames[dNow.getMonth()]
+	return dNow.getDate() + "/" + month + " " + dNow.getFullYear() + " " + dNow.getHours() + ":" + (dNow.getMinutes()<10?'0':'')+dNow.getMinutes();
 }
 
 function addChatSender(message, userName, date) {
@@ -185,7 +198,6 @@ function addChatReciever(message, date) {
   return resReciever;
 }
 
-//POST new Message
 function newMessage() {
 	let message = String(document.getElementById("messageSenderBox").value);
 	let jsonBody = {
@@ -208,6 +220,19 @@ function newMessage() {
 }
 
 function changeGroup(cGroup_id) {
+	//evtSource.removeEventListener();
+	//evtSource.close();
+	getChatSite(cGroup_id).then(data => {
+		groupID = cGroup_id;
+		document.body.innerHTML = data;
+		document.getElementById("logOutBtn").addEventListener("click", logOut);
+		document.getElementById("btnSender").addEventListener("click", newMessage);
+		document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
+		//addSSEListener();
+		startCountDown();
+	}).catch((err) => console.error(err.message));
+	
+	/*
 	fetch('chat?groupID='+cGroup_id, {
 		method: 'GET', 
 		headers: {
@@ -230,6 +255,7 @@ function changeGroup(cGroup_id) {
 	.catch((error) => {
 		console.error('Error:', error);
 	});
+	*/
 }
 
 function showWelcomeBox() {

@@ -1,6 +1,6 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, responseAuth, jsonResponse, SSEResponse, startServer, broadcastMsgSSE, adminGetUser, adminMakeGroup} from "./server.js";
+import {extractJSON, fileResponse, responseAuth, jsonResponse, acceptNewClient, startServer, broadcastMsgSSE, adminGetUser, adminMakeGroup} from "./server.js";
 import {createUser, createMessage, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
@@ -179,7 +179,7 @@ function getHandler(req, res, path, searchParms) {
 		break;
 		case "/chatSSE":
 		case "chatSSE": 
-			SSEResponse(req, res);
+			acceptNewClient(req, res);
 		break;
 		case "/createAccount":
 		case "createAccount": 
@@ -197,9 +197,9 @@ function getHandler(req, res, path, searchParms) {
 
 function startAutoCreateGroups() {
 	let now = new Date();
-	let millisLeft = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0, 0, 0) - now; // milliseconds until 16 o'clock
+	let millisLeft = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0, 0, 0) - now; // milliseconds until 16:00
 	if (millisLeft < 0) {
-		millisLeft += 86400000; // it's after 16 o'clock, try at 16 o'clock tomorrow.
+		millisLeft += 86400000; // it's after 16:00, try at 16:00 tomorrow.
 	}
 	setTimeout(function(){createNewGroups(); startAutoCreateGroups()}, millisLeft);
 }

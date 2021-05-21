@@ -8,7 +8,7 @@ import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, NoAccessGroupError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers, getAllUserId, createGroup} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer, extractJSON, adminGetUser, adminMakeGroup, fileResponse, SSEResponse, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
+export {startServer, extractJSON, adminGetUser, adminMakeGroup, fileResponse, acceptNewClient, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";
@@ -125,7 +125,7 @@ function isAuthenticated(req) {
 // This handles GET requests for the /chatSSE endpoint which are generated when
 // the client creates a new EventSource object (or when the EventSource
 // reconnects automatically)
-function SSEResponse(req, res) {
+function acceptNewClient(req, res) {
 	isAuthenticated(req).then(loginResult => {
 		let clientsSSEObj = {
 			SSEres: res,
@@ -163,6 +163,7 @@ function htmlChatResponse(res, htmlString, user_id, fname, lname){
 
 // Broadcast new message from SSE
 async function broadcastMsgSSE(req, res, data) {
+	res.writeHead(200).end();
 	let loginResult = await isAuthenticated(req); 
 	data.user_id = loginResult[0].user_id;
 	let groupID;
@@ -174,7 +175,6 @@ async function broadcastMsgSSE(req, res, data) {
 	if (!groupID) 
 		throw new Error(NoAccessGroupError);
 	let groupsMembers = await getGroupMembers(groupID);
-	res.writeHead(200).end();
 	for (const client of clientsSSE) {
 		if (isUserIdInGroup(groupsMembers, client.SSEuserID)) 
 			client.SSEres.write(createEventMsg(data));
@@ -256,7 +256,6 @@ function collectPostBody(req) {
 			length+=chunk.length; 
 		
 			if (length > reqCharLimit) {
-				//req.connection.destroy(); //we would need the response object to send an error code
 				reject(new Error(MessageTooLongError));
 			}
 		}).on('end', () => {

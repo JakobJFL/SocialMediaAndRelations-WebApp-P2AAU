@@ -90,7 +90,6 @@ function getGroupMembers(groupID) {
 				else 
 					sql += ", member_id"+i;
 			}
-
 			DBConnection.query(sql + " FROM chatGroups WHERE group_id = " + 
 				mysql.escape(groupID), function (err, result, fields) {    
 					if(err) 
