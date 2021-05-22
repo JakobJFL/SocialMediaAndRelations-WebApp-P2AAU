@@ -11,6 +11,7 @@ maxDate = yyyy+'-'+mm+'-'+dd;
 document.getElementById("birthDate").setAttribute("max", maxDate);
 
 document.getElementById("accInfo").addEventListener("submit", sendData); // kører sendData når klikkes på knappen eller når der er enter
+
 function sendData() {
 	let firstName = document.getElementById("firstName").value; 
 	let lastName = document.getElementById("lastName").value;  
@@ -59,20 +60,6 @@ function checkPas(input) {
 	if (input.value != document.getElementById('password').value) {
 		input.setCustomValidity('Adgangskoderne skal være identiske');
 	}
-	else if (String(input.value).length < 8) {
-		input.setCustomValidity('Adgangskoden skal være på minimum 8 tegn');
-	} 
-	else {
-		// input is valid -- reset the error message
+	else 
 		input.setCustomValidity('');
-	}
-}
-
-function checkNames(input) {
-	if (String(input.value).length > 15) {
-		input.setCustomValidity('Navnet er for langt');
-	} else {
-		// input is valid -- reset the error message
-		input.setCustomValidity('');
-	}
 }

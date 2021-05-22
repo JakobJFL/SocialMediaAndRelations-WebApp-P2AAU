@@ -67,6 +67,7 @@ function getFileType(fileName){
 	return (ext2Mime[fileExtension]||"text/plain");
 }
 
+//special admin login for maintenance. Gets data from all users
 function adminGetUser(req, res) {
 	let authheader = req.headers.authorization;
 	if (!authheader) 
@@ -84,6 +85,7 @@ function adminGetUser(req, res) {
 	}
 }
 
+//special admin login for maintenance. Makes group. JSON defines the group members
 function adminMakeGroup(req, res, data) {
 	let authheader = req.headers.authorization;
 	if (!authheader) 
@@ -100,6 +102,7 @@ function adminMakeGroup(req, res, data) {
 	}
 }
 
+//Checks the authorization headers matches a user en DB and returns the loginResult(userID) 
 function isAuthenticated(req) {
 	return new Promise((resolve,reject) => {
 		let authheader = req.headers.authorization;
@@ -145,6 +148,7 @@ function acceptNewClient(req, res) {
 	}).catch(err => reportError(res, err));
 }
 
+//Checks authorisation and set res to html site
 function responseAuth(req, res, parmsGroupID) {
 	isAuthenticated(req).then(loginResult => {
 		printChatPage(loginResult[0].user_id, loginResult[0].fname, parmsGroupID)
@@ -153,6 +157,7 @@ function responseAuth(req, res, parmsGroupID) {
 	}).catch(err => reportError(res, err));
 }
 
+//HTML response with added headers
 function htmlChatResponse(res, htmlString, user_id, fname, lname){
 	let objHeaderArr = [];
 	objHeaderArr.push({key: "user_ID", value: user_id});
@@ -182,11 +187,13 @@ async function broadcastMsgSSE(req, res, data) {
 	return data;
 }
 
+//Format object as SSE event message
 function createEventMsg(dataStr) {
 	let message = "data: " + JSON.stringify(dataStr).replace("\n", "\ndata: ");
 	return `event: chat\n${message}\n\n`;
 }
 
+//is the user ID from authorization headers in the group from request body
 function isUserIdInGroup(groupsMembers, userId) {
 	for (let i = 1; i <= groupSize; i++) {
 		let key = "member_id"+i; 
@@ -197,7 +204,6 @@ function isUserIdInGroup(groupsMembers, userId) {
 }
 
 /********* Response handling *********/
-
 // Send a error response with a given HTTP error code, and reason string 
 function errorResponse(res, code, reason) {
 	sendResponse(res, code, "Error:" + code + " - " + reason, "text/txt", null)

@@ -11,6 +11,7 @@ const messageLengthToAddDummy = 40;
 window.addEventListener("load", getLoginData);
 document.getElementById("loginBtn").addEventListener("submit", loginBtn_Submit);
 
+//checks if loginData is already in sessionStorage
 function getLoginData() {
 	let email = sessionStorage.getItem('email');
 	let password = sessionStorage.getItem('password');
@@ -21,12 +22,6 @@ function getLoginData() {
 	}
 }
 
-function logOut() {
-	sessionStorage.removeItem('email');
-	sessionStorage.removeItem('password');
-	location.reload();
-}
-
 function loginBtn_Submit(event) {
 	event.preventDefault(); //Handle the interaction with the server rather than browsers form submission
 	loginData.email = String(document.getElementById("inputEmail").value);
@@ -34,6 +29,7 @@ function loginBtn_Submit(event) {
 	setMainPage();
 }
 
+//Set body and head to chatsite
 function setMainPage() {
 	getChatSite().then(data => {
 		storeUser(loginData.email, loginData.password);
@@ -75,11 +71,9 @@ function getChatSite(cGroup_id) {
 	});
 }
 
-function showError(msg) {
-	let errorField = document.getElementById("errorField");
-	console.error(msg)
-	errorField.innerHTML = msg;
-	errorField.style = "visibility:show";
+function storeUser(email, password) {
+	sessionStorage.setItem('email', email);
+	sessionStorage.setItem('password', password);
 }
 
 function printHead() {
@@ -101,16 +95,11 @@ function printHead() {
 			<title>Study Buddies</title>`;
 }
 
-function submitOnEnter(event){
-	if (event.keyCode == 13 && !event.shiftKey) {
-		event.preventDefault();
-		newMessage();
-	}
-}
-
-function storeUser(email, password) {
-	sessionStorage.setItem('email', email);
-	sessionStorage.setItem('password', password);
+function showError(msg) {
+	let errorField = document.getElementById("errorField");
+	console.error(msg)
+	errorField.innerHTML = msg;
+	errorField.style = "visibility:show";
 }
 
 //EventSource
@@ -139,6 +128,7 @@ function addSSEListener() {
 	*/
 }
 
+//Adds the event from chatSSE to message row('allChat') by making new chatbox with content of response body
 function chatEventHandler(event) {
 	let responseObj = JSON.parse(event.data);
 	const dateStr = getDateNow();
@@ -155,6 +145,7 @@ function chatEventHandler(event) {
 	}
 }
 
+//Returns now date in format that match the server side
 function getDateNow() {
 	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	const dNow = new Date();
@@ -219,6 +210,7 @@ function newMessage() {
 	});
 }
 
+//Change chat html to group with the Group_id
 function changeGroup(cGroup_id) {
 	//evtSource.removeEventListener();
 	//evtSource.close();
@@ -231,31 +223,21 @@ function changeGroup(cGroup_id) {
 		//addSSEListener();
 		startCountDown();
 	}).catch((err) => console.error(err.message));
-	
-	/*
-	fetch('chat?groupID='+cGroup_id, {
-		method: 'GET', 
-		headers: {
-			'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password), 
-			'Content-Type': 'text/html',
-		},
-	})
-	.then(response => response.text())
-	.then(data => {
-		if (data.startsWith("Error:403")) 
-			console.error("Adgangskode eller brugernavn er forkert");
-		else {
-			document.body.innerHTML = data;
-			groupID = cGroup_id;
-			document.getElementById("btnSender").addEventListener("click", newMessage);
-			document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
-			document.getElementById("logOutBtn").addEventListener("click", logOut);
-		}
-	})
-	.catch((error) => {
-		console.error('Error:', error);
-	});
-	*/
+}
+
+//Remove loginData from sessionStorage
+function logOut() {
+	sessionStorage.removeItem('email');
+	sessionStorage.removeItem('password');
+	location.reload();
+}
+
+//Submits message form(calls newMessage) when enter key is pressed
+function submitOnEnter(event){
+	if (event.keyCode == 13 && !event.shiftKey) {
+		event.preventDefault();
+		newMessage();
+	}
 }
 
 function showWelcomeBox() {

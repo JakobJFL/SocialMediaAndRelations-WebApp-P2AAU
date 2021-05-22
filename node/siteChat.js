@@ -4,6 +4,7 @@ import {getGroups, getChats, getLastMessage} from "./database.js";
 
 const messageLengthToAddDummy = 40;
 
+//return promise that resolves the html body for chat page
 function printChatPage(userID, fname, parmsGroupID) {
     let bottom = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"crossorigin="anonymous"></script>
 	<script type="text/javascript" src="/js/eventsourceLib/src/eventsource.min.js"></script>
@@ -27,36 +28,36 @@ function printChatPage(userID, fname, parmsGroupID) {
 
 async function printBody(userID, fname, parmsGroupID) {
     let countdownCard = `<ul class="nav flex-column">
-						<li class="nav-item">
-							<div class="nav-link" aria-current="page" href="#">
-							<div class="static">
-								<div class="card-body">
-								<h6 class="card-subtitle text-muted" id="countdown">Ny gruppe om: </h6>
+							<li class="nav-item">
+								<div class="nav-link" aria-current="page" href="#">
+								<div class="static">
+									<div class="card-body">
+									<h6 class="card-subtitle text-muted" id="countdown">Ny gruppe om: </h6>
+									</div>
 								</div>
-							</div>
-							</div>
-						</li>
-						</ul>`
+								</div>
+							</li>
+							</ul>`
     let topCard = `<div class="container-fluid"><div class="row"><nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse"><div class="position-sticky pt-3">`;
     let bottomCard = `</div></nav></div></div>`
     let topMain = `<main>`;
 	let topChat = `<div class="chat-box p-2 px-4 py-5 my-4"><div id="allChat">`;
 	let bottomChat = `</div>
-	</div>
-		<div class="message-sender">
-		<div class="container-fluid p-2 px-4 py-3 bg-white">
-			<form id="senderFrom" action="javascript:void(0);">
-			<div class="input-group">
-				<textarea type="textbox" role="textbox" id="messageSenderBox" data-text="Skriv en besked" aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></textarea>
-				<div class="input-group-append">
-				<button type="submit" id="btnSender" class="btn btn-outline-primary send-btn"><i class="fas fa-paper-plane"></i></button>
-				</div>
-			</div>
-			</form>
-		</div>
-		</div>
-	</div>
-	</main>`;
+						</div>
+							<div class="message-sender">
+							<div class="container-fluid p-2 px-4 py-3 bg-white">
+								<form id="senderFrom" action="javascript:void(0);">
+								<div class="input-group">
+									<textarea type="textbox" role="textbox" id="messageSenderBox" data-text="Skriv en besked" aria-describedby="button-addon2" rows="1" class="form-control rounded-0 border-0 py-2 bg-light"></textarea>
+									<div class="input-group-append">
+									<button type="submit" id="btnSender" class="btn btn-outline-primary send-btn"><i class="fas fa-paper-plane"></i></button>
+									</div>
+								</div>
+								</form>
+							</div>
+							</div>
+						</div>
+						</main>`;
 	let cards = topCard+countdownCard;
 	let groupID = parmsGroupID;
 	let groupsData = await getGroups(userID);
@@ -79,6 +80,7 @@ async function printBody(userID, fname, parmsGroupID) {
 	} 
 }
 
+//return string html with cards(sidebar menu selectors) 
 function insertCards(group, lastMessage, fname, groupID) {
 	let cards = "";
 	let cardTitle = getCardTitle(group, fname);
@@ -94,6 +96,7 @@ function insertCards(group, lastMessage, fname, groupID) {
 	return cards;
 }
 
+//Returns names of people in the group except for the that is logged in
 function getCardTitle(group, fname) {
 	let names = "";
 	let isNameDel = false;
@@ -112,6 +115,7 @@ function getCardTitle(group, fname) {
 	return names;
 }
 
+//Returns studys of people in the group
 function getCardSubtitle(group) {
 	let groups = "";
 	let preGroups = "";
@@ -130,14 +134,7 @@ function getCardSubtitle(group) {
 function timeSince(date) {
 	let seconds = Math.floor((new Date() - date) / 1000);
 	let interval = seconds / 31536000;
-	/*
-	if (interval > 1) 
-	  	return Math.floor(interval) + " År";
-	interval = seconds / 2592000;
-	if (interval > 1) 
-	  	return Math.floor(interval) + " Måneder";
 	interval = seconds / 86400;
-	*/
 	if (interval > 1) 
 		if (interval < 2)
 			return Math.floor(interval) + " Dag";
@@ -164,18 +161,18 @@ function addCard(title, subtitle, active, cGroupID, addActive) {
 		cardActiveHtml = `<p class="card-active online">Aktiv nu</p>`;
 		
 	return `<ul class="nav flex-column">
-			<li class="nav-item">
-			<a class="nav-link" aria-current="page" onclick="changeGroup(${cGroupID})">
-				<div class="card ${addActive}">
-				<div class="card-body">
-					<h5 class="card-title">${title}</h5>
-					<h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
-					${cardActiveHtml}
-				</div>
-				</div>
-			</a>
-			</li>
-		</ul>`
+				<li class="nav-item">
+				<a class="nav-link" aria-current="page" onclick="changeGroup(${cGroupID})">
+					<div class="card ${addActive}">
+					<div class="card-body">
+						<h5 class="card-title">${title}</h5>
+						<h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
+						${cardActiveHtml}
+					</div>
+					</div>
+				</a>
+				</li>
+			</ul>`
 }
 
 function addChats(chatsData, userID) {
@@ -191,24 +188,6 @@ function addChats(chatsData, userID) {
 			chats += addChatSender(chat.msg_content, chat.fname + " " + chat.lname, dateFormatted);
 	}
 	return chats;
-}
-
-function addChatSender(message, userName, date) {
-	let dummy = "";
-	if (message.length <= messageLengthToAddDummy )
-		dummy = `<div class="dummy-space-left"></div>`
-	let resSender = `<div class="media sender-msg mb-3">
-		<img src="pictures/profile.jpg" alt="user" width="50" class="rounded-circle">
-		<div class="media-body py-2 ml-3">
-			<p class="small top-text-muted">${userName}</p>
-			<div class="bg-grey rounded py-2 px-3 mb-2">
-				<p class="text-small mb-0">${message}</p>
-			</div>
-		</div>
-		<p class="small text-muted text-bottom-sender">${date}</p>
-		${dummy}
-	</div>`;
-	return resSender;
 }
 
 function addChatReciever(message, date) {
@@ -228,15 +207,33 @@ function addChatReciever(message, date) {
   	return resReciever;
 }
 
+function addChatSender(message, userName, date) {
+	let dummy = "";
+	if (message.length <= messageLengthToAddDummy )
+		dummy = `<div class="dummy-space-left"></div>`
+	let resSender = `<div class="media sender-msg mb-3">
+						<img src="pictures/profile.jpg" alt="user" width="50" class="rounded-circle">
+						<div class="media-body py-2 ml-3">
+							<p class="small top-text-muted">${userName}</p>
+							<div class="bg-grey rounded py-2 px-3 mb-2">
+								<p class="text-small mb-0">${message}</p>
+							</div>
+						</div>
+						<p class="small text-muted text-bottom-sender">${date}</p>
+						${dummy}
+					</div>`;
+	return resSender;
+}
+
 function getHeader() {
 	return `<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow">
-	<a class="navbar-brand text-white">Study Buddies</a>
-	<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="navbar-left px-1">
-	<a class="nav-link navbar-text" id="logOutBtn">Log ud</a>
-	<a class="profileBtn" href="#"></a>
-	</div>
-	</header>`;   
+				<a class="navbar-brand text-white">Study Buddies</a>
+				<button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-left px-1">
+				<a class="nav-link navbar-text" id="logOutBtn">Log ud</a>
+				<a class="profileBtn" href="#"></a>
+				</div>
+			</header>`;   
 }

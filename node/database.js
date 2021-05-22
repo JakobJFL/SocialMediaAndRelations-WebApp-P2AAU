@@ -15,6 +15,7 @@ function dbConnect() {
 	});
 }
 
+//Check if email and password is in DB and resolve user_id
 function login(loginData) {
 	const DBConnection = dbConnect();
 	return new Promise((resolve,reject) => {
@@ -238,12 +239,22 @@ function createGroup(body) {
 		DBConnection.connect(function(err) {
 			if (err) 
 				reject(err);
-			let sql = `INSERT INTO chatGroups(member_id1, member_id2, member_id3, member_id4, member_id5) VALUES (
-				${mysql.escape(body.member_id1)}, 
-				${mysql.escape(body.member_id2)}, 
-				${mysql.escape(body.member_id3)}, 
-				${mysql.escape(body.member_id4)},
-				${mysql.escape(body.member_id5)});`;
+				let sql = "INSERT INTO chatGroups( ";
+			for (let i = 1; i <= groupSize; i++) {
+				if (i === 1)
+					sql += "member_id"+i;
+				else 
+					sql += ", member_id"+i;
+			}
+			sql += ") VALUES (";
+			for (let i = 1; i <= groupSize; i++) {
+				if (i === 1) {
+					sql += mysql.escape(body["member_id"+i]);
+				}
+				else 
+					sql += ", " + mysql.escape(body["member_id"+i]);
+			}
+			sql += ");"
 			DBConnection.query(sql, function (err, result) {
 				if (err) 
 					reject(err);

@@ -27,7 +27,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></span>
 								</div>
-							<input type="text" id="firstName" oninput="checkNames(this)" class="form-control" placeholder="Fornavn" required autofocus aria-describedby="basic-addon1">
+							<input type="text" id="firstName" class="form-control" placeholder="Fornavn" maxlength="15" required autofocus aria-describedby="basic-addon1">
 						</div>
 					</div>
 					<div class="col">
@@ -35,7 +35,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="text" id="lastName" oninput="checkNames(this)" class="form-control" placeholder="Efternavn" required> 
+							<input type="text" id="lastName" class="form-control" placeholder="Efternavn" maxlength="15" required> 
 						</div>
 					</div>
 				</div>
@@ -46,7 +46,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon3"><i class="fas fa-envelope"></i></span>
 							</div>
-							<input type="email" id="inputEmail" class="form-control" placeholder="eksempel@mail.dk" required aria-describedby="basic-addon3">
+							<input type="email" id="inputEmail" class="form-control" placeholder="eksempel@mail.dk" maxlength="50" required aria-describedby="basic-addon3">
 						</div>	
 					</div>
 				</div>
@@ -98,7 +98,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
 								</div>
-							<input type="password" id="password" class="form-control" placeholder="Adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+							<input type="password" id="password" class="form-control" placeholder="Adgangskode" required aria-label="lås" maxlength="50" minlength="8" aria-describedby="basic-addon2">
 						</div>
 					</div>
 				</div>
@@ -108,7 +108,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
 								</div>
-							<input type="password" id="passwordRepeat" oninput="checkPas(this)" class="form-control" placeholder="Gentag adgangskode" required aria-label="lås" aria-describedby="basic-addon2">
+							<input type="password" id="passwordRepeat" oninput="checkPas(this)" class="form-control" placeholder="Gentag adgangskode" required aria-label="lås" maxlength="50" minlength="8" aria-describedby="basic-addon2">
 						</div>
 					</div>
 				</div>
