@@ -89,7 +89,7 @@ function insertCards(group, lastMessage, fname, groupID) {
 	if (lastMessage) 
 		lastMessageDate = timeSince(lastMessage.TIMESTAMP);
 
-	if (group.group_id == groupID) 
+	if (group.group_id == groupID) //Allow type conversion
 		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "active"); 
 	else 
 		cards += addCard(cardTitle, cardSubtitle, lastMessageDate, group.group_id, "");
@@ -117,18 +117,18 @@ function getCardTitle(group, fname) {
 
 //Returns studys of people in the group
 function getCardSubtitle(group) {
-	let groups = "";
+	let study = "";
 	let preGroups = "";
 	for (let i = 1; i <= groupSize; i++) {
 		let key = "s"+i; 
-		if (preGroups !== group[key]) {
+		if (preGroups !== group[key] && group[key] !== null) {
 			if (i !== 1) 
-				groups += ", ";
-			groups += group[key];
+				study += ", ";
+			study += group[key];
 		}
 		preGroups = group[key];
 	}
-	return groups;
+	return study;
 }
 
 function timeSince(date) {

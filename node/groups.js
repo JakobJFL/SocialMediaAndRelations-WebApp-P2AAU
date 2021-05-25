@@ -20,7 +20,6 @@ function createNewGroups() {
 						newGroupArray = genGroups(userIds, prevGroups);
 					}
 				}
-				console.log(newGroupArray);
 			}
 			if (newGroupArray) 
 				insertGroupsDB(newGroupArray);

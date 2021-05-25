@@ -56,7 +56,7 @@ function getGroups(userID) {
 			for (let i = 1; i <= groupSize; i++) 
 				sql += "LEFT JOIN users u"+i+" ON chatGroups.member_id"+i+"=u"+i+".user_id ";
 			for (let i = 1; i <= groupSize; i++) 
-				sql += "INNER JOIN studys s"+i+" ON u"+i+".study=s"+i+".study_id ";
+				sql += "LEFT JOIN studys s"+i+" ON u"+i+".study=s"+i+".study_id ";
 
 			sql += "WHERE "
 			for (let i = 1; i <= groupSize; i++) {
@@ -65,6 +65,7 @@ function getGroups(userID) {
 				else 
 					sql += " OR chatGroups.member_id"+i+" = " + mysql.escape(userID);
 			}
+			sql += " ORDER BY chatGroups.group_id DESC "
 
 			DBConnection.query(sql, function (err, result, fields) {    
 				if(err) 
@@ -240,7 +241,6 @@ function createGroup(body) {
 			if (err) 
 				reject(err);
 			let objSize = Object.keys(body).length;	
-			
 			let sql = "INSERT INTO chatGroups( ";
 			for (let i = 1; i <= objSize; i++) {
 				if (i === 1)
@@ -257,7 +257,6 @@ function createGroup(body) {
 					sql += ", " + mysql.escape(body["member_id"+i]);
 			}
 			sql += ");"
-			console.log(sql);
 			DBConnection.query(sql, function (err, result) {
 				if (err) 
 					reject(err);
