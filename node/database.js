@@ -239,15 +239,17 @@ function createGroup(body) {
 		DBConnection.connect(function(err) {
 			if (err) 
 				reject(err);
-				let sql = "INSERT INTO chatGroups( ";
-			for (let i = 1; i <= groupSize; i++) {
+			let objSize = Object.keys(body).length;	
+			
+			let sql = "INSERT INTO chatGroups( ";
+			for (let i = 1; i <= objSize; i++) {
 				if (i === 1)
 					sql += "member_id"+i;
 				else 
 					sql += ", member_id"+i;
 			}
 			sql += ") VALUES (";
-			for (let i = 1; i <= groupSize; i++) {
+			for (let i = 1; i <= objSize; i++) {
 				if (i === 1) {
 					sql += mysql.escape(body["member_id"+i]);
 				}
@@ -255,6 +257,7 @@ function createGroup(body) {
 					sql += ", " + mysql.escape(body["member_id"+i]);
 			}
 			sql += ");"
+			console.log(sql);
 			DBConnection.query(sql, function (err, result) {
 				if (err) 
 					reject(err);

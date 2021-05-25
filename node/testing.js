@@ -13,7 +13,7 @@ function runTesting() {
 }
 
 function assert(expression, msg) {
-    if (expression) 
+    if (!expression) 
         console.error("Error " + msg);
 }
 
