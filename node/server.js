@@ -8,7 +8,7 @@ import {processReq, groupSize, startAutoCreateGroups} from "./app.js";
 import {ValidationError, AuthError, NoAccessGroupError, InternalError, MessageTooLongError, reportError} from "./errors.js";
 import {login, getGroups, getGroupMembers, getAllUserId, createGroup} from "./database.js";
 import {printChatPage} from "./siteChat.js";
-export {startServer, extractJSON, adminGetUser, adminMakeGroup, fileResponse, acceptNewClient, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
+export {startServer, extractJSON, adminGetUser, adminMakeGroup, adminRunGroupAlg, fileResponse, acceptNewClient, broadcastMsgSSE, responseAuth,jsonResponse,errorResponse, createEventMsg};
 
 const port = 3280; //Port of node0
 const hostname = "127.0.0.1";
@@ -65,6 +65,24 @@ function getFileType(fileName){
 		"docx": 'application/msword'
 	};
 	return (ext2Mime[fileExtension]||"text/plain");
+}
+
+function adminRunGroupAlg(req, res) {
+	return new Promise((resolve,reject) => {
+		let authheader = req.headers.authorization;
+		if (!authheader) {
+			reportError(res, new Error(AuthError))
+			reject();
+		}
+		if (authheader === "Basic amFrb2I6a2F0ZW41NQ==") { // base64 encoded admin username and password
+			sendResponse(res, 200, "Running group algorithm", "text/txt", null);
+			resolve();
+		}
+		else {
+			reportError(res, new Error(AuthError))
+			reject();
+		}
+	});
 }
 
 //special admin login for maintenance. Gets data from all users

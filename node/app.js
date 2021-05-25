@@ -1,6 +1,6 @@
 //We use EC6 modules!
 //Importing functions from other files
-import {extractJSON, fileResponse, responseAuth, jsonResponse, acceptNewClient, startServer, broadcastMsgSSE, adminGetUser, adminMakeGroup} from "./server.js";
+import {extractJSON, fileResponse, responseAuth, jsonResponse, acceptNewClient, startServer, broadcastMsgSSE, adminGetUser, adminMakeGroup, adminRunGroupAlg} from "./server.js";
 import {createUser, createMessage, getUserEmail} from "./database.js";
 import {ValidationError, NoResourceError, reportError} from "./errors.js";
 import {createNewGroups} from "./groups.js";
@@ -18,6 +18,7 @@ const sMin=1;
 const minPasLen=8;
 const maxNameLen=15;
 const maxPasMailLen=50;
+const contentLimitOfmsg = 2000;	// Character limit in chatbox 
 
 //Remove potentially dangerous/undesired characters 
 function sanitize(str){
@@ -78,7 +79,6 @@ function isStrLen(str, minLength, maxLength) {
 
 function validateMessageData(messageData) {
 	return new Promise((resolve,reject) => {
-		const content_limit = 2000;	// Character limit in chatbox 
 		let validData;
 		try {
 			validData = {
@@ -93,7 +93,7 @@ function validateMessageData(messageData) {
 		if (isStrLen(validData.fname, sMin, maxNameLen) || 
 			isStrLen(validData.lname, sMin, maxNameLen))
 				reject(new Error(ValidationError));
-		else if (validData.msg_content.length >= content_limit || validData.msg_content.length < 1) {
+		else if (validData.msg_content.length >= contentLimitOfmsg || validData.msg_content.length < 1) {
 			reject(new Error(ValidationError));
 		}
 		else if(isInteger(validData.group_id)) {
@@ -188,6 +188,12 @@ function getHandler(req, res, path, searchParms) {
 		case "/adminGetUser":
 		case "adminGetUser": 
 			adminGetUser(req, res);
+		break;
+		case "/adminRunGroupAlg":
+		case "adminRunGroupAlg": 
+			adminRunGroupAlg(req, res).then(function() {
+				createNewGroups();
+			});
 		break;
 		default: //For anything else assume it is a file to be served
 			fileResponse(res, req.url);

@@ -8,7 +8,7 @@ const NoAccessGroupError = "User credentials do not have access to this group";
 const NoResourceError = "No Such Resource";
 const InternalError = "Internal Error";
 
-function reportError(res,error){
+function reportError(res, error){
     switch (error.message) {
         case ValidationError: 
             return errorResponse(res, 400, error.message);
