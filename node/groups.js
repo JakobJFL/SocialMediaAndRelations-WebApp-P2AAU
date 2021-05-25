@@ -9,9 +9,8 @@ const msIn5Days = 432000000;
 function createNewGroups() {
 	getAllUserId().then(userIds =>{
 		getAllGroups().then(prevGroups => {
-			if(checkIfEnoughUsers(userIds.length)){
-				let newGroupArray = genGroups(userIds, prevGroups);
-
+			let newGroupArray = genGroups(userIds, prevGroups);
+			if(checkIfEnoughUsers(userIds.length)) {
 				if (!newGroupArray) {
 					newGroupArray = genGroups(userIds.reverse(), prevGroups);
 					if (!newGroupArray) {
@@ -21,12 +20,13 @@ function createNewGroups() {
 						newGroupArray = genGroups(userIds, prevGroups);
 					}
 				}
+				console.log(newGroupArray);
 			}
 			if (newGroupArray) 
 				insertGroupsDB(newGroupArray);
 			else
 				console.error("NO GROUPS CREATED");
-
+			
 			deleteInactiveGroups(prevGroups); //Delete old inactive groups
 		}).catch(err => console.log(err));
 	}).catch(err => console.log(err));
