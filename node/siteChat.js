@@ -29,8 +29,8 @@ function printChatPage(userID, fname, parmsGroupID) {
 async function printBody(userID, fname, parmsGroupID) {
     let countdownCard = `<ul class="nav flex-column">
 							<li class="nav-item">
-								<div class="nav-link" aria-current="page" href="#">
-								<div class="static">
+								<div class="nav-link" aria-current="page" onclick="location.reload();">
+								<div class="card static">
 									<div class="card-body">
 									<h6 class="card-subtitle text-muted" id="countdown">Ny gruppe om: </h6>
 									</div>

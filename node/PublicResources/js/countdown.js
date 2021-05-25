@@ -7,7 +7,7 @@ function startCountDown() {
     setTime(countDownDate);
 
     //Update the count down every 1 second
-    let x = setInterval(function() {
+    let timeInterval = setInterval(function() {
         setTime(countDownDate);
     }, 1000);
 
@@ -19,14 +19,14 @@ function startCountDown() {
         
         //Time calculations for hours and minutes
         let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let minutes = ((distance % (1000 * 60 * 60)) / (1000 * 60)).toFixed(0);
     
         //Output the result in element
         if (document.getElementById("countdown"))
             document.getElementById("countdown").innerHTML = "Ny gruppe om: " + hours + "t " + minutes + "m ";
 
         if (distance < 0) {
-            clearInterval(x);
+            clearInterval(timeInterval);
             document.getElementById("countdown").innerHTML = "Du får ny gruppe nu";
         }
     }
