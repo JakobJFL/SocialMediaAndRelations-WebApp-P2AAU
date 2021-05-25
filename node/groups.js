@@ -126,6 +126,7 @@ function groupSplit(shuffledStudys) { //Splits array into groups between 4 and 5
 
 	if(!rest==0) {
 		full -= (groupSize-rest);
+		full += 1;
 		rest = (groupSize-rest)*(groupSize-1);
 	}
 
@@ -153,7 +154,8 @@ function sortGroups(groups) { //Sorts the induvidial groups in asending order
 }
 
 function QuickSort(arr, left = 0, right = arr.length - 1) {
-	let len = arr.length, index;
+	let len = arr.length;
+	let index;
 	if (len > 1) {
 		index = partition(arr, left, right);
 		if (left < index - 1) 
@@ -162,6 +164,27 @@ function QuickSort(arr, left = 0, right = arr.length - 1) {
 			QuickSort(arr, index, right);
 	}
 	return arr;
+}
+
+function partition(arr, left, right) {
+	let middle = Math.floor((right + left) / 2);
+	let	pivot = arr[middle];
+	let	i = left; //Start pointer at the first item in the array
+	let	j = right; //Start pointer at the last item in the array
+
+	while(i <= j) {
+		while(arr[i] < pivot) //Move left pointer to the right until the value at the left is greater than the pivot value
+			i++;
+		while(arr[j] > pivot) //Move right pointer to the left until the value at the right is less than the pivot value
+			j--;
+
+		if (i <= j) { //If the left pointer is less than or equal to the right pointer, then swap values
+			[arr[i], arr[j]] = [arr[j], arr[i]]; //ES6 destructuring swap
+			i++;
+			j--;
+		}
+	}
+	return i;
 }
 
 function checkForDublicates(groups, prevGroups) { //Checks for dublicate groups between groups amd prevgroups
@@ -189,26 +212,6 @@ function arrayCompare(arr1, arr2) { //Checks to make sure a max of 3 groupsmembe
 		return true;
 }
 
-function partition(arr, left, right) {
-	let middle = Math.floor((right + left) / 2);
-	let	pivot = arr[middle];
-	let	i = left; //Start pointer at the first item in the array
-	let	j = right; //Start pointer at the last item in the array
-
-	while(i <= j) {
-		while(arr[i] < pivot) //Move left pointer to the right until the value at the left is greater than the pivot value
-			i++;
-		while(arr[j] > pivot) //Move right pointer to the left until the value at the right is less than the pivot value
-			j--;
-
-		if (i <= j) { //If the left pointer is less than or equal to the right pointer, then swap values
-			[arr[i], arr[j]] = [arr[j], arr[i]]; //ES6 destructuring swap
-			i++;
-			j--;
-		}
-	}
-	return i;
-}
 
 function arr2DToArrOfObj(ArrOfObj) {
 	let objectArr = [];
