@@ -8,7 +8,7 @@ import {runTesting} from "./testing.js";
 export {processReq, startAutoCreateGroups, isStrLen, validateEmail, groupSize, isInteger};
 
 startServer(); 
-runTesting();
+//runTesting();
 
 //Global constants
 const groupSize = 5; //min 3 max 12

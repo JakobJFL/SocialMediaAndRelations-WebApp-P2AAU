@@ -2,14 +2,14 @@ import {isStrLen, validateEmail, isInteger} from "./app.js";
 import {createEventMsg} from "./server.js";
 export {runTesting};
 
-function runTesting() {    
-    //testcreateEventMsg();
-    //testStrLen();
-    //testStrLenBad();
-    //testValidateEmail();
-    //testValidateEmailBad();
-    //testIsInteger();
-    //testIsIntegerBad();
+function runTesting() {   
+    testcreateEventMsg();
+    testStrLen();
+    testStrLenBad();
+    testValidateEmail();
+    testValidateEmailBad();
+    testIsInteger();
+    testIsIntegerBad();
 }
 
 function assert(expression, msg) {
@@ -18,54 +18,42 @@ function assert(expression, msg) {
 }
 
 function testcreateEventMsg() {
-    let dataStr = {
+    let actual = {
         test1: 1,
         test2: "This is a string"
     };
-    let EdataStr = 'event: chat\ndata: {"test1":1,"test2":"This is a string"}\n\n'
-    console.log(createEventMsg(dataStr));
-    assert(createEventMsg(dataStr) !== EdataStr, "in testcreateEventMsg");
+    let expected = 'event: chat\ndata: {"test1":1,"test2":"This is a string"}\n\n';
+    assert(createEventMsg(actual) === expected, "in testcreateEventMsg");
 }
 
 function testStrLen() {
     let testPsw = "0123456789";
-    console.log("Password: " + testPsw);
-    console.log("Is there an error? " + isStrLen(testPsw, 8, 30));
-    assert(isStrLen(testPsw, 8, 30), "in testStrLen");
+    assert(!isStrLen(testPsw, 8, 30), "in testStrLen");
 }
 
 function testStrLenBad() {
     let testPsw = "123";
-    console.log("Password: " + testPsw);
-    console.log("Is there an error? " + isStrLen(testPsw, 8, 30));
     assert(isStrLen(testPsw, 8, 30), "in testStrLenBad");
-    
     let testPswLong = "1234512345123451234512345123451";
-    console.log("PasswordLong: " + testPswLong);
-    console.log("Is there an error? " + isStrLen(testPswLong, 8, 30));
     assert(isStrLen(testPswLong, 8, 30), "in testStrLenBad");
 }
 
 function testValidateEmail() {
     let testEmail = "abc@mail.com"
-    console.log("Email: " + testEmail);
-    assert(validateEmail(testEmail) === false, "in testValidateEmail");
+    assert(validateEmail(testEmail) === true, "in testValidateEmail");
 }
 
 function testValidateEmailBad() {
     let testEmail = "abcmail.com"
-    console.log("Email: " + testEmail);
     assert(validateEmail(testEmail) === false, "in testValidateEmailBad");
 }
 
 function testIsInteger() {
     let testInt = 1;
-    console.log("Integer: " + testInt);
-    assert(isInteger(testInt) === false, "in testIsInteger");
+    assert(isInteger(testInt) === true, "in testIsInteger");
 }
 
 function testIsIntegerBad() {
     let testInt = 2.5;
-    console.log("Integer: " + testInt);
-    assert(isInteger(testInt) === false, "in testIsInteger");
+    assert(isInteger(testInt) === false, "in testIsIntegerBad");
 }
