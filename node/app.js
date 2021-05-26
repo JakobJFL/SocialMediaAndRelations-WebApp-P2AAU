@@ -163,7 +163,6 @@ function postHandler(req, res, path) {
 				.catch(err => reportError(res, err));
 		break;
 		default: 
-			console.error("Resource hello exist");
 			reportError(res, new Error(NoResourceError)); 
 	} 
 }

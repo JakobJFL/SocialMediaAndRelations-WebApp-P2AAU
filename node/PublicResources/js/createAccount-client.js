@@ -13,20 +13,13 @@ document.getElementById("birthDate").setAttribute("max", maxDate);
 document.getElementById("accInfo").addEventListener("submit", sendData); // kører sendData når klikkes på knappen eller når der er enter
 
 function sendData() {
-	let firstName = document.getElementById("firstName").value; 
-	let lastName = document.getElementById("lastName").value;  
-	let inputEmail = document.getElementById("inputEmail").value; 
-	let password = document.getElementById("password").value; 
-	let birthDate = document.getElementById("birthDate").value; 
-	let fieldsOfStudy = document.getElementById("inputFieldsOfStudy").value; 
-
 	let jsonBody = {
-		fname: firstName,
-		lname: lastName,
-		mail: inputEmail,
-		birthDate: birthDate,
-		study: fieldsOfStudy,
-		psw: password
+		fname: document.getElementById("firstName").value,
+		lname: document.getElementById("lastName").value,
+		mail: document.getElementById("inputEmail").value,
+		birthDate: document.getElementById("birthDate").value,
+		study: document.getElementById("inputFieldsOfStudy").value,
+		psw: document.getElementById("password").value
 	}; 
 	fetch('makeUser', {
 		method: 'POST',
@@ -36,9 +29,8 @@ function sendData() {
 		body: JSON.stringify(jsonBody),
 	})
 	.then(response => {
-		if (response.status === 200) {
+		if (response.status === 200) 
 			window.location.replace("../");
-		}
 		else if (response.status === 400) 
 			showError("Input er forkert, check e-mail adresse og undgå specialtegn");
 		else 
