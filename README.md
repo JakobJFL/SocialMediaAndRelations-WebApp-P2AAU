@@ -16,9 +16,9 @@ The directory ‘node_modules´ contains all modules and libraries used for the 
 All the mentioned code except for the ones with a link to the source of the code, is developed and written by SW2 C2-19 at Aalborg University. 
 
 ## Technical content in repository
-We use a node.js Server and a mysql database. the following are the key elements we use:
+We use a Node.js Server and a MySQL database. the following are the key elements we use:
 * Server-sent events with authentication  
-* Login and html responds with HTTP authentication
-* Server build html for chatsite
-* Mysql database with foreign keys and joins
-* Responsive website with bootstrap
+* Login and HTML responds with HTTP authentication
+* Server build HTML for chatsite
+* MySQL database with foreign keys and joins
+* Responsive website with Bootstrap
