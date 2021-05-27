@@ -261,7 +261,7 @@ function showWelcomeBox() {
 		<p>Study Buddies er udviklet på Aalborg Universitet af gruppen C2-19 i deres software projekt på 2. semester. Koden bag projektet kan findes på GitHub <a href="https://github.com/JakobJFL/SocialMediaAndRelations-WebApp-P2AAU">her</a>.</p>
 		<p>Der er også udviklet en rapport som en del af projektet.</p>
 		<p class="lead">
-			<a class="btn btn-primary btn" href="#" role="button">Se rapport</a>
+			<a class="btn btn-primary btn" href="report.pdf" target="_blank" role="button">Se rapport</a>
 		</p>
 	</div>
 </div>
