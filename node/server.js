@@ -15,13 +15,12 @@ const hostname = "127.0.0.1";
 
 const reqCharLimit = 10000000; //10 MB limit!
 const publicResources="/PublicResources/"; // Define path for public resources
-let clientsSSE = []; //List of online clients for SSE (Server-sent events)
+let clientsSSE = []; //List of online clients for SSE
 
-//secture file system access as described on https://nodejs.org/en/knowledge/file-system/security/introduction/
+//Secture file system access as described on https://nodejs.org/en/knowledge/file-system/security/introduction/
 const rootFileSystem=process.cwd();
 function securePath(userPath){
 	if (userPath.indexOf('\0') !== -1) {
-		// could also test for illegal chars: if (!/^[a-z0-9]+$/.test(filename)) {return undefined;}
 		return undefined;
 	}
 	userPath = publicResources+userPath;
@@ -29,7 +28,7 @@ function securePath(userPath){
 	return p;
 }
 
-// send contents as file as response
+//Send contents as file as response
 function fileResponse(res, filename){
 	const sPath=securePath(filename);
 	fs.readFile(sPath, (err, data) => {
@@ -67,6 +66,7 @@ function getFileType(fileName){
 	return (ext2Mime[fileExtension]||"text/plain");
 }
 
+//Special admin login for maintenance. Runs groups algorithm that makes new groups
 function adminRunGroupAlg(req, res) {
 	return new Promise((resolve,reject) => {
 		let authheader = req.headers.authorization;
@@ -85,7 +85,7 @@ function adminRunGroupAlg(req, res) {
 	});
 }
 
-//special admin login for maintenance. Gets data from all users
+//Special admin login for maintenance. Gets data from all users
 function adminGetUser(req, res) {
 	let authheader = req.headers.authorization;
 	if (!authheader) 
@@ -103,7 +103,7 @@ function adminGetUser(req, res) {
 	}
 }
 
-//special admin login for maintenance. Makes group. JSON defines the group members
+//Special admin login for maintenance. Makes group. JSON defines the group members
 function adminMakeGroup(req, res, data) {
 	let authheader = req.headers.authorization;
 	if (!authheader) 

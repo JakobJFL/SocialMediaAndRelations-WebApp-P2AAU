@@ -250,7 +250,6 @@ function showWelcomeBox() {
 		<div>Hver dag klokken <b>16:00</b> GMT+2, vil der blive dannet nye samtalegrupper. Find chatmenuen i venstre side af skærmen, eller hvis du er på mobil med denne knap: <i class="fa fa-bars text-muted"></i>. Her får du vist de grupper du er medlem af og du kan vælge hvilken gruppesamtale du vil skrive i.</div>
 		<br>
 		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Gruppedannelse</small></h2>
-		<div>Hver dag klokken 16:00 GMT+2, vil der blive dannet nye samtalegrupper.</div>
 		<div>Grupperne bliver tilfældigt sammensat ud fra din studieretning. Hvis der er ikke er nok brugere med den samme studieretning som dig, vil brugere med studieretninger der minder om din, blive en del af din gruppe. Størrelsen for en gruppe er 4-5 personer.</div>
 		<br>
 		<h2><i class="fa fa-users text-muted"></i> <small class="text-muted"> Inaktive grupper</small></h2>
