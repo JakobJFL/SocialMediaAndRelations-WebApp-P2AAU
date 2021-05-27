@@ -1,3 +1,15 @@
+@media (max-width: 767.98px) {
+    .dummy-space-right {
+        position: relative;
+        margin-left: 20vw;
+    }
+    
+    .dummy-space-left {
+        position: relative;
+        margin-right: 20vw;
+    }
+}
+
 @media (min-width: 767.98px) {
     .chat-box {
         z-index: 1;
@@ -13,6 +25,15 @@
         z-index: 1;
         margin-left: 30%;
         margin-right: 15%;
+    }
+    .dummy-space-right {
+        position: relative;
+        margin-left: 25vw;
+    }
+    
+    .dummy-space-left {
+        position: relative;
+        margin-right: 25vw;
     }
 }
 
@@ -54,16 +75,6 @@
 .bg-grey {
     background-color: var(--light-bg-color) !important;
 
-}
-
-.dummy-space-right {
-    position: relative;
-    margin-left: 400px !important;
-}
-
-.dummy-space-left {
-    position: relative;
-    margin-right: 400px !important;
 }
 
 .reciever-msg {
