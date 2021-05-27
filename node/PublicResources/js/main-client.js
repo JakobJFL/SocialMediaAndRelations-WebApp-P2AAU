@@ -103,7 +103,6 @@ function showError(msg) {
 }
 
 //EventSource
-
 function addSSEListener() {
 	evtSource = new EventSourcePolyfill("chatSSE", {
 		headers: {
@@ -111,21 +110,6 @@ function addSSEListener() {
 		}
 	});
 	evtSource.addEventListener("chat", chatEventHandler, false);
-
-	/*document.addEventListener("visibilitychange", function() {
-		if (document.hidden) {
-			evtSource.close();
-			evtSource.removeEventListener();
-		} else {
-			evtSource = new EventSourcePolyfill("chatSSE", {
-			headers: {
-				'Authorization': 'Basic '+btoa(loginData.email + ":" + loginData.password) 
-				}
-			});
-			evtSource.addEventListener("chat", chatEventHandler);
-		}
-	});
-	*/
 }
 
 //Adds the event from chatSSE to message row('allChat') by making new chatbox with content of response body
@@ -212,15 +196,12 @@ function newMessage() {
 
 //Change chat html to group with the Group_id
 function changeGroup(cGroup_id) {
-	//evtSource.removeEventListener();
-	//evtSource.close();
 	getChatSite(cGroup_id).then(data => {
 		groupID = cGroup_id;
 		document.body.innerHTML = data;
 		document.getElementById("logOutBtn").addEventListener("click", logOut);
 		document.getElementById("btnSender").addEventListener("click", newMessage);
 		document.getElementById("senderFrom").addEventListener("keypress", submitOnEnter);
-		//addSSEListener();
 		startCountDown();
 	}).catch((err) => console.error(err.message));
 }
